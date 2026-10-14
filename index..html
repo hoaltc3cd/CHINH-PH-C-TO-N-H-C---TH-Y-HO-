@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CHINH PHỤC TOÁN HỌC – THẦY HÒA AI</title>
+<style>
+:root{--navy:#172554;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--bg:#f1f5f9;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#172033}
+header{background:linear-gradient(135deg,#172554,#1d4ed8);color:#fff;padding:28px 16px;text-align:center}
+header h1{margin:0 0 8px;font-size:clamp(22px,4vw,34px)}header p{margin:0;color:#dbeafe}
+main{max-width:850px;margin:22px auto;padding:0 14px}.panel{background:var(--card);border-radius:18px;padding:22px;box-shadow:0 8px 24px #0f172a12;margin-bottom:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1;min-width:180px}
+label{display:block;font-weight:bold;margin:8px 0}input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
+button{border:0;border-radius:10px;padding:12px 16px;font-size:16px;font-weight:bold;cursor:pointer;background:var(--blue);color:#fff}
+button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#e2e8f0;color:#172033}.choice{display:block;width:100%;text-align:left;background:#eff6ff;color:#172033;border:2px solid transparent;margin:10px 0;white-space:normal}.choice:hover{border-color:#60a5fa}.choice.correct{background:#dcfce7;border-color:#16a34a}.choice.wrong{background:#fee2e2;border-color:#dc2626}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#475569;font-weight:bold}.progress{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:12px 0 20px}.bar{height:100%;width:0;background:#2563eb;transition:width .2s}
+.feedback{padding:14px;border-radius:12px;background:#f8fafc;margin-top:14px;line-height:1.55}.good{color:var(--green);font-weight:bold}.bad{color:var(--red);font-weight:bold}.hidden{display:none}.muted{color:#64748b;font-size:14px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px;border-bottom:1px solid #e2e8f0}footer{text-align:center;color:#64748b;padding:20px;font-size:13px}
+@media(max-width:560px){.panel{padding:16px}header{padding:24px 12px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎓 CHINH PHỤC TOÁN HỌC</h1>
+  <p>THẦY HÒA AI · Học Toán dễ như ăn kẹo!</p>
+</header>
+<main>
+  <section id="start" class="panel">
+    <h2>🎮 Thử thách Toán 10: Hàm số bậc hai</h2>
+    <p>Trả lời 10 câu hỏi trong 10 phút. Mỗi câu đúng được 10 điểm.</p>
+    <div class="row">
+      <div><label for="student">Họ và tên</label><input id="student" placeholder="Ví dụ: Nguyễn An" autocomplete="name"></div>
+      <div><label for="className">Lớp</label><input id="className" placeholder="Ví dụ: 10A1"></div>
+    </div>
+    <p style="margin-top:18px"><button id="startBtn">Bắt đầu chơi</button></p>
+    <p class="muted">Bản mẫu lưu bảng điểm trên trình duyệt hiện tại. Chưa có tài khoản hoặc bảng xếp hạng trực tuyến giữa các thiết bị.</p>
+  </section>
+
+  <section id="game" class="panel hidden">
+    <div class="meta"><span id="playerLabel">Học sinh</span><span>⏱️ Còn lại: <span id="time">10:00</span></span><span>⭐ Điểm: <span id="score">0</span></span></div>
+    <div class="progress"><div id="bar" class="bar"></div></div>
+    <div class="meta"><span id="questionCount">Câu 1/10</span><span>Chủ đề: Hàm số bậc hai</span></div>
+    <h2 id="questionText"></h2>
+    <div id="choices"></div>
+    <div id="feedback" class="feedback hidden" aria-live="polite"></div>
+    <p style="margin-bottom:0"><button id="nextBtn" disabled>Câu tiếp theo →</button></p>
+  </section>
+
+  <section id="result" class="panel hidden">
+    <h2>🏁 Kết quả của em</h2>
+    <p id="summary"></p>
+    <div id="review"></div>
+    <p><button id="replayBtn">Chơi lại</button> <button id="clearScoresBtn" class="secondary">Xóa bảng điểm trên máy này</button></p>
+  </section>
+
+  <section class="panel">
+    <h2>🏆 Bảng điểm trên thiết bị này</h2>
+    <p class="muted">Đây là bảng điểm cục bộ để minh họa. Muốn giáo viên xem điểm của cả lớp từ nhiều điện thoại, cần kết nối cơ sở dữ liệu và xác thực.</p>
+    <div id="leaderboard"></div>
+  </section>
+</main>
+<footer>CHINH PHỤC TOÁN HỌC – THẦY HÒA AI · Bản mẫu giáo dục</footer>
+<script>
+const questions = [
+ {q:"Đồ thị của hàm số y = x² có đỉnh là điểm nào?",a:["(0; 0)","(1; 0)","(0; 1)","(-1; 0)"],correct:0,why:"Hàm số y = x² có dạng y = ax² với a = 1, không có số hạng bậc nhất và hằng số nên đỉnh là O(0; 0)."},
+ {q:"Parabol y = 2x² mở về phía nào?",a:["Phía dưới","Phía trên","Sang trái","Sang phải"],correct:1,why:"Với y = ax² và a > 0, parabol mở lên trên."},
+ {q:"Trục đối xứng của y = (x − 3)² + 2 là đường thẳng nào?",a:["x = 2","y = 3","x = 3","y = 2"],correct:2,why:"Dạng y = a(x − h)² + k có trục đối xứng x = h. Ở đây h = 3."},
+ {q:"Giá trị nhỏ nhất của y = (x − 1)² + 4 là bao nhiêu?",a:["1","4","5","Không có"],correct:1,why:"Vì (x − 1)² ≥ 0 nên y ≥ 4, dấu bằng xảy ra khi x = 1."},
+ {q:"Hàm số y = −x² + 6 có giá trị lớn nhất bằng bao nhiêu?",a:["−6","0","6","Không có"],correct:2,why:"Ta có −x² ≤ 0 nên y = −x² + 6 ≤ 6, đạt được khi x = 0."},
+ {q:"Nghiệm của phương trình x² − 9 = 0 là:",a:["x = 9","x = ±3","x = 3","x = −9"],correct:1,why:"x² − 9 = (x − 3)(x + 3) = 0 nên x = 3 hoặc x = −3."},
+ {q:"Với y = x² − 4x + 1, hoành độ đỉnh là:",a:["−2","2","4","−4"],correct:1,why:"Với y = ax² + bx + c, hoành độ đỉnh là x = −b/(2a). Ở đây a = 1, b = −4 nên x = 2."},
+ {q:"Hàm số y = −3x² + 2 có hệ số a bằng:",a:["3","−3","2","−2"],correct:1,why:"So sánh với dạng y = ax² + bx + c, hệ số của x² là a = −3."},
+ {q:"Điểm nào thuộc đồ thị y = x² − 1?",a:["(0; 1)","(1; 0)","(2; 2)","(−1; 1)"],correct:1,why:"Thay x = 1 ta được y = 1² − 1 = 0, nên điểm (1; 0) thuộc đồ thị."},
+ {q:"Nếu y = ax² (a ≠ 0) có a < 0, đồ thị có đặc điểm nào?",a:["Mở lên, có giá trị nhỏ nhất","Mở xuống, có giá trị lớn nhất","Luôn nằm phía trên trục Ox","Không có trục đối xứng"],correct:1,why:"Khi a < 0, parabol mở xuống và đỉnh là điểm cao nhất; với y = ax², đỉnh là O(0; 0)."}
+];
+let index=0, score=0, remaining=600, timer=null, answered=false, right=0, player="", className="", answers=[];
+const $=id=>document.getElementById(id);
+function show(id){$(id).classList.remove("hidden")} function hide(id){$(id).classList.add("hidden")}
+function startGame(){
+ player=$("student").value.trim(); className=$("className").value.trim();
+ if(!player||!className){alert("Em hãy nhập họ tên và lớp trước khi chơi nhé!");return}
+ index=0;score=0;right=0;remaining=600;answers=[];answered=false;
+ $("score").textContent=score;$("playerLabel").textContent=player+" · "+className;
+ hide("start");hide("result");show("game");renderQuestion();updateTime();
+ clearInterval(timer);timer=setInterval(()=>{remaining--;updateTime();if(remaining<=0)finishGame()},1000);
+}
+function updateTime(){let m=Math.floor(remaining/60),s=remaining%60;$("time").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+function renderQuestion(){
+ if(index>=questions.length){finishGame();return}
+ answered=false;const q=questions[index];$("questionCount").textContent=`Câu ${index+1}/${questions.length}`;
+ $("bar").style.width=(index/questions.length*100)+"%";$("questionText").textContent=q.q;
+ $("choices").innerHTML="";hide("feedback");$("nextBtn").disabled=true;
+ q.a.forEach((choice,i)=>{const b=document.createElement("button");b.className="choice";b.textContent=String.fromCharCode(65+i)+". "+choice;b.onclick=()=>choose(i,b);$("choices").appendChild(b)});
+}
+function choose(i,button){
+ if(answered)return;answered=true;const q=questions[index];const buttons=[...$("choices").querySelectorAll("button")];
+ buttons.forEach((b,j)=>{b.disabled=true;if(j===q.correct)b.classList.add("correct")});
+ if(i===q.correct){score+=10;right++;button.classList.add("correct")}else button.classList.add("wrong");
+ $("score").textContent=score;answers.push({q:q.q,chosen:q.a[i],correct:q.a[q.correct],ok:i===q.correct});
+ $("feedback").innerHTML=`<div class="${i===q.correct?"good":"bad"}">${i===q.correct?"Chính xác! +10 điểm 🎉":"Chưa đúng. Cùng xem lại nhé!"}</div><div><b>Giải thích:</b> ${q.why}</div>`;
+ show("feedback");$("nextBtn").disabled=false;$("bar").style.width=((index+1)/questions.length*100)+"%";
+}
+function finishGame(){
+ clearInterval(timer);hide("game");show("result");
+ const total=questions.length;const percent=Math.round(right/total*100);
+ $("summary").innerHTML=`<b>${player}</b> (${className}) đạt <b>${score}/${total*10} điểm</b>, trả lời đúng <b>${right}/${total}</b> câu (${percent}%).<br>${percent>=80?"Rất tốt! Hãy thử mức độ khó hơn.":percent>=50?"Có nền tảng rồi; hãy xem kỹ các lời giải và luyện thêm.":"Không sao! Hãy ôn lại kiến thức nền tảng rồi chơi lại."}`;
+ $("review").innerHTML="<h3>📘 Những câu cần xem lại</h3>"+(answers.filter(a=>!a.ok).map(a=>`<p><b>${escapeHTML(a.q)}</b><br>Em chọn: ${escapeHTML(a.chosen)}<br>Đáp án đúng: ${escapeHTML(a.correct)}</p>`).join("")||"<p>Xuất sắc! Em không có câu sai trong lượt này.</p>");
+ const scores=JSON.parse(localStorage.getItem("chinhPhucScores")||"[]");
+ scores.push({player,className,score,right,when:new Date().toLocaleString("vi-VN")});scores.sort((a,b)=>b.score-a.score);localStorage.setItem("chinhPhucScores",JSON.stringify(scores.slice(0,20)));renderLeaderboard();
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderLeaderboard(){
+ const scores=JSON.parse(localStorage.getItem("chinhPhucScores")||"[]");
+ if(!scores.length){$("leaderboard").innerHTML="<p>Chưa có điểm. Hãy chơi lượt đầu tiên!</p>";return}
+ $("leaderboard").innerHTML="<table><thead><tr><th>#</th><th>Học sinh</th><th>Lớp</th><th>Điểm</th><th>Đúng</th></tr></thead><tbody>"+scores.map((s,i)=>`<tr><td>${i+1}</td><td>${escapeHTML(s.player)}</td><td>${escapeHTML(s.className)}</td><td>${s.score}</td><td>${s.right}/10</td></tr>`).join("")+"</tbody></table>";
+}
+$("startBtn").onclick=startGame;
+$("nextBtn").onclick=()=>{index++;renderQuestion()};
+$("replayBtn").onclick=()=>{show("start");hide("result");$("student").value=player;$("className").value=className;window.scrollTo({top:0,behavior:"smooth"})};
+$("clearScoresBtn").onclick=()=>{if(confirm("Xóa toàn bộ bảng điểm lưu trên trình duyệt này?")){localStorage.removeItem("chinhPhucScores");renderLeaderboard()}};
+renderLeaderboard();
+</script>
+</body>
+</html>
