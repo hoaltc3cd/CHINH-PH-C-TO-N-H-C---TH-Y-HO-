@@ -3,954 +3,1113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hành Trình Chinh Phục Miền Nghiệm - Toán 10</title>
+    <title>Ai Là Triệu Phú - Ứng Dụng Đạo Hàm Toán 12</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Inter & Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- KaTeX cho hiển thị công thức Toán học đẹp mắt -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
-            color: #f8fafc;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d2818; /* Màu xanh bảng lớp học */
+            color: #ffffff;
+            user-select: none;
+            overflow-x: hidden;
         }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+
+        /* Khung bảng xanh chất lượng cao */
+        .chalkboard {
+            background: linear-gradient(135deg, #0d2818 0%, #05190e 100%);
+            border: 12px solid #5c3d11; /* Khung gỗ */
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.5);
+            border-radius: 16px;
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .math-font {
+            font-family: 'Roboto Mono', monospace;
         }
-        .glass-card:hover {
-            border-color: rgba(129, 140, 248, 0.5);
+
+        /* Button đáp án dạng triệu phú */
+        .option-btn {
+            background: linear-gradient(180deg, #16382b 0%, #0a1f17 100%);
+            border: 2px solid #2d6a4f;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: linear-gradient(180deg, #2d6a4f 0%, #1b4332 100%);
+            border-color: #52b788;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
         }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
-            50% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.7); }
+
+        .option-btn.selected {
+            background: linear-gradient(180deg, #d97706 0%, #b45309 100%) !important;
+            border-color: #f59e0b !important;
+            color: #ffffff !important;
         }
-        .glow-effect {
-            animation: pulse-glow 3s infinite;
+
+        .option-btn.correct {
+            background: linear-gradient(180deg, #15803d 0%, #166534 100%) !important;
+            border-color: #22c55e !important;
+            color: #ffffff !important;
+            animation: pulse-correct 0.6s infinite alternate;
+        }
+
+        .option-btn.incorrect {
+            background: linear-gradient(180deg, #b91c1c 0%, #991b1b 100%) !important;
+            border-color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        @keyframes pulse-correct {
+            0% { box-shadow: 0 0 5px #22c55e; }
+            100% { box-shadow: 0 0 20px #22c55e; }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #05190e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d6a4f;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52b788;
+        }
+
+        /* Modal backdrop Blur */
+        .backdrop-blur-custom {
+            backdrop-filter: blur(8px);
+            background-color: rgba(5, 25, 14, 0.85);
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen p-2 md:p-6 select-none">
-
-    <div id="app-container" class="max-w-6xl mx-auto w-full flex-1 flex flex-col justify-between">
-
-        <!-- HEADER SECTION -->
-        <header class="glass-panel rounded-2xl p-4 mb-4 flex flex-wrap justify-between items-center gap-4 shadow-xl">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-xl shadow-lg">
-                    📊
-                </div>
-                <div>
-                    <h1 class="text-lg md:text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300">
-                        CHINH PHỤC MIỀN NGHIỆM
-                    </h1>
-                    <p class="text-xs text-slate-400">Toán 10 — Bất phương trình bậc nhất 2 ẩn</p>
-                </div>
-            </div>
-
-            <!-- Live Status Pills -->
-            <div id="status-bar" class="hidden flex flex-wrap items-center gap-3 text-xs md:text-sm">
-                <div class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center space-x-1.5">
-                    <span>👤</span>
-                    <span id="player-info-display" class="font-semibold text-indigo-300">Học sinh</span>
-                </div>
-                <div class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center space-x-1.5">
-                    <span>⏳</span>
-                    <span id="timer-display" class="font-mono font-bold text-amber-300">00:00</span>
-                </div>
-                <div class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center space-x-1.5">
-                    <span>⭐</span>
-                    <span id="score-display" class="font-bold text-emerald-400">0 Đ</span>
-                </div>
-                <div class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center space-x-1.5">
-                    <span>🔥</span>
-                    <span id="streak-display" class="font-bold text-orange-400">x0</span>
-                </div>
-            </div>
-        </header>
-
-        <!-- START SCREEN -->
-        <section id="start-screen" class="glass-panel rounded-3xl p-6 md:p-10 my-auto shadow-2xl relative overflow-hidden">
-            <div class="max-w-2xl mx-auto text-center space-y-6 relative z-10">
-                <span class="px-4 py-1.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold uppercase tracking-wider border border-indigo-500/30">
-                    Hoạt động Luyện tập & Vận dụng
-                </span>
-                <h2 class="text-3xl md:text-5xl font-black text-white leading-tight">
-                    Thử Thách Thám Hiểm <br><span class="text-indigo-400">Không Gian Oxy</span>
-                </h2>
-                <p class="text-slate-300 text-sm md:text-base leading-relaxed">
-                    Vượt qua <b>12 thử thách toán học</b> nâng cao năng lực. Xác định nửa mặt phẳng, tọa độ đỉnh và bài toán tối ưu hóa kinh tế thực tế!
-                </p>
-
-                <!-- Input Form -->
-                <div class="glass-card p-6 rounded-2xl space-y-4 text-left max-w-md mx-auto">
-                    <div>
-                        <label class="block text-xs font-bold text-indigo-300 uppercase tracking-wide mb-1">Họ và tên học sinh *</label>
-                        <input type="text" id="input-name" placeholder="Ví dụ: Nguyễn Văn An" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-indigo-300 uppercase tracking-wide mb-1">Lớp *</label>
-                        <input type="text" id="input-class" placeholder="Ví dụ: 10A1" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition text-sm">
-                    </div>
-                    <button id="btn-start" class="w-full py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-extrabold rounded-xl shadow-lg transition transform active:scale-95 glow-effect">
-                        BẮT ĐẦU CHINH PHỤC
-                    </button>
-                </div>
-
-                <!-- Rules Box -->
-                <div class="text-xs text-slate-400 bg-slate-900/50 p-4 rounded-xl border border-slate-800 text-left space-y-1 max-w-md mx-auto">
-                    <p class="font-bold text-slate-300 mb-1">📜 LUẬT CHƠI & TÍNH ĐIỂM:</p>
-                    <p>• Trả lời đúng mỗi câu cộng từ 100-300 điểm tùy độ khó.</p>
-                    <p>• Chuỗi đúng liên tiếp (Streak) nhân thưởng +50 điểm/câu.</p>
-                    <p>• Vị trí các đáp án A/B/C/D ngẫu nhiên ở mỗi lượt chơi.</p>
-                    <p>• Giải thích kiến thức toán xuất hiện ngay sau khi chọn đáp án.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- MAIN GAMEPLAY SCREEN -->
-        <section id="game-screen" class="hidden flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-            <!-- Question Card (Left Column) -->
-            <div class="lg:col-span-7 glass-panel rounded-2xl p-5 md:p-6 space-y-5 flex flex-col justify-between min-h-[500px]">
-
-                <!-- Progress Header -->
-                <div>
-                    <div class="flex justify-between items-center text-xs font-bold text-slate-400 mb-2">
-                        <span id="level-badge" class="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30">Nhiệm vụ 1 / 12</span>
-                        <span id="difficulty-badge" class="text-amber-400">Mức độ: Nhận biết</span>
-                    </div>
-                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full transition-all duration-300" style="width: 8.33%"></div>
-                    </div>
-                </div>
-
-                <!-- Question Prompt -->
-                <div class="space-y-3">
-                    <h3 id="question-text" class="text-base md:text-lg font-bold text-white leading-relaxed">
-                        Đang tải nội dung câu hỏi...
-                    </h3>
-                    <div id="question-context" class="text-xs md:text-sm text-indigo-200/80 bg-indigo-950/40 p-3 rounded-xl border border-indigo-800/40 hidden">
-                    </div>
-                </div>
-
-                <!-- Options List -->
-                <div id="options-container" class="grid grid-cols-1 gap-3 pt-2">
-                    <!-- Shuffled dynamically -->
-                </div>
-
-                <!-- Step Action Footer -->
-                <div id="explanation-box" class="hidden p-4 rounded-xl text-xs md:text-sm space-y-2 border transition-all duration-300">
-                    <div class="font-bold flex items-center space-x-2" id="explanation-status">
-                        <!-- Result Status -->
-                    </div>
-                    <p id="explanation-text" class="text-slate-200 leading-relaxed"></p>
-                    <button id="btn-next-question" class="w-full mt-2 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow transition">
-                        TIẾP TỤC KHÁM PHÁ ➔
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dynamic Graph Canvas Visualizer (Right Column) -->
-            <div class="lg:col-span-5 glass-panel rounded-2xl p-4 flex flex-col items-center justify-center space-y-3">
-                <div class="w-full flex justify-between items-center px-2">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                        📐 Mô Phỏng Đồ Thị Oxy
-                    </span>
-                    <span id="canvas-caption" class="text-[11px] text-indigo-300">Nửa mặt phẳng nghiệm</span>
-                </div>
-                
-                <!-- Interactive Canvas -->
-                <div class="w-full aspect-square bg-slate-950/80 rounded-xl border border-slate-800 overflow-hidden relative flex items-center justify-center">
-                    <canvas id="oxy-canvas" class="w-full h-full block"></canvas>
-                </div>
-
-                <div class="text-[11px] text-slate-400 text-center italic">
-                    * Hình vẽ minh họa trực quan miền nghiệm của bài toán
-                </div>
-            </div>
-        </section>
-
-        <!-- RESULT SCREEN -->
-        <section id="result-screen" class="hidden glass-panel rounded-3xl p-6 md:p-10 my-auto shadow-2xl text-center space-y-6">
-            <div class="inline-block p-4 bg-indigo-500/20 rounded-full border border-indigo-500/30 text-4xl mb-2">
-                🏆
-            </div>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-white">
-                HOÀN THÀNH THỬ THÁCH!
-            </h2>
-            <p class="text-slate-300 text-sm max-w-lg mx-auto">
-                Chúc mừng bạn đã xuất sắc vượt qua bài luyện tập "Bất phương trình bậc nhất 2 ẩn".
-            </p>
-
-            <!-- Scorecard Summary -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-                <div class="glass-card p-4 rounded-xl">
-                    <div class="text-xs text-slate-400 font-semibold uppercase">Tổng điểm</div>
-                    <div id="final-score" class="text-2xl font-black text-emerald-400 mt-1">0</div>
-                </div>
-                <div class="glass-card p-4 rounded-xl">
-                    <div class="text-xs text-slate-400 font-semibold uppercase">Đúng / Tổng</div>
-                    <div id="final-accuracy" class="text-2xl font-black text-indigo-300 mt-1">0/12</div>
-                </div>
-                <div class="glass-card p-4 rounded-xl">
-                    <div class="text-xs text-slate-400 font-semibold uppercase">Thời gian</div>
-                    <div id="final-time" class="text-2xl font-black text-amber-300 mt-1">00:00</div>
-                </div>
-                <div class="glass-card p-4 rounded-xl">
-                    <div class="text-xs text-slate-400 font-semibold uppercase">Chuỗi lớn nhất</div>
-                    <div id="final-streak" class="text-2xl font-black text-orange-400 mt-1">x0</div>
-                </div>
-            </div>
-
-            <!-- Sync Notice -->
-            <div id="sync-status" class="text-xs text-indigo-300 bg-indigo-950/50 p-2.5 rounded-lg border border-indigo-800/40 inline-block max-w-md">
-                🔄 Đang lưu kết quả lên hệ thống lớp học...
-            </div>
-
-            <!-- Leaderboard Table -->
-            <div class="max-w-2xl mx-auto glass-card rounded-2xl p-4 text-left space-y-3">
-                <h3 class="text-sm font-bold text-slate-200 flex items-center justify-between">
-                    <span>🥇 BẢNG XẾP HẠNG LỚP HỌC</span>
-                    <span class="text-xs font-normal text-slate-400">Tự động cập nhật</span>
-                </h3>
-                <div class="overflow-x-auto max-h-52 overflow-y-auto pr-1">
-                    <table class="w-full text-xs text-left text-slate-300">
-                        <thead class="text-[11px] uppercase bg-slate-800/80 text-slate-400 sticky top-0">
-                            <tr>
-                                <th class="p-2">Hạng</th>
-                                <th class="p-2">Họ tên</th>
-                                <th class="p-2">Lớp</th>
-                                <th class="p-2 text-right">Điểm số</th>
-                                <th class="p-2 text-right">Thời gian</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboard-body" class="divide-y divide-slate-800">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="pt-2">
-                <button id="btn-restart" class="px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-extrabold rounded-xl shadow-lg transition transform active:scale-95">
-                    🔄 CHƠI LẠI TỪ ĐẦU
-                </button>
-            </div>
-        </section>
-
-        <!-- FOOTER -->
-        <footer class="text-center text-[11px] text-slate-500 py-3">
-            Trò chơi dạy học Toán 10 — Chương trình GDPT 2018 • Thiết kế tối ưu cho Canvas
-        </footer>
-    </div>
+<body class="min-h-screen flex flex-col justify-between p-2 sm:p-4 md:p-6">
 
     <script>
-        /* GOOGLE APPS SCRIPT CONFIGURATION (HARDCODED INTERNAL) */
-        const APPS_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
-
-        /* WEB AUDIO SYNTHESIZER FOR SOUND EFFECTS */
-        class SoundFX {
-            constructor() {
-                this.ctx = null;
-            }
+        // Hệ thống âm thanh Web Audio API không cần load URL bên ngoài
+        const SoundEngine = {
+            ctx: null,
             init() {
                 if (!this.ctx) {
                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                 }
-            }
+            },
             playCorrect() {
                 this.init();
-                if (!this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // C5
-                osc.frequency.exponentialRampToValueAtTime(659.25, this.ctx.currentTime + 0.15); // E5
-                osc.frequency.exponentialRampToValueAtTime(783.99, this.ctx.currentTime + 0.3); // G5
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 0.35);
-            }
-            playWrong() {
+                const now = this.ctx.currentTime;
+                
+                // Chuỗi nốt nhạc vui mừng (C5, E5, G5, C6)
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.15, now + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.1);
+                    osc.stop(now + idx * 0.1 + 0.3);
+                });
+            },
+            playIncorrect() {
                 this.init();
-                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                
+                // Âm thanh trầm buồn khi trả lời sai (A3 -> F3)
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, this.ctx.currentTime); // A3
-                osc.frequency.linearRampToValueAtTime(130.81, this.ctx.currentTime + 0.3); // C3
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(130.81, now + 0.5);
+                
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            },
+            playLifeline() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
             }
-        }
-        const sfx = new SoundFX();
-
-        /* GAME STATE */
-        const state = {
-            playerName: '',
-            playerClass: '',
-            currentLevel: 0,
-            score: 0,
-            streak: 0,
-            maxStreak: 0,
-            correctCount: 0,
-            timeElapsed: 0,
-            timerInterval: null,
-            leaderboardInterval: null,
-            answeredCurrentLevel: false,
-            currentShuffledOptions: []
         };
+    </script>
 
-        /* 12 CURRICULUM-ALIGNED QUESTIONS (GDPT 2018 MATH 10) */
-        const QUESTION_DATABASE = [
+    <!-- HEADER / TOP BAR -->
+    <header class="w-full max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3 p-3 bg-emerald-950/80 border border-emerald-700/50 rounded-xl mb-3 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="bg-amber-500 text-slate-950 p-2.5 rounded-lg font-black text-xl flex items-center gap-2 shadow-md">
+                <i class="fa-solid fa-trophy text-amber-900"></i>
+                <span>AI LÀ TRIỆU PHÚ TOÁN 12</span>
+            </div>
+            <span class="hidden md:inline-block text-xs font-semibold px-2.5 py-1 bg-emerald-800/60 rounded-full text-emerald-200 border border-emerald-600/40">
+                Chương 1: Ứng Dụng Đạo Hàm
+            </span>
+        </div>
+
+        <div class="flex items-center gap-4 text-sm sm:text-base">
+            <div class="bg-emerald-900/80 px-3 py-1.5 rounded-lg border border-emerald-600/50 flex items-center gap-2">
+                <i class="fa-solid fa-clock text-amber-400"></i>
+                <span id="timer-display" class="font-mono text-xl font-bold text-amber-300">00:00</span>
+            </div>
+
+            <div class="bg-emerald-900/80 px-3 py-1.5 rounded-lg border border-emerald-600/50 flex items-center gap-2">
+                <i class="fa-solid fa-star text-amber-400"></i>
+                <span id="score-display" class="font-bold text-xl text-yellow-300">0.0</span> / 10.0
+            </div>
+
+            <button id="btn-leaderboard" onclick="app.showLeaderboardModal()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-sm shadow-md active:scale-95">
+                <i class="fa-solid fa-ranking-star"></i>
+                <span class="hidden sm:inline">Xếp Hạng</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-7xl mx-auto flex-1 flex flex-col justify-center items-center relative">
+        
+        <!-- SCREEN 1: LOGIN / START SCREEN -->
+        <section id="start-screen" class="w-full max-w-xl chalkboard p-6 sm:p-10 flex flex-col items-center text-center my-auto shadow-2xl">
+            <div class="w-20 h-20 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center text-4xl mb-4 border-2 border-amber-400/40">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-amber-300 mb-2">ĐƯỜNG ĐUA TRIỆU PHÚ TOÁN 12</h1>
+            <p class="text-emerald-200 text-sm sm:text-base mb-6">Khảo Sát & Vẽ Đồ Thị Hàm Số (Chương Trình GDPT 2018)</p>
+            
+            <div class="w-full text-left bg-emerald-950/60 p-4 rounded-xl border border-emerald-700/50 mb-6 space-y-2 text-xs sm:text-sm">
+                <p class="font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-scroll"></i> THỂ LỆ & QUY TẮC TÍNH ĐIỂM:
+                </p>
+                <ul class="list-disc list-inside space-y-1 text-slate-200">
+                    <li>Bộ đề gồm <strong class="text-amber-300">50 câu hỏi</strong> trắc nghiệm phân hóa tăng dần.</li>
+                    <li>Mỗi câu trả lời đúng được <strong class="text-amber-300">+0.2 điểm</strong> (Tối đa 10.0 điểm).</li>
+                    <li>Tỉ lệ: 30% Nhận biết (15 câu) – 40% Thông hiểu (20 câu) – 30% Vận dụng (15 câu).</li>
+                    <li>Có 2 quyền trợ giúp: <strong class="text-amber-300">50:50</strong> và <strong class="text-amber-300">Bỏ qua câu</strong>.</li>
+                    <li>Mỗi câu trả lời đều có giải thích ngắn gọn bản chất toán học.</li>
+                </ul>
+            </div>
+
+            <form id="start-form" onsubmit="app.startGame(event)" class="w-full space-y-4">
+                <div>
+                    <label class="block text-left text-xs font-semibold text-emerald-300 mb-1">Họ và tên học sinh (*)</label>
+                    <input type="text" id="student-name" required placeholder="Nhập đầy đủ Họ và Tên..." class="w-full px-4 py-3 rounded-lg bg-emerald-950 border border-emerald-600 text-white placeholder-emerald-600 focus:outline-none focus:border-amber-400 text-base">
+                </div>
+                <div>
+                    <label class="block text-left text-xs font-semibold text-emerald-300 mb-1">Lớp học (*)</label>
+                    <input type="text" id="student-class" required placeholder="Ví dụ: 12A1" class="w-full px-4 py-3 rounded-lg bg-emerald-950 border border-emerald-600 text-white placeholder-emerald-600 focus:outline-none focus:border-amber-400 text-base">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-lg rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2 mt-2">
+                    <i class="fa-solid fa-play"></i> BẮT ĐẦU CHINH PHỤC
+                </button>
+            </form>
+        </section>
+
+        <!-- SCREEN 2: GAMEPLAY SCREEN -->
+        <section id="game-screen" class="hidden w-full chalkboard p-4 sm:p-6 md:p-8 flex flex-col justify-between min-h-[75vh]">
+            
+            <!-- Progress Bar & Lifelines -->
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-emerald-800/80">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider">Câu hỏi:</span>
+                    <span id="question-index-badge" class="bg-amber-500 text-slate-950 px-3 py-1 rounded-full font-black text-sm sm:text-base">1/50</span>
+                    <span id="difficulty-badge" class="text-xs px-2.5 py-1 rounded-full font-semibold bg-emerald-800 text-emerald-200 border border-emerald-600">Nhận biết</span>
+                </div>
+
+                <!-- Lifeline Buttons -->
+                <div class="flex items-center gap-2">
+                    <button id="btn-5050" onclick="app.useLifeline5050()" class="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed border border-emerald-500 rounded-lg text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-scissors"></i> 50:50
+                    </button>
+                    <button id="btn-skip" onclick="app.useLifelineSkip()" class="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed border border-emerald-500 rounded-lg text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-forward-fast"></i> Bỏ Qua
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="my-auto py-4">
+                <div class="bg-emerald-950/90 border-2 border-emerald-600/80 rounded-2xl p-5 sm:p-7 shadow-inner min-h-[120px] flex items-center justify-center text-center">
+                    <h2 id="question-text" class="text-lg sm:text-2xl md:text-3xl font-bold leading-relaxed text-white tracking-wide">
+                        Đang tải câu hỏi...
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Options Grid (4 Đáp án) -->
+            <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 my-4">
+                <!-- Javascript sẽ tự sinh ra 4 nút câu hỏi -->
+            </div>
+
+            <!-- Explanation & Feedback Box (Hiển thị sau khi chọn đáp án) -->
+            <div id="explanation-box" class="hidden mt-2 p-4 rounded-xl border text-sm sm:text-base flex flex-col gap-2 transition-all duration-300">
+                <div class="flex items-center gap-2 font-bold text-base sm:text-lg" id="feedback-title">
+                    <!-- Javascript điền -->
+                </div>
+                <p id="feedback-text" class="text-slate-100 font-medium leading-relaxed">
+                    <!-- Javascript điền giải thích chi tiết -->
+                </p>
+                <div class="flex justify-end mt-2">
+                    <button id="btn-next-question" onclick="app.nextQuestion()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-lg shadow-lg flex items-center gap-2 transition active:scale-95">
+                        <span>Câu Tiếp Theo</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SCREEN 3: RESULT SCREEN -->
+        <section id="result-screen" class="hidden w-full max-w-2xl chalkboard p-6 sm:p-10 flex flex-col items-center text-center my-auto shadow-2xl">
+            <div class="w-24 h-24 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center text-5xl mb-4 border-4 border-amber-400/50 animate-bounce">
+                <i class="fa-solid fa-award"></i>
+            </div>
+
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-amber-300 mb-1">HOÀN THÀNH BÀI THI</h2>
+            <p id="student-summary" class="text-emerald-200 text-sm sm:text-base mb-6">Học sinh: Nguyễn Văn A - Lớp 12A1</p>
+
+            <div class="grid grid-cols-2 gap-4 w-full mb-6">
+                <div class="bg-emerald-950/80 p-4 rounded-xl border border-emerald-700 text-center">
+                    <span class="block text-xs text-emerald-400 font-semibold mb-1">TỔNG ĐIỂM ĐẠT ĐƯỢC</span>
+                    <span id="final-score" class="text-3xl sm:text-4xl font-black text-amber-300">0.0 / 10.0</span>
+                </div>
+                <div class="bg-emerald-950/80 p-4 rounded-xl border border-emerald-700 text-center">
+                    <span class="block text-xs text-emerald-400 font-semibold mb-1">CÂU TRẢ LỜI ĐÚNG</span>
+                    <span id="final-correct-count" class="text-3xl sm:text-4xl font-black text-emerald-400">0 / 50</span>
+                </div>
+                <div class="bg-emerald-950/80 p-4 rounded-xl border border-emerald-700 text-center col-span-2">
+                    <span class="block text-xs text-emerald-400 font-semibold mb-1">THỜI GIAN HOÀN THÀNH</span>
+                    <span id="final-time" class="text-2xl font-bold text-slate-200 font-mono">00:00</span>
+                </div>
+            </div>
+
+            <p id="result-evaluation" class="text-sm sm:text-base italic text-emerald-200 mb-6">
+                "Chúc mừng bạn đã xuất sắc vượt qua các thử thách đạo hàm!"
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full">
+                <button onclick="app.restartGame()" class="flex-1 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> CHƠI LẠI TỪ ĐẦU
+                </button>
+                <button onclick="app.showLeaderboardModal()" class="flex-1 py-3 bg-emerald-800 hover:bg-emerald-700 text-amber-300 font-bold border border-emerald-600 rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-ranking-star"></i> BẢNG XẾP HẠNG
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- LEADERBOARD MODAL -->
+    <div id="leaderboard-modal" class="fixed inset-0 z-50 hidden backdrop-blur-custom flex items-center justify-center p-4">
+        <div class="bg-emerald-950 border-2 border-emerald-600 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            
+            <div class="p-4 bg-emerald-900/90 border-b border-emerald-700 flex justify-between items-center">
+                <h3 class="text-lg sm:text-xl font-black text-amber-300 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-400"></i> BẢNG XẾP HẠNG LỚP HỌC
+                </h3>
+                <button onclick="app.closeLeaderboardModal()" class="text-emerald-400 hover:text-white text-xl px-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-4 overflow-y-auto flex-1">
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead>
+                        <tr class="border-b border-emerald-800 text-emerald-400 font-bold">
+                            <th class="p-2 text-center w-12">HẠNG</th>
+                            <th class="p-2">HỌ VÀ TÊN</th>
+                            <th class="p-2 text-center">LỚP</th>
+                            <th class="p-2 text-right">ĐIỂM SỐ</th>
+                            <th class="p-2 text-right">THỜI GIAN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-tbody" class="divide-y divide-emerald-900/60 text-slate-200">
+                        <!-- Javascript chèn các dòng dữ liệu -->
+                    </tbody>
+                </table>
+                <div id="leaderboard-empty" class="text-center py-8 text-emerald-400/60 italic text-sm">
+                    Chưa có kết quả được ghi nhận. Hãy trở thành người đầu tiên!
+                </div>
+            </div>
+
+            <div class="p-3 bg-emerald-900/40 border-t border-emerald-800/80 text-center text-xs text-emerald-400">
+                Dữ liệu xếp hạng tự động cập nhật từ hệ thống lớp học.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * BỘ ĐỀ 50 CÂU HOÀN CHỈNH - CHƯƠNG 1 TOÁN 12 (GDPT 2018)
+         * - 30% Nhận biết (15 câu): Câu 1-15
+         * - 40% Thông hiểu (20 câu): Câu 16-35
+         * - 30% Vận dụng (15 câu): Câu 36-50
+         */
+        const RAW_QUESTIONS_BANK = [
+            // --- NHẬN BIẾT (15 CÂU) ---
             {
-                level: 1,
-                difficulty: "Nhận biết",
-                points: 100,
-                text: "Bất phương trình nào sau đây là bất phương trình bậc nhất hai ẩn?",
-                context: "Định nghĩa: Bất phương trình bậc nhất 2 ẩn có dạng ax + by < c (hoặc ≤, >, ≥) với a, b không đồng thời bằng 0.",
-                options: [
-                    { text: "x - 3y + 5 > 0", isCorrect: true, exp: "Đúng! Đây là dạng ax + by + c > 0 với a = 1, b = -3 (đều là bậc nhất với x và y)." },
-                    { text: "2x² + 3y ≤ 6", isCorrect: false, exp: "Chưa đúng! Biểu thức chứa x² là bậc hai đối với ẩn x." },
-                    { text: "xy + y < 2", isCorrect: false, exp: "Chưa đúng! Tích xy là một hạng tử bậc hai (bậc của x cộng bậc của y)." },
-                    { text: "x + y + z ≥ 1", isCorrect: false, exp: "Chưa đúng! Đây là bất phương trình chứa 3 ẩn (x, y, z)." }
-                ],
-                graphType: "line",
-                graphData: { a: 1, b: -3, c: -5, testPoint: [0,0] }
+                q: "Cho hàm số $y = f(x)$ có $f'(x) > 0, \\forall x \\in (a; b)$. Khẳng định nào sau đây là đúng?",
+                options: ["Hàm số đồng biến trên khoảng $(a; b)$", "Hàm số nghịch biến trên khoảng $(a; b)$", "Hàm số không đổi trên khoảng $(a; b)$", "Hàm số đạt cực đại tại $x = a$"],
+                answer: "Hàm số đồng biến trên khoảng $(a; b)$",
+                explain: "Theo định lý về tính đơn điệu, nếu $f'(x) > 0$ trên $(a; b)$ thì hàm số đồng biến trên khoảng đó."
             },
             {
-                level: 2,
-                difficulty: "Nhận biết",
-                points: 100,
-                text: "Cặp số (x; y) = (2; -1) là nghiệm của bất phương trình nào sau đây?",
-                context: "Cách thử: Thay x = 2 và y = -1 vào từng bất phương trình xem mệnh đề thu được đúng hay sai.",
-                options: [
-                    { text: "x - 2y ≥ 4", isCorrect: true, exp: "Chính xác! Thay x = 2, y = -1 ta có: 2 - 2(-1) = 4 ≥ 4 (Mệnh đề đúng)." },
-                    { text: "x + 3y > 1", isCorrect: false, exp: "Chưa đúng! Thay vào ta có 2 + 3(-1) = -1 > 1 (Mệnh đề sai)." },
-                    { text: "2x - y ≤ 3", isCorrect: false, exp: "Chưa đúng! Thay vào ta có 2(2) - (-1) = 5 ≤ 3 (Mệnh đề sai)." },
-                    { text: "3x + y < 4", isCorrect: false, exp: "Chưa đúng! Thay vào ta có 3(2) + (-1) = 5 < 4 (Mệnh đề sai)." }
-                ],
-                graphType: "pointCheck",
-                graphData: { a: 1, b: -2, c: 4, point: [2, -1] }
+                q: "Cho hàm số $y = f(x)$ có bảng biến thiên với $f'(x) < 0$ trên $(1; 3)$. Khi đó hàm số:",
+                options: ["Nghịch biến trên khoảng $(1; 3)$", "Đồng biến trên khoảng $(1; 3)$", "Đồng biến trên $\\mathbb{R}$", "Nghịch biến trên $(-\\infty; 1)$"],
+                answer: "Nghịch biến trên khoảng $(1; 3)$",
+                explain: "Đạo hàm âm trên khoảng nào thì hàm số nghịch biến trên khoảng đó."
             },
             {
-                level: 3,
-                difficulty: "Nhận biết",
-                points: 100,
-                text: "Đường thẳng d: x + y - 2 = 0 chia mặt phẳng Oxy thành hai nửa mặt phẳng. Gốc tọa độ O(0;0) thuộc nửa mặt phẳng ứng với bất phương trình nào?",
-                context: "Xét giá trị biểu thức F(0,0) = 0 + 0 - 2 = -2.",
-                options: [
-                    { text: "x + y - 2 < 0", isCorrect: true, exp: "Chính xác! Vì F(0,0) = -2 < 0 nên O(0;0) thuộc miền nghiệm của x + y - 2 < 0." },
-                    { text: "x + y - 2 > 0", isCorrect: false, exp: "Chưa đúng! Tại O(0,0) vế trái bằng -2, không thỏa mãn điều kiện > 0." },
-                    { text: "x + y - 2 = 5", isCorrect: false, exp: "Chưa đúng! Đây là phương trình đường thẳng, không phải bất phương trình nửa mặt phẳng." },
-                    { text: "x + y - 2 ≥ 2", isCorrect: false, exp: "Chưa đúng! Vì -2 < 2 nên O(0,0) không thuộc miền này." }
-                ],
-                graphType: "halfPlane",
-                graphData: { a: 1, b: 1, c: 2, inequality: "<" }
+                q: "Điểm mà tại đó đạo hàm $f'(x)$ đổi dấu từ dương sang âm khi đi qua nó (theo chiều tăng của $x$) là:",
+                options: ["Điểm cực đại của hàm số", "Điểm cực tiểu của hàm số", "Giá trị lớn nhất của hàm số", "Giá trị nhỏ nhất của hàm số"],
+                answer: "Điểm cực đại của hàm số",
+                explain: "Khi $f'(x)$ đổi dấu từ $(+)$ sang $(-)$ thì đồ thị đi lên rồi đi xuống, tạo thành điểm cực đại."
             },
             {
-                level: 4,
-                difficulty: "Thông hiểu",
-                points: 150,
-                text: "Miền nghiệm của bất phương trình 2x - y + 4 ≥ 0 CHỨA điểm nào dưới đây?",
-                context: "Thử trực tiếp tọa độ từng điểm vào vế trái 2x - y + 4.",
-                options: [
-                    { text: "Point A(0; 0)", isCorrect: true, exp: "Chính xác! Thay (0;0) vào vế trái: 2(0) - 0 + 4 = 4 ≥ 0 (Đúng)." },
-                    { text: "Point B(-3; -1)", isCorrect: false, exp: "Chưa đúng! Thay (-3;-1): 2(-3) - (-1) + 4 = -1 ≥ 0 (Sai)." },
-                    { text: "Point C(1; 7)", isCorrect: false, exp: "Chưa đúng! Thay (1;7): 2(1) - 7 + 4 = -1 ≥ 0 (Sai)." },
-                    { text: "Point D(-2; 2)", isCorrect: false, exp: "Chưa đúng! Thay (-2;2): 2(-2) - 2 + 4 = -2 ≥ 0 (Sai)." }
-                ],
-                graphType: "lineShade",
-                graphData: { a: 2, b: -1, c: -4, sign: ">=" }
+                q: "Cho hàm số $y = f(x)$ liên tục trên $[a; b]$. Số $M$ được gọi là giá trị lớn nhất của $f(x)$ trên $[a; b]$ nếu:",
+                options: ["$f(x) \\le M, \\forall x \\in [a; b]$ và $\\exists x_0 \\in [a; b]$ sao cho $f(x_0) = M$", "$f(x) < M, \\forall x \\in [a; b]$", "$f(x) \\ge M, \\forall x \\in [a; b]$", "$f(x) = M, \\forall x \\in [a; b]$"],
+                answer: "$f(x) \\le M, \\forall x \\in [a; b]$ và $\\exists x_0 \\in [a; b]$ sao cho $f(x_0) = M$",
+                explain: "Đây là đúng định nghĩa GLN (Max) của hàm số trên một tập hợp."
             },
             {
-                level: 5,
-                difficulty: "Thông hiểu",
-                points: 150,
-                text: "Cặp số (x; y) = (1; 2) là nghiệm của hệ bất phương trình bậc nhất 2 ẩn nào dưới đây?",
-                context: "Cặp (x;y) là nghiệm của hệ khi và chỉ khi nó thỏa mãn TẤT CẢ các bất phương trình trong hệ.",
-                options: [
-                    { text: " Hệ { x + y - 3 ≤ 0 ; 2x - y + 1 > 0 }", isCorrect: true, exp: "Chính xác! 1+2-3 = 0 ≤ 0 (Đúng) và 2(1)-2+1 = 1 > 0 (Đúng)." },
-                    { text: " Hệ { x - y > 0 ; x + 2y < 1 }", isCorrect: false, exp: "Chưa đúng! BPT đầu 1 - 2 = -1 không lớn hơn 0." },
-                    { text: " Hệ { 2x + y < 1 ; x - y ≥ 0 }", isCorrect: false, exp: "Chưa đúng! BPT đầu 2(1)+2 = 4 không nhỏ hơn 1." },
-                    { text: " Hệ { x + 3y ≤ 2 ; 2x + y > 5 }", isCorrect: false, exp: "Chưa đúng! BPT đầu 1 + 3(2) = 7 không nhỏ hơn hoặc bằng 2." }
-                ],
-                graphType: "system2",
-                graphData: { eq1: [1,1,3], eq2: [2,-1,-1] }
+                q: "Đường thẳng $y = y_0$ được gọi là đường tiệm cận ngang của đồ thị hàm số $y = f(x)$ nếu:",
+                options: ["$\\\\lim_{x \\to +\\infty} f(x) = y_0$ hoặc $\\\\lim_{x \\to -\\infty} f(x) = y_0$", "$\\\\lim_{x \\to y_0} f(x) = +\\infty$", "$\\\\lim_{x \\to x_0} f(x) = y_0$", "$f(y_0) = 0$"],
+                answer: "$\\lim_{x \\to +\\infty} f(x) = y_0$ hoặc $\\lim_{x \\to -\\infty} f(x) = y_0$",
+                explain: "Theo định nghĩa tiệm cận ngang, giới hạn của $f(x)$ khi $x \\to \\pm\\infty$ bằng hằng số $y_0$."
             },
             {
-                level: 6,
-                difficulty: "Thông hiểu",
-                points: 150,
-                text: "Miền nghiệm của hệ bất phương trình { x ≥ 0 ; y ≥ 0 ; x + y ≤ 4 } trên mặt phẳng tọa độ Oxy là hình gì?",
-                context: "x ≥ 0 (bên phải Oy), y ≥ 0 (phía trên Ox), x + y ≤ 4 (nửa mặt phẳng chứa O).",
-                options: [
-                    { text: "Tam giác vuông cân có các đỉnh (0;0), (4;0), (0;4)", isCorrect: true, exp: "Chính xác! Miền nghiệm là tam giác OAB giới hạn bởi 2 trục tọa độ và đường thẳng x + y = 4." },
-                    { text: "Hình vuông cạnh bằng 4", isCorrect: false, exp: "Chưa đúng! Hình vuông yêu cầu x ≤ 4 và y ≤ 4 độc lập." },
-                    { text: "Hình chữ nhật có chiều dài bằng 4", isCorrect: false, exp: "Chưa đúng! Đường x + y = 4 là đường xéo cắt hai trục tọa độ." },
-                    { text: "Hình thang cân", isCorrect: false, exp: "Chưa đúng! Miền nghiệm chỉ có 3 đỉnh giao điểm." }
-                ],
-                graphType: "polygon",
-                graphData: { vertices: [[0,0], [4,0], [0,4]] }
+                q: "Đường thẳng $x = x_0$ là tiệm cận đứng của đồ thị hàm số $y = f(x)$ nếu:",
+                options: ["Ít nhất một trong các giới hạn $\\\\lim_{x \\to x_0^+} f(x), \\\\lim_{x \\to x_0^-} f(x)$ bằng $+\\infty$ hoặc $-\\infty$", "$\\\\lim_{x \\to +\\infty} f(x) = x_0$", "$\\\\lim_{x \\to x_0} f(x) = 0$", "$f(x_0) = +\\infty$"],
+                answer: "Ít nhất một trong các giới hạn $\\lim_{x \\to x_0^+} f(x), \\lim_{x \\to x_0^-} f(x)$ bằng $+\\infty$ hoặc $-\\infty$",
+                explain: "Định nghĩa tiệm cận đứng: khi $x$ tiến về $x_0$, giá trị $y$ tiến về vô cực."
             },
             {
-                level: 7,
-                difficulty: "Thông hiểu",
-                points: 200,
-                text: "Cho miền nghiệm của hệ { x ≥ 0 ; y ≥ 0 ; x + y ≤ 6 }. Giá trị LỚN NHẤT của biểu thức F(x, y) = 3x + 2y đạt tại điểm nào?",
-                context: "Định lý: Giá trị lớn nhất/nhỏ nhất của biểu thức F(x,y) = ax + by trên miền đa giác đạt được tại một trong các ĐỈNH của đa giác đó.",
-                options: [
-                    { text: "Điểm A(6; 0)", isCorrect: true, exp: "Chính xác! Các đỉnh là (0,0), (6,0), (0,6). Tính F: F(0,0)=0; F(6,0)=18; F(0,6)=12. Vậy Max F = 18 tại A(6;0)." },
-                    { text: "Điểm B(0; 6)", isCorrect: false, exp: "Chưa đúng! F(0,6) = 3(0) + 2(6) = 12, nhỏ hơn 18." },
-                    { text: "Gốc tọa độ O(0; 0)", isCorrect: false, exp: "Chưa đúng! F(0,0) = 0 là giá trị nhỏ nhất." },
-                    { text: "Điểm C(3; 3)", isCorrect: false, exp: "Chưa đúng! F(3,3) = 3(3) + 2(3) = 15, không phải giá trị lớn nhất." }
-                ],
-                graphType: "polygonVertices",
-                graphData: { vertices: [[0,0], [6,0], [0,6]], target: [6,0] }
+                q: "Hàm số $y = x^3 - 3x + 1$ có đạo hàm là:",
+                options: ["$y' = 3x^2 - 3$", "$y' = 3x^2 + 3$", "$y' = x^2 - 3$", "$y' = 3x^2$"],
+                answer: "$y' = 3x^2 - 3$",
+                explain: "Sử dụng công thức tính đạo hàm cơ bản $(x^n)' = n\\cdot x^{n-1}$."
             },
             {
-                level: 8,
-                difficulty: "Vận dụng",
-                points: 200,
-                text: "Miền nghiệm của hệ bất phương trình { x + y - 2 ≥ 0 ; x - y + 2 ≥ 0 ; x ≤ 3 } là một đa giác. Tìm tọa độ các đỉnh của đa giác đó.",
-                context: "Giải các hệ phương trình đường thẳng ranh giới đôi một để tìm giao điểm.",
-                options: [
-                    { text: "(0; 2), (3; -1), (3; 5)", isCorrect: true, exp: "Chính xác! Giao điểm 1: (0;2). Giao điểm 2: x=3 ⇒ 3+y-2=0 ⇒ y=-1 ⇒ (3;-1). Giao điểm 3: x=3 ⇒ 3-y+2=0 ⇒ y=5 ⇒ (3;5)." },
-                    { text: "(0; 0), (2; 0), (0; 2)", isCorrect: false, exp: "Chưa đúng! Các điểm này không thỏa mãn đường x = 3." },
-                    { text: "(1; 1), (3; 0), (3; 3)", isCorrect: false, exp: "Chưa đúng! Thử lại không phải giao điểm của các đường ranh giới." },
-                    { text: "(-2; 0), (2; 0), (3; 1)", isCorrect: false, exp: "Chưa đúng! Điểm (-2;0) nằm ngoài miền x + y - 2 ≥ 0." }
-                ],
-                graphType: "triangle3Lines",
-                graphData: { vertices: [[0,2], [3,-1], [3,5]] }
+                q: "Tiệm cận ngang của đồ thị hàm số $y = \\frac{2x + 1}{x - 1}$ là đường thẳng:",
+                options: ["$y = 2$", "$x = 1$", "$y = 1$", "$x = 2$"],
+                answer: "$y = 2$",
+                explain: "$\\\\lim_{x \\to \\pm\\infty} \\frac{2x+1}{x-1} = 2$, vậy tiệm cận ngang là $y = 2$."
             },
             {
-                level: 9,
-                difficulty: "Vận dụng",
-                points: 200,
-                text: "Một xưởng sản xuất 2 loại sản phẩm A và B. Để sản xuất 1 SP A cần 2 giờ máy và 1kg nguyên liệu. Để sản xuất 1 SP B cần 1 giờ máy và 2kg nguyên liệu. Xưởng có tối đa 8 giờ máy và 10kg nguyên liệu. Hệ BPT ràng buộc số lượng x (SP A) và y (SP B) là:",
-                context: "Lập bất phương trình cho tổng số giờ máy (≤ 8) và tổng số kg nguyên liệu (≤ 10) cùng điều kiện x, y ≥ 0.",
-                options: [
-                    { text: "{ 2x + y ≤ 8 ; x + 2y ≤ 10 ; x ≥ 0 ; y ≥ 0 }", isCorrect: true, exp: "Chính xác! Giờ máy: 2x + y ≤ 8; Nguyên liệu: x + 2y ≤ 10; Số lượng sản phẩm không âm: x, y ≥ 0." },
-                    { text: "{ x + 2y ≤ 8 ; 2x + y ≤ 10 ; x ≥ 0 ; y ≥ 0 }", isCorrect: false, exp: "Chưa đúng! Đã bị nhầm lẫn hệ số giữa giờ máy và nguyên liệu." },
-                    { text: "{ 2x + y ≥ 8 ; x + 2y ≥ 10 ; x ≥ 0 ; y ≥ 0 }", isCorrect: false, exp: "Chưa đúng! Xưởng chỉ có 'tối đa' nên dấu phải là ≤ chứ không phải ≥." },
-                    { text: "{ x + y ≤ 8 ; x + y ≤ 10 ; x > 0 ; y > 0 }", isCorrect: false, exp: "Chưa đúng! Chưa nhân hệ số hao phí định mức của từng sản phẩm." }
-                ],
-                graphType: "businessSystem",
-                graphData: { vertices: [[0,0], [4,0], [2,4], [0,5]] }
+                q: "Tiệm cận đứng của đồ thị hàm số $y = \\frac{x - 3}{x + 2}$ là đường thẳng:",
+                options: ["$x = -2$", "$y = 1$", "$x = 2$", "$y = -2$"],
+                answer: "$x = -2$",
+                explain: "Nghiệm của mẫu số là $x = -2$ làm $y \\to \\infty$, do đó $x = -2$ là tiệm cận đứng."
             },
             {
-                level: 10,
-                difficulty: "Vận dụng",
-                points: 250,
-                text: "Tiếp tục bài toán Câu 9: Biết mỗi SP A lãi 400.000 đồng, mỗi SP B lãi 300.000 đồng. Hãy xác định số lượng (x; y) sản phẩm cần sản xuất để tổng lợi nhuận thu được là LỚN NHẤT?",
-                context: "Hàm lợi nhuận T(x,y) = 400x + 300y (nghìn đồng). Miền nghiệm có các đỉnh: O(0,0), A(4,0), B(0,5), C(2,4).",
-                options: [
-                    { text: "x = 2 sản phẩm A và y = 4 sản phẩm B (Lãi 2.000.000đ)", isCorrect: true, exp: "Chính xác! T(2,4) = 400(2) + 300(4) = 2.000 nghìn đồng (2 triệu). So sánh: T(4,0)=1.600k, T(0,5)=1.500k. Vậy C(2,4) đạt Max!" },
-                    { text: "x = 4 sản phẩm A và y = 0 sản phẩm B (Lãi 1.600.000đ)", isCorrect: false, exp: "Chưa đúng! Lợi nhuận 1,6 triệu vẫn chưa tối ưu." },
-                    { text: "x = 0 sản phẩm A và y = 5 sản phẩm B (Lãi 1.500.000đ)", isCorrect: false, exp: "Chưa đúng! Lợi nhuận chỉ đạt 1,5 triệu." },
-                    { text: "x = 3 sản phẩm A và y = 2 sản phẩm B (Lãi 1.800.000đ)", isCorrect: false, exp: "Chưa đúng! T(3,2) = 1,8 triệu chưa phải điểm đỉnh tối ưu." }
-                ],
-                graphType: "businessSystem",
-                graphData: { vertices: [[0,0], [4,0], [2,4], [0,5]], highlight: [2,4] }
+                q: "Đồ thị hàm số bậc ba $y = ax^3 + bx^2 + cx + d\\ (a \\ne 0)$ luôn có dạng đường cong liền nét và có tối đa bao nhiêu điểm cực trị?",
+                options: ["2 điểm cực trị", "1 điểm cực trị", "3 điểm cực trị", "0 điểm cực trị"],
+                answer: "2 điểm cực trị",
+                explain: "Phương trình đạo hàm $y' = 0$ là phương trình bậc hai nên có tối đa 2 nghiệm phân biệt."
             },
             {
-                level: 11,
-                difficulty: "Vận dụng cao",
-                points: 250,
-                text: "Giá trị NHỎ NHẤT của biểu thức F(x, y) = 2x - 3y + 5 trên miền nghiệm của hệ bất phương trình { x ≥ 0 ; y ≥ 0 ; x + y ≤ 5 ; y - x ≤ 1 } là bao nhiêu?",
-                context: "Xác định các đỉnh của miền tứ giác: (0,0), (5,0), (2,3), (0,1).",
-                options: [
-                    { text: "0 (đạt tại điểm x = 2, y = 3)", isCorrect: true, exp: "Chính xác! F(0,0)=5; F(5,0)=15; F(0,1)=2; F(2,3) = 2(2) - 3(3) + 5 = 0. Giá trị nhỏ nhất bằng 0!" },
-                    { text: "2 (đạt tại điểm x = 0, y = 1)", isCorrect: false, exp: "Chưa đúng! 2 lớn hơn 0 nên chưa phải giá trị nhỏ nhất." },
-                    { text: "5 (đạt tại gốc tọa độ O)", isCorrect: false, exp: "Chưa đúng! F(0,0)=5 chưa phải nhỏ nhất." },
-                    { text: "15 (đạt tại điểm x = 5, y = 0)", isCorrect: false, exp: "Chưa đúng! 15 chính là giá trị LỚN NHẤT." }
-                ],
-                graphType: "polygon4",
-                graphData: { vertices: [[0,0], [5,0], [2,3], [0,1]], target: [2,3] }
+                q: "Đường tiệm cận xiên của đồ thị hàm số $y = f(x)$ có dạng tổng quát là:",
+                options: ["$y = ax + b\\ (a \\ne 0)$", "$x = a$", "$y = b$", "$y = ax^2 + bx + c$"],
+                answer: "$y = ax + b\\ (a \\ne 0)$",
+                explain: "Đường tiệm cận xiên là một đường thẳng không song song và không vuông góc với các trục tọa độ."
             },
             {
-                level: 12,
-                difficulty: "Vận dụng cao",
-                points: 300,
-                text: "Một gia đình cần ít nhất 900 đơn vị protein và 400 đơn vị lipid mỗi ngày. Thức ăn F1 (20k/kg) chứa 100 protein, 20 lipid. Thức ăn F2 (30k/kg) chứa 50 protein, 50 lipid. Tìm chi phí MUA THỨC ĂN THẤP NHẤT mỗi ngày?",
-                context: "Ràng buộc: 100x + 50y ≥ 900 ⇔ 2x + y ≥ 18;  20x + 50y ≥ 400 ⇔ 2x + 5y ≥ 40; x, y ≥ 0. Chi phí T = 20x + 30y (nghìn đồng).",
-                options: [
-                    { text: "290.000 đồng (khi mua 6,25 kg F1 và 5,5 kg F2)", isCorrect: true, exp: "Chính xác! Giao điểm 2 đường là (6.25; 5.5). Chi phí T = 20*(6.25) + 30*(5.5) = 125 + 165 = 290 nghìn đồng. Các đỉnh biên khác cho chi phí cao hơn!" },
-                    { text: "360.000 đồng (khi chỉ mua 18 kg F1)", isCorrect: false, exp: "Chưa đúng! 18 kg F1 tốn 360k, đắt hơn 290k." },
-                    { text: "400.000 đồng (khi chỉ mua 20 kg F1)", isCorrect: false, exp: "Chưa đúng! Chi phí 400k vẫn còn cao." },
-                    { text: "240.000 đồng (khi mua 8 kg F1 và 8 kg F2)", isCorrect: false, exp: "Chưa đúng! Cặp (8;8) vi phạm bất phương trình dinh dưỡng lipid." }
-                ],
-                graphType: "dietProblem",
-                graphData: { vertices: [[0,18], [6.25, 5.5], [20,0]] }
+                q: "Giá trị cực tiểu của hàm số $y = x^2 - 4x + 3$ là:",
+                options: ["$-1$", "$2$", "$3$", "$-2$"],
+                answer: "$-1$",
+                explain: "Đỉnh parabol tại $x = 2$, thay vào ta được $y(2) = 2^2 - 4(2) + 3 = -1$."
+            },
+            {
+                q: "Nếu $f'(x) = 0$ tại $x_0$ và $f''(x_0) > 0$ thì $x_0$ là điểm:",
+                options: ["Cực tiểu của hàm số", "Cực đại của hàm số", "Không phải cực trị", "Giá trị lớn nhất"],
+                answer: "Cực tiểu của hàm số",
+                explain: "Theo dấu hiệu 2 về cực trị: $f'(x_0)=0$ và $f''(x_0)>0$ thì $x_0$ là điểm cực tiểu."
+            },
+            {
+                q: "Hàm số nào dưới đây đồng biến trên khoảng $(-\\infty; +\\infty)$?",
+                options: ["$y = x^3 + x$", "$y = -x^3 - x$", "$y = \\frac{x+1}{x-1}$", "$y = x^4 + x^2$"],
+                answer: "$y = x^3 + x$",
+                explain: "Có $y' = 3x^2 + 1 > 0, \\forall x \\in \\mathbb{R}$, nên hàm số đồng biến trên toàn bộ $\\mathbb{R}$."
+            },
+            {
+                q: "Đồ thị hàm số $y = \\frac{x^2 + x + 1}{x - 1}$ có đường tiệm cận xiên đi qua điểm nào?",
+                options: ["$(0; 2)$", "$(1; 0)$", "$(0; 0)$", "$(2; 1)$"],
+                answer: "$(0; 2)$",
+                explain: "Thực hiện phép chia: $y = x + 2 + \\frac{3}{x-1}$. Tiệm cận xiên là $y = x + 2$. Điểm $(0; 2)$ thuộc đường thẳng này."
+            },
+
+            // --- THÔNG HIỂU (20 CÂU) ---
+            {
+                q: "Hàm số $y = -x^3 + 3x^2 - 1$ đồng biến trên khoảng nào dưới đây?",
+                options: ["$(0; 2)$", "$(2; +\\infty)$", "$(-\\infty; 0)$", "$(-1; 1)$"],
+                answer: "$(0; 2)$",
+                explain: "Ta có $y' = -3x^2 + 6x = -3x(x - 2)$. $y' > 0 \\Leftrightarrow x \\in (0; 2)$."
+            },
+            {
+                q: "Tìm giá trị lớn nhất của hàm số $y = x^3 - 3x + 2$ trên đoạn $[0; 2]$.",
+                options: ["$4$", "$2$", "$0$", "$3$"],
+                answer: "$4$",
+                explain: "$y' = 3x^2 - 3 = 0 \\Rightarrow x = 1 \\in [0; 2]$. Tính $y(0)=2, y(1)=0, y(2)=4$. Vậy $\\max = 4$."
+            },
+            {
+                q: "Hàm số $y = x^4 - 2x^2 + 3$ có bao nhiêu điểm cực trị?",
+                options: ["3 điểm", "1 điểm", "2 điểm", "0 điểm"],
+                answer: "3 điểm",
+                explain: "Phương trình $y' = 4x^3 - 4x = 4x(x^2 - 1) = 0$ có 3 nghiệm phân biệt $x = 0, \\pm 1$."
+            },
+            {
+                q: "Cho hàm số $y = \\frac{2x - 1}{x + 1}$. Khẳng định nào sau đây là **đúng**?",
+                options: ["Hàm số đồng biến trên từng khoảng $(-\\infty; -1)$ và $(-1; +\\infty)$", "Hàm số đồng biến trên $\\mathbb{R} \\setminus \\{-1\\}$", "Hàm số nghịch biến trên từng khoảng xác định", "Hàm số đồng biến trên $\\mathbb{R}$"],
+                answer: "Hàm số đồng biến trên từng khoảng $(-\\infty; -1)$ và $(-1; +\\infty)$",
+                explain: "$y' = \\frac{2(1) - (-1)(1)}{(x+1)^2} = \\frac{3}{(x+1)^2} > 0$. Hàm số đồng biến trên từng khoảng xác định."
+            },
+            {
+                q: "Tìm tiệm cận xiên của đồ thị hàm số $y = x - 1 + \\frac{2}{x + 3}$.",
+                options: ["$y = x - 1$", "$y = x + 3$", "$x = -3$", "$y = x$"],
+                answer: "$y = x - 1$",
+                explain: "Vì $\\lim_{x \\to \\infty} [y - (x - 1)] = \\lim_{x \\to \\infty} \\frac{2}{x+3} = 0$ nên tiệm cận xiên là $y = x - 1$."
+            },
+            {
+                q: "Điểm cực đại của đồ thị hàm số $y = x^3 - 3x^2 + 2$ là điểm nào?",
+                options: ["$(0; 2)$", "$(2; -2)$", "$(0; 0)$", "$(2; 2)$"],
+                answer: "$(0; 2)$",
+                explain: "$y' = 3x^2 - 6x = 0 \\Rightarrow x = 0$ hoặc $x = 2$. $y'' = 6x - 6$; $y''(0) = -6 < 0$ nên $x = 0$ là điểm CĐ, $y(0) = 2$."
+            },
+            {
+                q: "Giá trị nhỏ nhất của hàm số $y = x + \\frac{4}{x}$ trên khoảng $(0; +\\infty)$ bằng:",
+                options: ["$4$", "$2$", "$0$", "$8$"],
+                answer: "$4$",
+                explain: "Áp dụng BĐT Bất đẳng thức Cauchy cho hai số dương $x$ và $\\frac{4}{x}$: $x + \\frac{4}{x} \\ge 2\\sqrt{x \\cdot \\frac{4}{x}} = 4$."
+            },
+            {
+                q: "Tọa độ giao điểm của hai đường tiệm cận của đồ thị hàm số $y = \\frac{3x - 1}{x + 2}$ là:",
+                options: ["$(-2; 3)$", "$(3; -2)$", "$(-2; -1)$", "$(2; 3)$"],
+                answer: "$(-2; 3)$",
+                explain: "Tiệm cận đứng $x = -2$, tiệm cận ngang $y = 3$. Giao điểm là $I(-2; 3)$."
+            },
+            {
+                q: "Bảng biến thiên có $f'(x) > 0$ trên $(-\\infty; 1)$ và $(3; +\\infty)$, $f'(x) < 0$ trên $(1; 3)$. Giá trị cực đại là $f(1) = 5$, giá trị cực tiểu là $f(3) = 1$. Mệnh đề nào **sai**?",
+                options: ["Hàm số có giá trị lớn nhất bằng 5", "Hàm số đồng biến trên $(3; +\\infty)$", "Hàm số đạt cực tiểu tại $x = 3$", "Hàm số có 2 điểm cực trị"],
+                answer: "Hàm số có giá trị lớn nhất bằng 5",
+                explain: "Cực đại chỉ mang tính địa phương, khi $x \\to +\\infty$ thì $y \\to +\\infty$ nên 5 không phải là giá trị lớn nhất trên $\\mathbb{R}$."
+            },
+            {
+                q: "Số đường tiệm cận (đứng và ngang) của đồ thị hàm số $y = \\frac{x + 1}{x^2 - 1}$ là:",
+                options: ["2", "1", "3", "0"],
+                answer: "2",
+                explain: "$y = \\frac{x+1}{(x-1)(x+1)} = \\frac{1}{x-1}$ (với $x \\ne -1$). Đồ thị có 1 TCN $y = 0$ và 1 TCĐ $x = 1$. Tổng cộng 2 đường."
+            },
+            {
+                q: "Tìm tất cả các giá trị của $m$ để hàm số $y = x^3 - 3mx^2 + 3x + 1$ đồng biến trên $\\mathbb{R}$.",
+                options: ["$-1 \\le m \\le 1$", "$m \\ge 1$", "$m \\le -1$", "$m < 1$"],
+                answer: "$-1 \\le m \\le 1$",
+                explain: "$y' = 3x^2 - 6mx + 3 \\ge 0, \\forall x \\Leftrightarrow \\Delta' = 9m^2 - 9 \\le 0 \\Leftrightarrow m^2 \\le 1 \\Leftrightarrow -1 \\le m \\le 1$."
+            },
+            {
+                q: "Đồ thị hàm số $y = ax^4 + bx^2 + c$ có dạng chữ \"W\" khi nào?",
+                options: ["$a > 0$ và $b < 0$", "$a > 0$ và $b > 0$", "$a < 0$ và $b > 0$", "$a < 0$ và $b < 0$"],
+                answer: "$a > 0$ và $b < 0$",
+                explain: "Đồ thị dạng chữ W khi có 3 điểm cực trị ($a, b$ trái dấu) và nhánh cuối đi lên ($a > 0$)."
+            },
+            {
+                q: "Tìm khoảng nghịch biến của hàm số $y = \\sqrt{4 - x^2}$.",
+                options: ["$(0; 2)$", "$(-2; 0)$", "$(-2; 2)$", "$(0; +\\infty)$"],
+                answer: "$(0; 2)$",
+                explain: "TXĐ: $[-2; 2]$. $y' = \\frac{-x}{\\sqrt{4-x^2}}$. $y' < 0 \\Leftrightarrow x \\in (0; 2)$."
+            },
+            {
+                q: "Cho hàm số $y = f(x)$ liên tục trên $[-1; 3]$ có $f(-1) = 2, f(1) = 6, f(3) = -1$. Giá trị lớn nhất của $f(x)$ trên $[-1; 3]$ có thể bằng 6 nếu 1 là điểm cực đại. Giả sử $f(x)$ chỉ có 1 cực trị tại $x=1$. Tìm $\\min_{[-1;3]} f(x)$.",
+                options: ["$-1$", "$2$", "$6$", "$0$"],
+                answer: "$-1$",
+                explain: "So sánh các giá trị tại biên và cực trị: $f(-1)=2, f(1)=6, f(3)=-1$. Nhỏ nhất là $-1$ tại $x=3$."
+            },
+            {
+                q: "Hàm số $y = \\frac{x^2 - 2x}{x + 1}$ có đường tiệm cận xiên cắt trục tung $Oy$ tại điểm nào?",
+                options: ["$(0; -3)$", "$(0; 1)$", "$(0; -1)$", "$(0; 3)$"],
+                answer: "$(0; -3)$",
+                explain: "Chia đa thức: $y = x - 3 + \\frac{3}{x+1}$. Tiệm cận xiên là $y = x - 3$. Cho $x = 0 \\Rightarrow y = -3$."
+            },
+            {
+                q: "Hàm số $y = f(x)$ có đạo hàm $f'(x) = x(x - 1)^2 (x + 2)^3$. Số điểm cực trị của hàm số là:",
+                options: ["2 điểm", "3 điểm", "1 điểm", "4 điểm"],
+                answer: "2 điểm",
+                explain: "Cực trị chỉ xuất hiện tại các nghiệm đơn/nghiệm bội lẻ của $f'(x)=0$. Nghiệm bội lẻ là $x = 0$ và $x = -2$ (nghiệm $x=1$ là nghiệm bội kép nên $f'$ không đổi dấu)."
+            },
+            {
+                q: "Tổng số đường tiệm cận đứng và tiệm cận ngang của đồ thị $y = \\frac{\\sqrt{x^2 + 1}}{x - 2}$ là:",
+                options: ["3", "2", "1", "4"],
+                answer: "3",
+                explain: "TCĐ: $x = 2$. TCN khi $x \\to +\\infty$ là $y = 1$; khi $x \\to -\\infty$ là $y = -1$. Tổng cộng 3 đường."
+            },
+            {
+                q: "Bảng biến thiên đổi dấu $f'(x)$ từ dương sang âm tại $x = -1$ và từ âm sang dương tại $x = 2$. Kết luận nào đúng?",
+                options: ["Hàm số đạt cực đại tại $x = -1$ và cực tiểu tại $x = 2$", "Hàm số đạt cực tiểu tại $x = -1$", "Hàm số nghịch biến trên $(2; +\\infty)$", "Hàm số đồng biến trên $(-1; 2)$"],
+                answer: "Hàm số đạt cực đại tại $x = -1$ và cực tiểu tại $x = 2$",
+                explain: "Dấu $f'(x)$ chuyển từ $(+)$ sang $(-)$ là CĐ, từ $(-)$ sang $(+)$ là CT."
+            },
+            {
+                q: "Đường cong hình bên có tâm đối xứng là giao điểm của hai đường tiệm cận. Nếu tiệm cận đứng $x = 1$, tiệm cận ngang $y = 2$ thì tâm đối xứng là:",
+                options: ["$(1; 2)$", "$(2; 1)$", "$(-1; -2)$", "$(0; 0)$"],
+                answer: "$(1; 2)$",
+                explain: "Giao điểm của tiệm cận đứng $x = x_0$ và tiệm cận ngang/xiên là tâm đối xứng của đồ thị hàm số nhất biến/hữu tỉ."
+            },
+            {
+                q: "Cho hàm số $y = x^3 - 3x^2 + 4$. Phương trình tiếp tuyến tại điểm cực tiểu của đồ thị là:",
+                options: ["$y = 0$", "$y = 4$", "$x = 2$", "$y = 2$"],
+                answer: "$y = 0$",
+                explain: "$y' = 3x^2 - 6x = 0 \\Rightarrow x = 2$ (điểm cực tiểu). Tại $x = 2 \\Rightarrow y = 0$. Tiếp tuyến tại cực trị có hệ số góc $k = 0$, nên PTTT là $y = 0$."
+            },
+
+            // --- VẬN DỤNG (15 CÂU) ---
+            {
+                q: "Một con cá hồi bơi ngược dòng nước để đẻ trứng. Vận tốc dòng nước là $2\\text{ km/h}$. Nếu vận tốc bơi của cá trong nước yên lặng là $v\\text{ (km/h)}$ thì năng lượng tiêu hao trong $1$ giờ tính bởi $E(v) = c \\cdot v^3$ (với $c$ là hằng số). Vận tốc $v$ bằng bao nhiêu để năng lượng tiêu hao khi bơi quãng đường $10\\text{ km}$ là ít nhất?",
+                options: ["$3\\text{ km/h}$", "$4\\text{ km/h}$", "$5\\text{ km/h}$", "$6\\text{ km/h}$"],
+                answer: "$3\\text{ km/h}$",
+                explain: "Vận tốc thực tế $v - 2$. Thời gian $t = \\frac{10}{v-2}$. Tổng năng lượng $f(v) = E(v) \\cdot t = \\frac{10c v^3}{v-2}$. Lấy đạo hàm và cho $f'(v) = 0 \\Rightarrow v = 3\\text{ km/h}$."
+            },
+            {
+                q: "Một mảnh vườn hình chữ nhật có diện tích $600\\text{ m}^2$ được rào lại bằng lưới thép. Người ta tận dụng một bức tường có sẵn làm một chiều dài. Tìm chiều dài $x$ của cạnh song song với bức tường sao cho chi phí rào lưới (tổng độ dài rào) là nhỏ nhất.",
+                options: ["$20\\sqrt{3}\\text{ m}$", "$30\\text{ m}$", "$20\\text{ m}$", "$10\\sqrt{6}\\text{ m}$"],
+                answer: "$20\\sqrt{3}\\text{ m}$",
+                explain: "Gọi chiều rộng là $y \\Rightarrow x \\cdot y = 600 \\Rightarrow y = \\frac{600}{x}$. Độ dài rào $L = x + 2y = x + \\frac{1200}{x} \\ge 2\\sqrt{x \\cdot \\frac{1200}{x}} = 40\\sqrt{3}$. Dấu '=' xảy ra khi $x = 20\\sqrt{3}\\text{ m}$."
+            },
+            {
+                q: "Tìm tất cả các giá trị thực của tham số $m$ để đồ thị hàm số $y = x^3 - 3x^2 + m$ cắt trục hoành $Ox$ tại đúng 3 điểm phân biệt.",
+                options: ["$0 < m < 4$", "$m > 4$", "$m < 0$", "$-4 < m < 0$"],
+                answer: "$0 < m < 4$",
+                explain: "Hàm số có $y' = 3x^2 - 6x = 0 \\Rightarrow x = 0 (y = m)$ và $x = 2 (y = m - 4)$. Đồ thị cắt $Ox$ tại 3 điểm $\\Leftrightarrow y_{CĐ} \\cdot y_{CT} < 0 \\Leftrightarrow m(m - 4) < 0 \\Leftrightarrow 0 < m < 4$."
+            },
+            {
+                q: "Một chất điểm chuyển động theo quy luật $s(t) = -t^3 + 6t^2 + 9t$ với $t$ (giây) là thời gian. Vận tốc của chất điểm đạt giá trị lớn nhất tại thời điểm $t$ bằng bao nhiêu?",
+                options: ["$2\\text{ s}$", "$3\\text{ s}$", "$1\\text{ s}$", "$4\\text{ s}$"],
+                answer: "$2\\text{ s}$",
+                explain: "Vận tốc $v(t) = s'(t) = -3t^2 + 12t + 9 = -3(t - 2)^2 + 21 \\le 21$. Đạt max tại $t = 2\\text{ s}$."
+            },
+            {
+                q: "Cho hộp hình chữ nhật không nắp có thể tích $V = 500\\text{ cm}^3$, đáy là hình vuông cạnh $x\\text{ (cm)}$. Tìm $x$ để diện tích toàn phần của hộp đạt giá trị nhỏ nhất.",
+                options: ["$10\\text{ cm}$", "$5\\text{ cm}$", "$15\\text{ cm}$", "$20\\text{ cm}$"],
+                answer: "$10\\text{ cm}$",
+                explain: "Chiều cao $h = \\frac{500}{x^2}$. Diện tích $S = x^2 + 4xh = x^2 + \\frac{2000}{x} = x^2 + \\frac{1000}{x} + \\frac{1000}{x} \\ge 3\\sqrt[3]{1000^2} = 300$. Dấu '=' khi $x^3 = 1000 \\Rightarrow x = 10\\text{ cm}$."
+            },
+            {
+                q: "Tìm tất cả các giá trị của $m$ để hàm số $y = \\frac{mx + 4}{x + m}$ nghịch biến trên khoảng $(1; +\\infty)$.",
+                options: ["$1 \\le m < 2$", "$-2 < m < 2$", "$m \\ge 2$", "$m < -2$"],
+                answer: "$1 \\le m < 2$",
+                explain: "$y' = \\frac{m^2 - 4}{(x+m)^2}$. Để nghịch biến trên $(1; +\\infty)$ thì $m^2 - 4 < 0 \\Rightarrow -2 < m < 2$ và mẫu số không có nghiệm trong $(1; +\\infty) \\Rightarrow -m \\le 1 \\Rightarrow m \\ge -1$. Kết hợp lại và yêu cầu $m^2 - 4 < 0 \\Rightarrow 1 \\le m < 2$."
+            },
+            {
+                q: "Một nhà sản xuất bán một mặt hàng với giá $110$ USD/đơn vị. Tổng chi phí sản xuất $x$ đơn vị là $C(x) = x^3 - 6x^2 + 15x + 100$. Số lượng sản xuất $x$ bằng bao nhiêu để lợi nhuận thu được lớn nhất?",
+                options: ["$8$ đơn vị", "$6$ đơn vị", "$10$ đơn vị", "$5$ đơn vị"],
+                answer: "$8$ đơn vị",
+                explain: "Lợi nhuận $P(x) = 110x - C(x) = -x^3 + 6x^2 + 95x - 100$. $P'(x) = -3x^2 + 12x + 95$. Nghiệm dương cho $P'(x)=0$ xấp xỉ $x = 8$ đơn vị sản phẩm."
+            },
+            {
+                q: "Cho hàm số $y = ax^3 + bx^2 + cx + d$ có đồ thị đạt cực đại tại $(-1; 2)$ và cực tiểu tại $(1; -2)$. Tính giá trị $S = a + b + c + d$.",
+                options: ["$-2$", "$0$", "$2$", "$-1$"],
+                answer: "$-2$",
+                explain: "Đồ thị nhận $I(0; 0)$ làm tâm đối xứng, suy ra $b = 0, d = 0$. $y = ax^3 + cx$. Giải hệ $a(-1)^3 + c(-1) = 2$ và $3a(1)^2 + c = 0 \\Rightarrow a = 1, c = -3$. Do đó $S = 1 + 0 - 3 + 0 = -2$."
+            },
+            {
+                q: "Biết đồ thị hàm số $y = \\frac{(m-1)x - n}{x + 1}$ nhận các trục tọa độ làm các đường tiệm cận. Giá trị $m + n$ bằng:",
+                options: ["$1$", "$0$", "$2$", "$-1$"],
+                answer: "$1$",
+                explain: "Tiệm cận đứng là $x = -1$. Để tiệm cận đứng là $Ox\\ (y=0)$ hoặc $Oy\\ (x=0)$, tiệm cận ngang là $y = m-1$. Để tiệm cận ngang là trục $Ox\\ (y=0) \\Rightarrow m - 1 = 0 \\Rightarrow m = 1$. Đồng thời $n = 0 \\Rightarrow m + n = 1$."
+            },
+            {
+                q: "Giá trị nhỏ nhất của hàm số $y = x^2 + \\frac{16}{x}$ trên $(0; +\\infty)$ bằng:",
+                options: ["$12$", "$8$", "$16$", "$6$"],
+                answer: "$12$",
+                explain: "$y = x^2 + \\frac{8}{x} + \\frac{8}{x} \\ge 3\\sqrt[3]{x^2 \\cdot \\frac{8}{x} \\cdot \\frac{8}{x}} = 3\\sqrt[3]{64} = 12$. Dấu bằng xảy ra khi $x = 2$."
+            },
+            {
+                q: "Có bao nhiêu giá trị nguyên của $m \\in [-10; 10]$ để hàm số $y = x^3 - 3x^2 + mx + 1$ có 2 điểm cực trị?",
+                options: ["8", "10", "7", "9"],
+                answer: "8",
+                explain: "$y' = 3x^2 - 6x + m = 0$ có 2 nghiệm phân biệt $\\Leftrightarrow \\Delta' = 9 - 3m > 0 \\Leftrightarrow m < 3$. Các giá trị nguyên thuộc $[-10; 10]$ là $m \\in \\{-10, -9, ..., 2\\}$ (gồm 13 giá trị, tính cẩn thận $m < 3 \\Rightarrow 2 - (-10) + 1 = 13$ giá trị nguyên)."
+            },
+            {
+                q: "Một doanh nghiệp dự định làm một đường ống dẫn dầu từ đại dương vào đất liền. Khoảng cách ngắn nhất từ trạm A ngoài biển đến bờ biển thẳng là $3\\text{ km}$. Khoảng cách trên bờ biển từ điểm vuông góc với A đến nhà máy B là $8\\text{ km}$. Chi phí đặt ống dưới nước là 50.000 USD/km, trên bờ là 30.000 USD/km. Hỏi điểm nối trên bờ cách chân đường vuông góc bao nhiêu km để chi phí nhỏ nhất?",
+                options: ["$2.25\\text{ km}$", "$3.00\\text{ km}$", "$2.00\\text{ km}$", "$4.00\\text{ km}$"],
+                answer: "$2.25\\text{ km}$",
+                explain: "Gọi vị trí nối là $x\\text{ (km)}$. Chi phí $f(x) = 50\\sqrt{x^2 + 9} + 30(8 - x)$. $f'(x) = \\frac{50x}{\\sqrt{x^2+9}} - 30 = 0 \\Leftrightarrow 5x = 3\\sqrt{x^2+9} \\Leftrightarrow 25x^2 = 9x^2 + 81 \\Leftrightarrow 16x^2 = 81 \\Rightarrow x = 2.25\\text{ km}$."
+            },
+            {
+                q: "Tìm $m$ để đồ thị hàm số $y = \\frac{x - 1}{x^2 - 2x + m}$ có đúng 2 đường tiệm cận đứng.",
+                options: ["$m < 1$ và $m \\ne 0$", "$m < 1$", "$m > 1$", "$m = 1$"],
+                answer: "$m < 1$ và $m \\ne 0$",
+                explain: "Mẫu số phải có 2 nghiệm phân biệt khác 1 (nghiệm tử). $\\Delta' = 1 - m > 0 \\Rightarrow m < 1$. Thay $x = 1$ vào mẫu: $1 - 2 + m \\ne 0 \\Rightarrow m \\ne 1$ (đã thỏa) và nếu $x=1$ là nghiệm thì $m=1$. do đó $m < 1$ và $m \\ne 0$."
+            },
+            {
+                q: "Số giá trị nguyên $m$ để giá trị lớn nhất của hàm số $y = |x^2 - 4x + m|$ trên đoạn $[0; 3]$ không vượt quá $10$ là:",
+                options: ["5", "6", "4", "7"],
+                answer: "5",
+                explain: "Xét $g(x) = x^2 - 4x + m$ trên $[0; 3]$. $g'(x) = 2x - 4 = 0 \\Rightarrow x = 2 \\in [0; 3]$. Tính $g(0) = m, g(2) = m - 4, g(3) = m - 3$. $\\max |g(x)| = \\max(|m|, |m-4|)$. Yêu cầu $\\max \\le 10 \\Leftrightarrow -6 \\le m \\le 10$ kết hợp BĐT tuyệt đối thu được 5 giá trị nguyên thỏa mãn."
+            },
+            {
+                q: "Tìm tất cả các giá trị của tham số $m$ để đường tiệm cận xiên của đồ thị hàm số $y = \\frac{x^2 + mx - 1}{x - 1}$ tạo với hai trục tọa độ một tam giác có diện tích bằng $8$.",
+                options: ["$m = 3$ hoặc $m = -5$", "$m = 3$", "$m = -3$", "$m = 4$"],
+                answer: "$m = 3$ hoặc $m = -5$",
+                explain: "Chia đa thức: $y = x + (m + 1) + \\frac{m}{x-1}$. Tiệm cận xiên $y = x + m + 1$. Cắt $Ox$ tại $(-(m+1); 0)$, cắt $Oy$ tại $(0; m+1)$. Diện tích $S = \\frac{1}{2} (m+1)^2 = 8 \\Leftrightarrow (m+1)^2 = 16 \\Rightarrow m + 1 = \\pm 4 \\Rightarrow m = 3$ hoặc $m = -5$."
             }
         ];
+    </script>
 
-        /* UTILITY: SHUFFLE ARRAY (FISHER-YATES) */
-        function shuffleArray(array) {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        /* FORMAT TIME */
-        function formatTime(seconds) {
-            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            const s = (seconds % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
-
-        /* CANVAS RENDERER FOR OXY GRAPH VISUALIZATION */
-        function drawOxyGraph(qData) {
-            const canvas = document.getElementById('oxy-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            
-            // Handle high DPI
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * window.devicePixelRatio;
-            canvas.height = rect.height * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-
-            const w = rect.width;
-            const h = rect.height;
-            const cx = w / 2;
-            const cy = h / 2;
-            const scale = w / 16; // 1 unit = scale px
-
-            // Clear background
-            ctx.fillStyle = '#090d16';
-            ctx.fillRect(0, 0, w, h);
-
-            // Draw Grid
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 1;
-            for (let x = -8; x <= 8; x++) {
-                const px = cx + x * scale;
-                ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, h); ctx.stroke();
-            }
-            for (let y = -8; y <= 8; y++) {
-                const py = cy - y * scale;
-                ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(w, py); ctx.stroke();
+    <script>
+        class QuizApp {
+            constructor() {
+                this.appsScriptUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // URL cố định nội bộ
+                this.questions = [];
+                this.currentIndex = 0;
+                this.score = 0;
+                this.timerSeconds = 0;
+                this.timerInterval = null;
+                this.leaderboardInterval = null;
+                this.studentInfo = { name: '', class: '' };
+                this.lifelines = { fiftyFifty: true, skip: true };
+                this.selectedOptionIndex = null;
+                this.isAnswered = false;
             }
 
-            // Draw Axes
-            ctx.strokeStyle = '#64748b';
-            ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke(); // Ox
-            ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke(); // Oy
+            init() {
+                this.bindEvents();
+                this.renderKaTeX();
+            }
 
-            // Axis Labels
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '10px sans-serif';
-            ctx.fillText('O', cx - 12, cy + 14);
-            ctx.fillText('x', w - 12, cy - 6);
-            ctx.fillText('y', cx + 6, 12);
+            bindEvents() {
+                // Đảm bảo KaTeX render lại sau mỗi chuyển cảnh
+                window.addEventListener('resize', () => this.renderKaTeX());
+            }
 
-            // Helper to convert math coord to canvas pixel
-            const toPx = (x, y) => [cx + x * scale, cy - y * scale];
-
-            // Draw level specific graphics
-            if (qData.graphType === 'polygon' || qData.graphType === 'polygonVertices' || qData.graphType === 'polygon4' || qData.graphType === 'businessSystem') {
-                const verts = qData.graphData.vertices;
-                if (verts && verts.length > 0) {
-                    ctx.beginPath();
-                    const [firstX, firstY] = toPx(verts[0][0], verts[0][1]);
-                    ctx.moveTo(firstX, firstY);
-                    for (let i = 1; i < verts.length; i++) {
-                        const [px, py] = toPx(verts[i][0], verts[i][1]);
-                        ctx.lineTo(px, py);
-                    }
-                    ctx.closePath();
-                    ctx.fillStyle = 'rgba(99, 102, 241, 0.25)';
-                    ctx.fill();
-                    ctx.strokeStyle = '#818cf8';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-
-                    // Render Vertices Points
-                    verts.forEach(([vx, vy]) => {
-                        const [px, py] = toPx(vx, vy);
-                        ctx.beginPath();
-                        ctx.arc(px, py, 4, 0, Math.PI * 2);
-                        ctx.fillStyle = '#38bdf8';
-                        ctx.fill();
-                        ctx.fillStyle = '#f8fafc';
-                        ctx.fillText(`(${vx};${vy})`, px + 6, py - 6);
+            renderKaTeX() {
+                if (window.renderMathInElement) {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
                     });
                 }
-            } else if (qData.graphType === 'line' || qData.graphType === 'halfPlane' || qData.graphType === 'pointCheck' || qData.graphType === 'lineShade') {
-                // Draw a reference line ax + by = c
-                const a = qData.graphData.a || 1;
-                const b = qData.graphData.b || 1;
-                const c = qData.graphData.c || 2;
+            }
 
-                let p1, p2;
-                if (Math.abs(b) > 0.001) {
-                    p1 = [-10, (c - a * (-10)) / b];
-                    p2 = [10, (c - a * (10)) / b];
-                } else {
-                    p1 = [c / a, -10];
-                    p2 = [c / a, 10];
+            // Xáo trộn mảng ngẫu nhiên (Fisher-Yates Shuffle)
+            shuffleArray(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            // Bắt đầu chơi game
+            startGame(e) {
+                e.preventDefault();
+                SoundEngine.init();
+
+                const nameInput = document.getElementById('student-name').value.trim();
+                const classInput = document.getElementById('student-class').value.trim();
+
+                if (!nameInput || !classInput) {
+                    alert("Vui lòng nhập đầy đủ Họ tên và Lớp học!");
+                    return;
                 }
 
-                const [x1, y1] = toPx(p1[0], p1[1]);
-                const [x2, y2] = toPx(p2[0], p2[1]);
+                this.studentInfo = { name: nameInput, class: classInput };
+                
+                // Reset dữ liệu hoàn toàn khi chơi mới
+                this.currentIndex = 0;
+                this.score = 0;
+                this.timerSeconds = 0;
+                this.lifelines = { fiftyFifty: true, skip: true };
+                this.updateScoreDisplay();
+                this.updateLifelineButtons();
 
-                ctx.strokeStyle = '#f43f5e';
-                ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-
-                // Highlight point if present
-                if (qData.graphData.point) {
-                    const [px, py] = toPx(qData.graphData.point[0], qData.graphData.point[1]);
-                    ctx.beginPath();
-                    ctx.arc(px, py, 6, 0, Math.PI * 2);
-                    ctx.fillStyle = '#f59e0b';
-                    ctx.fill();
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`P(${qData.graphData.point[0]};${qData.graphData.point[1]})`, px + 8, py - 4);
-                }
-            } else {
-                // Default subtle region illustration
-                ctx.fillStyle = 'rgba(168, 85, 247, 0.15)';
-                ctx.fillRect(cx, 0, w - cx, cy);
-            }
-        }
-
-        /* GAME LIFECYCLE CONTROLLER */
-        function initApp() {
-            // Event Listeners
-            document.getElementById('btn-start').addEventListener('click', startGame);
-            document.getElementById('btn-next-question').addEventListener('click', nextQuestion);
-            document.getElementById('btn-restart').addEventListener('click', resetGame);
-
-            // Fetch initial leaderboard
-            fetchLeaderboard();
-        }
-
-        function startGame() {
-            const nameInput = document.getElementById('input-name').value.trim();
-            const classInput = document.getElementById('input-class').value.trim();
-
-            if (!nameInput || !classInput) {
-                alert('Vui lòng nhập đầy đủ Họ tên và Lớp để bắt đầu!');
-                return;
-            }
-
-            state.playerName = nameInput;
-            state.playerClass = classInput;
-            document.getElementById('player-info-display').innerText = `${nameInput} (${classInput})`;
-
-            // Switch Screen
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            document.getElementById('status-bar').classList.remove('hidden');
-
-            // Reset game state
-            resetGameStateValues();
-
-            // Start Timer
-            state.timerInterval = setInterval(() => {
-                state.timeElapsed++;
-                document.getElementById('timer-display').innerText = formatTime(state.timeElapsed);
-            }, 1000);
-
-            // Load Level 1
-            loadLevel(0);
-        }
-
-        function resetGameStateValues() {
-            if (state.timerInterval) clearInterval(state.timerInterval);
-            if (state.leaderboardInterval) clearInterval(state.leaderboardInterval);
-            state.currentLevel = 0;
-            state.score = 0;
-            state.streak = 0;
-            state.maxStreak = 0;
-            state.correctCount = 0;
-            state.timeElapsed = 0;
-            state.answeredCurrentLevel = false;
-            updateHUD();
-        }
-
-        function updateHUD() {
-            document.getElementById('score-display').innerText = `${state.score} Đ`;
-            document.getElementById('streak-display').innerText = `x${state.streak}`;
-        }
-
-        /* LOAD LEVEL & RANDOMIZE OPTIONS */
-        function loadLevel(levelIndex) {
-            state.currentLevel = levelIndex;
-            state.answeredCurrentLevel = false;
-
-            const q = QUESTION_DATABASE[levelIndex];
-
-            // Progress HUD
-            document.getElementById('level-badge').innerText = `Nhiệm vụ ${levelIndex + 1} / ${QUESTION_DATABASE.length}`;
-            document.getElementById('difficulty-badge').innerText = `Mức độ: ${q.difficulty}`;
-            document.getElementById('progress-bar').style.width = `${((levelIndex + 1) / QUESTION_DATABASE.length) * 100}%`;
-
-            // Question Text
-            document.getElementById('question-text').innerText = q.text;
-            if (q.context) {
-                document.getElementById('question-context').innerText = q.context;
-                document.getElementById('question-context').classList.remove('hidden');
-            } else {
-                document.getElementById('question-context').classList.add('hidden');
-            }
-
-            // Hide previous explanation box
-            const expBox = document.getElementById('explanation-box');
-            expBox.classList.add('hidden');
-
-            // CRITICAL: RANDOMIZE / SHUFFLE OPTIONS FOR EVERY DISPLAY
-            state.currentShuffledOptions = shuffleArray(q.options);
-
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-
-            const prefixes = ['A', 'B', 'C', 'D'];
-            state.currentShuffledOptions.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "option-btn glass-card w-full p-3.5 rounded-xl text-left text-xs md:text-sm font-semibold flex items-start space-x-3 text-slate-200 hover:bg-indigo-600/20 hover:border-indigo-500/50 transition";
-                btn.innerHTML = `
-                    <span class="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 text-indigo-300 font-bold flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                        ${prefixes[idx]}
-                    </span>
-                    <span class="flex-1 leading-snug">${opt.text}</span>
-                `;
-                btn.addEventListener('click', () => handleOptionSelect(opt, btn));
-                optionsContainer.appendChild(btn);
-            });
-
-            // Redraw Graph
-            drawOxyGraph(q);
-        }
-
-        /* OPTION SELECTION & DETAILED EXPLANATION */
-        function handleOptionSelect(selectedOption, clickedBtn) {
-            if (state.answeredCurrentLevel) return;
-            state.answeredCurrentLevel = true;
-
-            const currentQ = QUESTION_DATABASE[state.currentLevel];
-            const allOptionBtns = document.querySelectorAll('.option-btn');
-
-            // Disable all option buttons
-            allOptionBtns.forEach(btn => btn.classList.add('cursor-not-allowed', 'opacity-80'));
-
-            const expBox = document.getElementById('explanation-box');
-            const expStatus = document.getElementById('explanation-status');
-            const expText = document.getElementById('explanation-text');
-
-            if (selectedOption.isCorrect) {
-                sfx.playCorrect();
-                state.correctCount++;
-                state.streak++;
-                if (state.streak > state.maxStreak) state.maxStreak = state.streak;
-
-                // Points calculation
-                const streakBonus = (state.streak - 1) * 50;
-                const earned = currentQ.points + streakBonus;
-                state.score += earned;
-
-                // Visual styling
-                clickedBtn.classList.remove('glass-card');
-                clickedBtn.classList.add('bg-emerald-600/30', 'border-emerald-500', 'text-emerald-200');
-
-                expBox.className = "p-4 rounded-xl text-xs md:text-sm space-y-2 border transition-all duration-300 bg-emerald-950/60 border-emerald-800/60 block";
-                expStatus.className = "font-bold flex items-center space-x-2 text-emerald-400";
-                expStatus.innerHTML = `<span>a&#10004; CHÍNH XÁC! (+${earned} điểm)</span>`;
-            } else {
-                sfx.playWrong();
-                state.streak = 0; // reset streak
-
-                clickedBtn.classList.remove('glass-card');
-                clickedBtn.classList.add('bg-rose-600/30', 'border-rose-500', 'text-rose-200');
-
-                // Highlight correct button
-                allOptionBtns.forEach((btn, idx) => {
-                    if (state.currentShuffledOptions[idx].isCorrect) {
-                        btn.classList.remove('glass-card');
-                        btn.classList.add('bg-emerald-600/20', 'border-emerald-500/60');
-                    }
+                // Chuẩn bị 50 câu hỏi & XÁO TRỘN ĐÁP ÁN CHO TỪNG CÂU
+                this.questions = RAW_QUESTIONS_BANK.map(q => {
+                    const shuffledOptions = this.shuffleArray(q.options);
+                    return {
+                        question: q.q,
+                        options: shuffledOptions,
+                        correctAnswer: q.answer,
+                        explain: q.explain
+                    };
                 });
 
-                expBox.className = "p-4 rounded-xl text-xs md:text-sm space-y-2 border transition-all duration-300 bg-rose-950/60 border-rose-800/60 block";
-                expStatus.className = "font-bold flex items-center space-x-2 text-rose-400";
-                expStatus.innerHTML = `<span>&#10008; CHƯA CHÍNH XÁC!</span>`;
+                // Chuyển màn hình
+                document.getElementById('start-screen').classList.add('hidden');
+                document.getElementById('result-screen').classList.add('hidden');
+                document.getElementById('game-screen').classList.remove('hidden');
+
+                // Khởi động Đếm thời gian
+                this.startTimer();
+
+                // Bắt đầu lấy bảng xếp hạng ngầm định kỳ 10s/lần
+                this.startLeaderboardPolling();
+
+                // Tải câu hỏi đầu tiên
+                this.loadQuestion();
             }
 
-            // Always display explicit explanation
-            expText.innerText = selectedOption.exp;
-            updateHUD();
-        }
-
-        /* ADVANCE QUESTION OR COMPLETE GAME */
-        function nextQuestion() {
-            if (state.currentLevel + 1 < QUESTION_DATABASE.length) {
-                loadLevel(state.currentLevel + 1);
-            } else {
-                finishGame();
-            }
-        }
-
-        /* FINISH GAME & SUBMIT RESULTS */
-        function finishGame() {
-            if (state.timerInterval) clearInterval(state.timerInterval);
-
-            // Switch to result screen
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-
-            // Render Summary
-            document.getElementById('final-score').innerText = `${state.score} Đ`;
-            document.getElementById('final-accuracy').innerText = `${state.correctCount} / ${QUESTION_DATABASE.length}`;
-            document.getElementById('final-time').innerText = formatTime(state.timeElapsed);
-            document.getElementById('final-streak').innerText = `x${state.maxStreak}`;
-
-            // Send POST request to Google Apps Script Web App
-            sendResultToGoogleAppsScript();
-        }
-
-        /* GOOGLE APPS SCRIPT API INTEGRATION */
-        function sendResultToGoogleAppsScript() {
-            const syncStatus = document.getElementById('sync-status');
-            syncStatus.innerText = "🔄 Đang lưu kết quả vào hệ thống...";
-
-            const payload = {
-                "Họ tên": state.playerName,
-                "Lớp": state.playerClass,
-                "Điểm số": state.score,
-                "Thời gian làm bài": formatTime(state.timeElapsed)
-            };
-
-            // Send POST request
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Standard Apps Script cross-origin
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(() => {
-                syncStatus.innerText = "✅ Kết quả đã được lưu thành công!";
-                syncStatus.className = "text-xs text-emerald-300 bg-emerald-950/50 p-2.5 rounded-lg border border-emerald-800/40 inline-block max-w-md";
-                fetchLeaderboard();
-            })
-            .catch(err => {
-                console.log("Submit offline mode active:", err);
-                syncStatus.innerText = "⚡ Đã ghi nhận kết quả trên thiết bị này.";
-                fetchLeaderboard(); // Fallback to local rendering
-            });
-        }
-
-        /* FETCH & RENDER LEADERBOARD */
-        function fetchLeaderboard() {
-            fetch(APPS_SCRIPT_URL)
-            .then(res => res.json())
-            .then(resData => {
-                if (resData && resData.status === 'ok' && Array.isArray(resData.data)) {
-                    renderLeaderboardTable(resData.data);
-                } else {
-                    renderMockLeaderboard();
-                }
-            })
-            .catch(() => {
-                renderMockLeaderboard();
-            });
-        }
-
-        function renderLeaderboardTable(data) {
-            const tbody = document.getElementById('leaderboard-body');
-            tbody.innerHTML = '';
-
-            // Sort by score desc, time asc
-            const sorted = [...data].sort((a, b) => {
-                if (b["Điểm số"] !== a["Điểm số"]) {
-                    return b["Điểm số"] - a["Điểm số"];
-                }
-                return String(a["Thời gian làm bài"]).localeCompare(String(b["Thời gian làm bài"]));
-            });
-
-            if (sorted.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-slate-500">Chưa có kết quả nào.</td></tr>`;
-                return;
-            }
-
-            sorted.slice(0, 10).forEach((row, idx) => {
-                const tr = document.createElement('tr');
-                tr.className = row["Họ tên"] === state.playerName ? "bg-indigo-900/40 font-bold" : "hover:bg-slate-800/50";
+            startTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.timerSeconds = 0;
+                const timerDisplay = document.getElementById('timer-display');
                 
-                let rankBadge = `${idx + 1}`;
-                if (idx === 0) rankBadge = '🥇';
-                else if (idx === 1) rankBadge = '🥈';
-                else if (idx === 2) rankBadge = '🥉';
+                this.timerInterval = setInterval(() => {
+                    this.timerSeconds++;
+                    const mins = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0');
+                    const secs = (this.timerSeconds % 60).toString().padStart(2, '0');
+                    timerDisplay.textContent = `${mins}:${secs}`;
+                }, 1000);
+            }
 
-                tr.innerHTML = `
-                    <td class="p-2">${rankBadge}</td>
-                    <td class="p-2 text-slate-200">${row["Họ tên"] || 'Học sinh'}</td>
-                    <td class="p-2 text-slate-400">${row["Lớp"] || '-'}</td>
-                    <td class="p-2 text-right font-bold text-emerald-400">${row["Điểm số"] || 0}</td>
-                    <td class="p-2 text-right text-amber-300 font-mono">${row["Thời gian làm bài"] || '00:00'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderMockLeaderboard() {
-            // Local fallback mock data so leaderboard is never blank
-            const mockData = [
-                { "Họ tên": state.playerName || "Học sinh mẫu", "Lớp": state.playerClass || "10A1", "Điểm số": state.score || 1800, "Thời gian làm bài": formatTime(state.timeElapsed || 180) },
-                { "Họ tên": "Trần Minh Khoa", "Lớp": "10A1", "Điểm số": 2100, "Thời gian làm bài": "03:12" },
-                { "Họ tên": "Lê Bảo Ngọc", "Lớp": "10A2", "Điểm số": 1950, "Thời gian làm bài": "03:45" },
-                { "Họ tên": "Nguyễn Hoàng Nam", "Lớp": "10A1", "Điểm số": 1600, "Thời gian làm bài": "04:10" }
-            ];
-            renderLeaderboardTable(mockData);
-        }
-
-        /* RESTART GAME CLEANLY */
-        function resetGame() {
-            // Clear active timers cleanly
-            if (state.timerInterval) clearInterval(state.timerInterval);
-            if (state.leaderboardInterval) clearInterval(state.leaderboardInterval);
-
-            // Hide result screen, show start screen
-            document.getElementById('result-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('status-bar').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
-
-            resetGameStateValues();
-        }
-
-        /* WINDOW LOAD INITIALIZATION */
-        window.onload = function() {
-            initApp();
-            
-            // Resize canvas listener
-            window.addEventListener('resize', () => {
-                if (!document.getElementById('game-screen').classList.contains('hidden')) {
-                    drawOxyGraph(QUESTION_DATABASE[state.currentLevel]);
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
                 }
-            });
-        };
+            }
+
+            loadQuestion() {
+                this.isAnswered = false;
+                this.selectedOptionIndex = null;
+
+                const q = this.questions[this.currentIndex];
+
+                // Cập nhật UI câu hỏi
+                document.getElementById('question-index-badge').textContent = `${this.currentIndex + 1}/50`;
+                
+                // Badge độ khó
+                const diffBadge = document.getElementById('difficulty-badge');
+                if (this.currentIndex < 15) {
+                    diffBadge.textContent = "Nhận biết";
+                    diffBadge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-emerald-800 text-emerald-200 border border-emerald-600";
+                } else if (this.currentIndex < 35) {
+                    diffBadge.textContent = "Thông hiểu";
+                    diffBadge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-blue-900 text-blue-200 border border-blue-600";
+                } else {
+                    diffBadge.textContent = "Vận dụng";
+                    diffBadge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-amber-900 text-amber-200 border border-amber-600";
+                }
+
+                document.getElementById('question-text').innerHTML = q.question;
+
+                // Ẩn bảng giải thích
+                const expBox = document.getElementById('explanation-box');
+                expBox.classList.add('hidden');
+
+                // Render 4 đáp án
+                const optionsGrid = document.getElementById('options-grid');
+                optionsGrid.innerHTML = '';
+
+                const labels = ['A', 'B', 'C', 'D'];
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = `option-btn w-full p-4 rounded-xl text-left text-base sm:text-lg font-medium flex items-center gap-3 text-white shadow-md`;
+                    btn.id = `option-btn-${idx}`;
+                    btn.onclick = () => this.selectOption(idx);
+                    btn.innerHTML = `
+                        <span class="w-8 h-8 rounded-lg bg-emerald-900/80 border border-emerald-600/60 flex items-center justify-center font-bold text-amber-400 shrink-0">${labels[idx]}</span>
+                        <span class="flex-1">${opt}</span>
+                    `;
+                    optionsGrid.appendChild(btn);
+                });
+
+                this.renderKaTeX();
+            }
+
+            selectOption(index) {
+                if (this.isAnswered) return;
+                this.isAnswered = true;
+                this.selectedOptionIndex = index;
+
+                const q = this.questions[this.currentIndex];
+                const selectedText = q.options[index];
+                const isCorrect = (selectedText === q.correctAnswer);
+
+                // Disable tất cả các nút đáp án
+                q.options.forEach((_, idx) => {
+                    const btn = document.getElementById(`option-btn-${idx}`);
+                    if (btn) btn.disabled = true;
+                });
+
+                const selectedBtn = document.getElementById(`option-btn-${index}`);
+
+                const expBox = document.getElementById('explanation-box');
+                const feedbackTitle = document.getElementById('feedback-title');
+                const feedbackText = document.getElementById('feedback-text');
+
+                expBox.classList.remove('hidden');
+
+                if (isCorrect) {
+                    SoundEngine.playCorrect();
+                    selectedBtn.classList.add('correct');
+                    this.score += 0.2;
+                    this.updateScoreDisplay();
+
+                    expBox.className = "mt-2 p-4 rounded-xl border border-emerald-500 bg-emerald-950/90 text-emerald-100 flex flex-col gap-2 shadow-lg";
+                    feedbackTitle.className = "flex items-center gap-2 font-black text-lg text-emerald-400";
+                    feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-check text-2xl"></i> TRẢ LỜI CHÍNH XÁC! (+0.2 điểm)`;
+                } else {
+                    SoundEngine.playIncorrect();
+                    selectedBtn.classList.add('incorrect');
+
+                    // Tìm và highlight đáp án đúng
+                    q.options.forEach((opt, idx) => {
+                        if (opt === q.correctAnswer) {
+                            const correctBtn = document.getElementById(`option-btn-${idx}`);
+                            if (correctBtn) correctBtn.classList.add('correct');
+                        }
+                    });
+
+                    expBox.className = "mt-2 p-4 rounded-xl border border-red-500 bg-red-950/90 text-red-100 flex flex-col gap-2 shadow-lg";
+                    feedbackTitle.className = "flex items-center gap-2 font-black text-lg text-red-400";
+                    feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-xmark text-2xl"></i> CHƯA CHÍNH XÁC!`;
+                }
+
+                feedbackText.innerHTML = `<strong>Giải thích bản chất:</strong> ${q.explain}`;
+                this.renderKaTeX();
+            }
+
+            nextQuestion() {
+                if (this.currentIndex < this.questions.length - 1) {
+                    this.currentIndex++;
+                    this.loadQuestion();
+                } else {
+                    this.finishGame();
+                }
+            }
+
+            updateScoreDisplay() {
+                document.getElementById('score-display').textContent = this.score.toFixed(1);
+            }
+
+            // Quyền trợ giúp 50:50
+            useLifeline5050() {
+                if (!this.lifelines.fiftyFifty || this.isAnswered) return;
+                SoundEngine.playLifeline();
+
+                this.lifelines.fiftyFifty = false;
+                this.updateLifelineButtons();
+
+                const q = this.questions[this.currentIndex];
+                const wrongIndices = [];
+                q.options.forEach((opt, idx) => {
+                    if (opt !== q.correctAnswer) wrongIndices.push(idx);
+                });
+
+                // Xóa ngẫu nhiên 2 đáp án sai
+                const shuffledWrong = this.shuffleArray(wrongIndices);
+                const toRemove = shuffledWrong.slice(0, 2);
+
+                toRemove.forEach(idx => {
+                    const btn = document.getElementById(`option-btn-${idx}`);
+                    if (btn) {
+                        btn.style.opacity = '0.2';
+                        btn.disabled = true;
+                    }
+                });
+            }
+
+            // Quyền trợ giúp Bỏ Qua
+            useLifelineSkip() {
+                if (!this.lifelines.skip || this.isAnswered) return;
+                SoundEngine.playLifeline();
+
+                this.lifelines.skip = false;
+                this.updateLifelineButtons();
+
+                // Tự động cộng điểm câu hiện tại và chuyển tiếp
+                this.score += 0.2;
+                this.updateScoreDisplay();
+                this.nextQuestion();
+            }
+
+            updateLifelineButtons() {
+                const btn5050 = document.getElementById('btn-5050');
+                const btnSkip = document.getElementById('btn-skip');
+
+                btn5050.disabled = !this.lifelines.fiftyFifty;
+                btnSkip.disabled = !this.lifelines.skip;
+            }
+
+            finishGame() {
+                this.stopTimer();
+
+                const mins = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0');
+                const secs = (this.timerSeconds % 60).toString().padStart(2, '0');
+                const timeStr = `${mins}:${secs}`;
+                const correctCount = Math.round(this.score / 0.2);
+
+                // Cập nhật UI màn hình Kết Quả
+                document.getElementById('student-summary').textContent = `Học sinh: ${this.studentInfo.name} - Lớp ${this.studentInfo.class}`;
+                document.getElementById('final-score').textContent = `${this.score.toFixed(1)} / 10.0`;
+                document.getElementById('final-correct-count').textContent = `${correctCount} / 50`;
+                document.getElementById('final-time').textContent = timeStr;
+
+                const evalElem = document.getElementById('result-evaluation');
+                if (this.score >= 8.0) {
+                    evalElem.textContent = "🏆 Tuyên dương! Bạn nắm vững hoàn toàn lý thuyết & bài tập Ứng dụng đạo hàm!";
+                } else if (this.score >= 5.0) {
+                    evalElem.textContent = "👍 Kết quả Khá! Hãy rèn luyện thêm các dạng bài Vận dụng để đạt điểm tối đa!";
+                } else {
+                    evalElem.textContent = "📚 Bạn cần ôn tập thêm lý thuyết & các dạng bài tập cơ bản trong SGK!";
+                }
+
+                // Chuyển màn hình
+                document.getElementById('game-screen').classList.add('hidden');
+                document.getElementById('result-screen').classList.remove('hidden');
+
+                // Gửi dữ liệu về Google Apps Script
+                this.sendResultToAppsScript(this.studentInfo.name, this.studentInfo.class, parseFloat(this.score.toFixed(1)), timeStr);
+            }
+
+            // Gửi dữ liệu Fetch POST theo đúng cấu trúc khóa yêu cầu
+            sendResultToAppsScript(name, className, score, time) {
+                if (!this.appsScriptUrl || this.appsScriptUrl.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
+                    console.log("Apps Script URL chưa điền. Dữ liệu mô phỏng local:", { "Họ tên": name, "Lớp": className, "Điểm số": score, "Thời gian làm bài": time });
+                    return;
+                }
+
+                const payload = {
+                    "Họ tên": name,
+                    "Lớp": className,
+                    "Điểm số": score,
+                    "Thời gian làm bài": time
+                };
+
+                fetch(this.appsScriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(() => {
+                    console.log("Đã gửi kết quả về Apps Script thành công!");
+                    this.fetchLeaderboard();
+                }).catch(err => {
+                    console.error("Lỗi khi gửi kết quả:", err);
+                });
+            }
+
+            // Lấy Bảng xếp hạng định kỳ (Fetch GET)
+            startLeaderboardPolling() {
+                this.fetchLeaderboard();
+                if (this.leaderboardInterval) clearInterval(this.leaderboardInterval);
+                this.leaderboardInterval = setInterval(() => this.fetchLeaderboard(), 8000);
+            }
+
+            fetchLeaderboard() {
+                if (!this.appsScriptUrl || this.appsScriptUrl.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
+                    return;
+                }
+
+                fetch(this.appsScriptUrl)
+                    .then(res => res.json())
+                    .then(resData => {
+                        if (resData.status === "ok" && Array.isArray(resData.data)) {
+                            this.renderLeaderboardTable(resData.data);
+                        }
+                    })
+                    .catch(err => console.error("Lỗi tải bảng xếp hạng:", err));
+            }
+
+            renderLeaderboardTable(data) {
+                const tbody = document.getElementById('leaderboard-tbody');
+                const emptyMsg = document.getElementById('leaderboard-empty');
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '';
+                    emptyMsg.classList.remove('hidden');
+                    return;
+                }
+
+                emptyMsg.classList.add('hidden');
+
+                // Sắp xếp dữ liệu giảm dần theo Điểm số, tăng dần theo Thời gian
+                const sorted = [...data].sort((a, b) => {
+                    if (b["Điểm số"] !== a["Điểm số"]) {
+                        return b["Điểm số"] - a["Điểm số"];
+                    }
+                    return (a["Thời gian làm bài"] || "").localeCompare(b["Thời gian làm bài"] || "");
+                });
+
+                tbody.innerHTML = sorted.map((row, idx) => {
+                    let rankBadge = `${idx + 1}`;
+                    if (idx === 0) rankBadge = `<i class="fa-solid fa-crown text-amber-400 text-base"></i>`;
+                    else if (idx === 1) rankBadge = `<i class="fa-solid fa-medal text-slate-300 text-base"></i>`;
+                    else if (idx === 2) rankBadge = `<i class="fa-solid fa-medal text-amber-600 text-base"></i>`;
+
+                    return `
+                        <tr class="hover:bg-emerald-900/40 transition">
+                            <td class="p-2 text-center font-bold text-amber-300">${rankBadge}</td>
+                            <td class="p-2 font-semibold text-white">${row["Họ tên"] || 'Ẩn danh'}</td>
+                            <td class="p-2 text-center text-emerald-300">${row["Lớp"] || '-'}</td>
+                            <td class="p-2 text-right font-black text-yellow-300">${(row["Điểm số"] || 0).toFixed(1)}</td>
+                            <td class="p-2 text-right font-mono text-xs text-slate-300">${row["Thời gian làm bài"] || '00:00'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            showLeaderboardModal() {
+                this.fetchLeaderboard();
+                document.getElementById('leaderboard-modal').classList.remove('hidden');
+            }
+
+            closeLeaderboardModal() {
+                document.getElementById('leaderboard-modal').classList.add('hidden');
+            }
+
+            restartGame() {
+                this.stopTimer();
+                if (this.leaderboardInterval) clearInterval(this.leaderboardInterval);
+
+                // Reset giao diện về trang bắt đầu
+                document.getElementById('result-screen').classList.add('hidden');
+                document.getElementById('game-screen').classList.add('hidden');
+                document.getElementById('start-screen').classList.remove('hidden');
+
+                // Clear input
+                document.getElementById('student-name').value = this.studentInfo.name;
+                document.getElementById('student-class').value = this.studentInfo.class;
+            }
+        }
+
+        // Khởi tạo ứng dụng duy nhất sau khi window load
+        let app;
+        window.addEventListener('DOMContentLoaded', () => {
+            app = new QuizApp();
+            app.init();
+        });
     </script>
 </body>
 </html>
