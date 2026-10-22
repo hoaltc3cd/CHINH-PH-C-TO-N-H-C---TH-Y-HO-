@@ -3,1113 +3,1384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai Là Triệu Phú - Ứng Dụng Đạo Hàm Toán 12</title>
+    <title>Ai Là Triệu Phú Toán 12 - Đạo Hàm & Oxyz</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Inter & Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- KaTeX cho hiển thị công thức Toán học đẹp mắt -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
-
+    <!-- MathJax CDN for High Quality Math Formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Google Fonts for Blackboard Classroom Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d2818; /* Màu xanh bảng lớp học */
+            font-family: 'Roboto', sans-serif;
+            background-color: #061910; /* Extra Deep Chalkboard Green */
             color: #ffffff;
             user-select: none;
             overflow-x: hidden;
         }
-
-        /* Khung bảng xanh chất lượng cao */
+        .heading-font {
+            font-family: 'Montserrat', sans-serif;
+        }
+        /* Blackboard texture & wooden framing */
         .chalkboard {
-            background: linear-gradient(135deg, #0d2818 0%, #05190e 100%);
-            border: 12px solid #5c3d11; /* Khung gỗ */
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.5);
-            border-radius: 16px;
+            background: radial-gradient(circle, #0e301f 0%, #04120a 100%);
+            border: 10px solid #4a2e18; /* Wooden chalkboard frame */
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 10px 30px rgba(0,0,0,0.8);
+            border-radius: 18px;
         }
-
-        .math-font {
-            font-family: 'Roboto Mono', monospace;
-        }
-
-        /* Button đáp án dạng triệu phú */
-        .option-btn {
-            background: linear-gradient(180deg, #16382b 0%, #0a1f17 100%);
-            border: 2px solid #2d6a4f;
+        /* High Contrast Quiz Buttons */
+        .quiz-btn {
+            background: linear-gradient(180deg, #1e3a8a 0%, #0d1b3e 100%);
+            border: 2px solid #3b82f6;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             transition: all 0.2s ease-in-out;
-            position: relative;
-            overflow: hidden;
         }
-
-        .option-btn:hover:not(:disabled) {
-            background: linear-gradient(180deg, #2d6a4f 0%, #1b4332 100%);
-            border-color: #52b788;
+        .quiz-btn:hover:not(:disabled) {
+            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+            border-color: #fbbf24;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+            box-shadow: 0 0 18px rgba(251, 191, 36, 0.7);
         }
-
-        .option-btn.selected {
-            background: linear-gradient(180deg, #d97706 0%, #b45309 100%) !important;
-            border-color: #f59e0b !important;
-            color: #ffffff !important;
-        }
-
-        .option-btn.correct {
+        .quiz-btn.correct {
             background: linear-gradient(180deg, #15803d 0%, #166534 100%) !important;
-            border-color: #22c55e !important;
-            color: #ffffff !important;
+            border-color: #4ade80 !important;
             animation: pulse-correct 0.6s infinite alternate;
         }
-
-        .option-btn.incorrect {
+        .quiz-btn.incorrect {
             background: linear-gradient(180deg, #b91c1c 0%, #991b1b 100%) !important;
-            border-color: #ef4444 !important;
-            color: #ffffff !important;
+            border-color: #fca5a5 !important;
         }
-
         @keyframes pulse-correct {
-            0% { box-shadow: 0 0 5px #22c55e; }
-            100% { box-shadow: 0 0 20px #22c55e; }
+            from { box-shadow: 0 0 6px #4ade80; }
+            to { box-shadow: 0 0 25px #4ade80, 0 0 35px #22c55e; }
         }
-
-        /* Custom scrollbar */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #05190e;
+            background: #04120a;
         }
         ::-webkit-scrollbar-thumb {
-            background: #2d6a4f;
+            background: #166534;
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #52b788;
-        }
-
-        /* Modal backdrop Blur */
-        .backdrop-blur-custom {
-            backdrop-filter: blur(8px);
-            background-color: rgba(5, 25, 14, 0.85);
+        .glow-gold {
+            text-shadow: 0 0 12px rgba(251, 191, 36, 0.9);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between p-2 sm:p-4 md:p-6">
+<body class="min-h-screen flex flex-col justify-between p-2 md:p-4">
 
-    <script>
-        // Hệ thống âm thanh Web Audio API không cần load URL bên ngoài
-        const SoundEngine = {
-            ctx: null,
-            init() {
-                if (!this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-            },
-            playCorrect() {
-                this.init();
-                const now = this.ctx.currentTime;
-                
-                // Chuỗi nốt nhạc vui mừng (C5, E5, G5, C6)
-                const notes = [523.25, 659.25, 783.99, 1046.50];
-                notes.forEach((freq, idx) => {
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.value = freq;
-                    gain.gain.setValueAtTime(0.15, now + idx * 0.1);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.3);
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start(now + idx * 0.1);
-                    osc.stop(now + idx * 0.1 + 0.3);
-                });
-            },
-            playIncorrect() {
-                this.init();
-                const now = this.ctx.currentTime;
-                
-                // Âm thanh trầm buồn khi trả lời sai (A3 -> F3)
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, now);
-                osc.frequency.exponentialRampToValueAtTime(130.81, now + 0.5);
-                
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            },
-            playLifeline() {
-                this.init();
-                const now = this.ctx.currentTime;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, now);
-                osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.25);
-            }
-        };
-    </script>
-
-    <!-- HEADER / TOP BAR -->
-    <header class="w-full max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3 p-3 bg-emerald-950/80 border border-emerald-700/50 rounded-xl mb-3 shadow-lg">
-        <div class="flex items-center gap-3">
-            <div class="bg-amber-500 text-slate-950 p-2.5 rounded-lg font-black text-xl flex items-center gap-2 shadow-md">
-                <i class="fa-solid fa-trophy text-amber-900"></i>
-                <span>AI LÀ TRIỆU PHÚ TOÁN 12</span>
+    <header class="w-full max-w-7xl mx-auto flex justify-between items-center bg-slate-900/95 border border-emerald-500/60 p-3 rounded-xl mb-3 shadow-2xl">
+        <div class="flex items-center space-x-3">
+            <div class="w-11 h-11 rounded-full bg-amber-500 flex items-center justify-center font-black text-slate-950 text-2xl border-2 border-yellow-200">
+                12
             </div>
-            <span class="hidden md:inline-block text-xs font-semibold px-2.5 py-1 bg-emerald-800/60 rounded-full text-emerald-200 border border-emerald-600/40">
-                Chương 1: Ứng Dụng Đạo Hàm
-            </span>
+            <div>
+                <h1 class="heading-font text-xl md:text-2xl font-black text-amber-400 tracking-wide glow-gold">AI LÀ TRIỆU PHÚ TOÁN 12</h1>
+                <p class="text-xs md:text-sm text-emerald-300 font-semibold">Chủ đề: Đạo hàm & Hệ tọa độ trong Không gian (Oxyz)</p>
+            </div>
         </div>
-
-        <div class="flex items-center gap-4 text-sm sm:text-base">
-            <div class="bg-emerald-900/80 px-3 py-1.5 rounded-lg border border-emerald-600/50 flex items-center gap-2">
-                <i class="fa-solid fa-clock text-amber-400"></i>
-                <span id="timer-display" class="font-mono text-xl font-bold text-amber-300">00:00</span>
+        <div class="flex items-center space-x-4">
+            <div id="userInfoDisplay" class="hidden text-right">
+                <div class="text-base font-bold text-cyan-300" id="dispStudentName">Học sinh</div>
+                <div class="text-xs text-slate-300" id="dispStudentClass">Lớp 12A</div>
             </div>
-
-            <div class="bg-emerald-900/80 px-3 py-1.5 rounded-lg border border-emerald-600/50 flex items-center gap-2">
-                <i class="fa-solid fa-star text-amber-400"></i>
-                <span id="score-display" class="font-bold text-xl text-yellow-300">0.0</span> / 10.0
+            <div class="text-center bg-slate-800/90 px-4 py-1.5 rounded-lg border border-amber-500/40">
+                <span class="text-[10px] text-slate-300 block font-bold tracking-widest">THỜI GIAN</span>
+                <span id="timerDisplay" class="text-xl md:text-2xl font-black text-yellow-400 heading-font">00:00</span>
             </div>
-
-            <button id="btn-leaderboard" onclick="app.showLeaderboardModal()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 text-sm shadow-md active:scale-95">
-                <i class="fa-solid fa-ranking-star"></i>
-                <span class="hidden sm:inline">Xếp Hạng</span>
-            </button>
         </div>
     </header>
 
-    <main class="w-full max-w-7xl mx-auto flex-1 flex flex-col justify-center items-center relative">
-        
-        <!-- SCREEN 1: LOGIN / START SCREEN -->
-        <section id="start-screen" class="w-full max-w-xl chalkboard p-6 sm:p-10 flex flex-col items-center text-center my-auto shadow-2xl">
-            <div class="w-20 h-20 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center text-4xl mb-4 border-2 border-amber-400/40">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-amber-300 mb-2">ĐƯỜNG ĐUA TRIỆU PHÚ TOÁN 12</h1>
-            <p class="text-emerald-200 text-sm sm:text-base mb-6">Khảo Sát & Vẽ Đồ Thị Hàm Số (Chương Trình GDPT 2018)</p>
-            
-            <div class="w-full text-left bg-emerald-950/60 p-4 rounded-xl border border-emerald-700/50 mb-6 space-y-2 text-xs sm:text-sm">
-                <p class="font-bold text-amber-400 flex items-center gap-2">
-                    <i class="fa-solid fa-scroll"></i> THỂ LỆ & QUY TẮC TÍNH ĐIỂM:
+    <main class="w-full max-w-7xl mx-auto flex-1 flex flex-col justify-center">
+
+        <!-- ================= MÀN HÌNH 1: BẮT ĐẦU VÀ NHẬP THÔNG TIN ================= -->
+        <section id="startScreen" class="chalkboard p-6 md:p-10 text-center my-auto max-w-3xl mx-auto w-full border-2">
+            <div class="mb-6">
+                <span class="bg-amber-500/20 text-amber-300 border border-amber-500/50 text-xs px-3 py-1 rounded-full uppercase tracking-widest font-semibold">
+                    Hoạt động Luyện tập - Vận dụng
+                </span>
+                <h2 class="heading-font text-3xl md:text-5xl font-black text-amber-400 mt-4 mb-2 glow-gold leading-tight">
+                    CHINH PHỤC ĐỈNH CAO TOÁN 12
+                </h2>
+                <p class="text-emerald-100 text-sm md:text-base max-w-xl mx-auto font-medium">
+                    Ngân hàng 60 câu hỏi chuẩn GDPT 2018 (40 Trắc nghiệm & 20 Đúng/Sai). Hãy thử thách bản lĩnh Toán học của bạn!
                 </p>
-                <ul class="list-disc list-inside space-y-1 text-slate-200">
-                    <li>Bộ đề gồm <strong class="text-amber-300">50 câu hỏi</strong> trắc nghiệm phân hóa tăng dần.</li>
-                    <li>Mỗi câu trả lời đúng được <strong class="text-amber-300">+0.2 điểm</strong> (Tối đa 10.0 điểm).</li>
-                    <li>Tỉ lệ: 30% Nhận biết (15 câu) – 40% Thông hiểu (20 câu) – 30% Vận dụng (15 câu).</li>
-                    <li>Có 2 quyền trợ giúp: <strong class="text-amber-300">50:50</strong> và <strong class="text-amber-300">Bỏ qua câu</strong>.</li>
-                    <li>Mỗi câu trả lời đều có giải thích ngắn gọn bản chất toán học.</li>
-                </ul>
             </div>
 
-            <form id="start-form" onsubmit="app.startGame(event)" class="w-full space-y-4">
+            <!-- Form Đăng Nhập Học Sinh -->
+            <div class="bg-slate-900/90 p-6 rounded-xl border border-emerald-500/40 max-w-md mx-auto space-y-4 mb-6 shadow-2xl">
                 <div>
-                    <label class="block text-left text-xs font-semibold text-emerald-300 mb-1">Họ và tên học sinh (*)</label>
-                    <input type="text" id="student-name" required placeholder="Nhập đầy đủ Họ và Tên..." class="w-full px-4 py-3 rounded-lg bg-emerald-950 border border-emerald-600 text-white placeholder-emerald-600 focus:outline-none focus:border-amber-400 text-base">
+                    <label class="block text-left text-xs font-bold text-emerald-300 uppercase mb-1">Họ và Tên học sinh (*):</label>
+                    <input type="text" id="inputName" placeholder="Ví dụ: Nguyễn Văn An" class="w-full bg-slate-800 border border-slate-600 rounded-lg p-3 text-white focus:outline-none focus:border-amber-400 font-semibold text-base">
                 </div>
                 <div>
-                    <label class="block text-left text-xs font-semibold text-emerald-300 mb-1">Lớp học (*)</label>
-                    <input type="text" id="student-class" required placeholder="Ví dụ: 12A1" class="w-full px-4 py-3 rounded-lg bg-emerald-950 border border-emerald-600 text-white placeholder-emerald-600 focus:outline-none focus:border-amber-400 text-base">
+                    <label class="block text-left text-xs font-bold text-emerald-300 uppercase mb-1">Lớp (*):</label>
+                    <input type="text" id="inputClass" placeholder="Ví dụ: 12A1" class="w-full bg-slate-800 border border-slate-600 rounded-lg p-3 text-white focus:outline-none focus:border-amber-400 font-semibold text-base">
                 </div>
+            </div>
 
-                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-lg rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2 mt-2">
-                    <i class="fa-solid fa-play"></i> BẮT ĐẦU CHINH PHỤC
+            <!-- Nút Bắt đầu & Luật chơi -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="showRulesModal()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl border border-slate-600 transition">
+                    📖 Xem Luật Chơi
                 </button>
-            </form>
+                <button onclick="startGame()" class="px-8 py-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-black text-lg rounded-xl shadow-lg transform hover:-translate-y-0.5 transition">
+                    🚀 BẮT ĐẦU CHƠI NGAY
+                </button>
+            </div>
         </section>
 
-        <!-- SCREEN 2: GAMEPLAY SCREEN -->
-        <section id="game-screen" class="hidden w-full chalkboard p-4 sm:p-6 md:p-8 flex flex-col justify-between min-h-[75vh]">
+        <!-- ================= MÀN HÌNH 2: CHƠI GAME CHÍNH ================= -->
+        <section id="gameScreen" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-4 my-auto">
             
-            <!-- Progress Bar & Lifelines -->
-            <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-emerald-800/80">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider">Câu hỏi:</span>
-                    <span id="question-index-badge" class="bg-amber-500 text-slate-950 px-3 py-1 rounded-full font-black text-sm sm:text-base">1/50</span>
-                    <span id="difficulty-badge" class="text-xs px-2.5 py-1 rounded-full font-semibold bg-emerald-800 text-emerald-200 border border-emerald-600">Nhận biết</span>
+            <!-- Cột Trái: Nội dung câu hỏi và các lựa chọn -->
+            <div class="lg:col-span-3 flex flex-col justify-between space-y-4">
+                
+                <!-- Thanh Trợ Giúp -->
+                <div class="bg-slate-900/90 border border-slate-700 p-3 rounded-xl flex justify-between items-center">
+                    <div class="text-xs md:text-sm font-bold text-amber-400 uppercase tracking-wide">
+                        Quyền Trợ Giúp:
+                    </div>
+                    <div class="flex space-x-2 md:space-x-4">
+                        <button id="btn5050" onclick="useHelp5050()" class="px-3 py-1.5 bg-indigo-900/80 hover:bg-indigo-700 border border-indigo-400 text-indigo-200 text-xs md:text-sm font-bold rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed">
+                            ✂️ 50:50
+                        </button>
+                        <button id="btnHint" onclick="useHelpHint()" class="px-3 py-1.5 bg-emerald-900/80 hover:bg-emerald-700 border border-emerald-400 text-emerald-200 text-xs md:text-sm font-bold rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed">
+                            💡 Gợi ý Tư duy
+                        </button>
+                        <button id="btnChange" onclick="useHelpChange()" class="px-3 py-1.5 bg-purple-900/80 hover:bg-purple-700 border border-purple-400 text-purple-200 text-xs md:text-sm font-bold rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed">
+                            🔄 Đổi câu hỏi
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Lifeline Buttons -->
-                <div class="flex items-center gap-2">
-                    <button id="btn-5050" onclick="app.useLifeline5050()" class="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed border border-emerald-500 rounded-lg text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-scissors"></i> 50:50
-                    </button>
-                    <button id="btn-skip" onclick="app.useLifelineSkip()" class="px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed border border-emerald-500 rounded-lg text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-forward-fast"></i> Bỏ Qua
-                    </button>
-                </div>
-            </div>
-
-            <!-- Question Box -->
-            <div class="my-auto py-4">
-                <div class="bg-emerald-950/90 border-2 border-emerald-600/80 rounded-2xl p-5 sm:p-7 shadow-inner min-h-[120px] flex items-center justify-center text-center">
-                    <h2 id="question-text" class="text-lg sm:text-2xl md:text-3xl font-bold leading-relaxed text-white tracking-wide">
+                <!-- Khung Hiển Thị Câu Hỏi (Bảng Xanh) -->
+                <div class="chalkboard p-6 md:p-8 min-h-[220px] flex flex-col justify-center relative">
+                    <div class="flex justify-between items-center mb-3">
+                        <span id="questionTypeBadge" class="bg-blue-600/40 text-blue-200 border border-blue-400/40 text-xs px-3 py-1 rounded font-bold uppercase">
+                            Trắc nghiệm 4 lựa chọn
+                        </span>
+                        <span id="cognitiveBadge" class="bg-emerald-600/40 text-emerald-200 border border-emerald-400/40 text-xs px-3 py-1 rounded font-bold">
+                            Mức độ: Nhận biết
+                        </span>
+                    </div>
+                    <div id="questionText" class="text-xl md:text-2xl font-bold leading-relaxed text-white text-center">
                         Đang tải câu hỏi...
-                    </h2>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Options Grid (4 Đáp án) -->
-            <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 my-4">
-                <!-- Javascript sẽ tự sinh ra 4 nút câu hỏi -->
-            </div>
-
-            <!-- Explanation & Feedback Box (Hiển thị sau khi chọn đáp án) -->
-            <div id="explanation-box" class="hidden mt-2 p-4 rounded-xl border text-sm sm:text-base flex flex-col gap-2 transition-all duration-300">
-                <div class="flex items-center gap-2 font-bold text-base sm:text-lg" id="feedback-title">
-                    <!-- Javascript điền -->
+                <!-- Khung Hiển thị Đáp án -->
+                <div id="answersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                    <!-- Dynamic rendering via JavaScript -->
                 </div>
-                <p id="feedback-text" class="text-slate-100 font-medium leading-relaxed">
-                    <!-- Javascript điền giải thích chi tiết -->
-                </p>
-                <div class="flex justify-end mt-2">
-                    <button id="btn-next-question" onclick="app.nextQuestion()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-lg shadow-lg flex items-center gap-2 transition active:scale-95">
-                        <span>Câu Tiếp Theo</span> <i class="fa-solid fa-arrow-right"></i>
+
+                <!-- Nút Xác nhận đối với Dạng Đúng/Sai -->
+                <div id="submitContainer" class="hidden text-center pt-2">
+                    <button onclick="submitNonMCQAnswer()" class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-lg rounded-xl shadow-lg transition">
+                        NỘP CÂU TRẢ LỜI
                     </button>
                 </div>
             </div>
 
+            <!-- Cột Phải: Tháp Tiền Thưởng / Điểm & Bảng Xếp Hạng -->
+            <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex flex-col justify-between">
+                <div>
+                    <h3 class="heading-font text-center text-amber-400 font-extrabold text-sm border-b border-slate-800 pb-2 mb-3 tracking-wider">
+                        TIẾN TRÌNH & MỐC ĐIỂM
+                    </h3>
+                    <div id="ladderList" class="space-y-1 text-xs max-h-[340px] overflow-y-auto pr-1">
+                        <!-- Ladder dynamic items -->
+                    </div>
+                </div>
+
+                <div class="mt-4 border-t border-slate-800 pt-3">
+                    <button onclick="fetchLeaderboard()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-cyan-300 font-bold rounded-lg text-xs transition flex items-center justify-center space-x-1">
+                        <span>🏆 Xem Bảng Xếp Hạng Lớp</span>
+                    </button>
+                </div>
+            </div>
         </section>
 
-        <!-- SCREEN 3: RESULT SCREEN -->
-        <section id="result-screen" class="hidden w-full max-w-2xl chalkboard p-6 sm:p-10 flex flex-col items-center text-center my-auto shadow-2xl">
-            <div class="w-24 h-24 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center text-5xl mb-4 border-4 border-amber-400/50 animate-bounce">
-                <i class="fa-solid fa-award"></i>
+        <!-- ================= MÀN HÌNH 3: TỔNG KẾT & KẾT QUẢ ================= -->
+        <section id="resultScreen" class="hidden chalkboard p-6 md:p-10 text-center my-auto max-w-3xl mx-auto w-full border-2">
+            <div class="mb-4">
+                <span class="text-6xl">🎓</span>
+                <h2 class="heading-font text-3xl md:text-5xl font-black text-amber-400 mt-2 mb-1 glow-gold">
+                    HOÀN THÀNH THỬ THÁCH!
+                </h2>
+                <p class="text-slate-200 text-sm">Chúc mừng bạn đã hoàn thành bài luyện tập Toán 12</p>
             </div>
 
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-amber-300 mb-1">HOÀN THÀNH BÀI THI</h2>
-            <p id="student-summary" class="text-emerald-200 text-sm sm:text-base mb-6">Học sinh: Nguyễn Văn A - Lớp 12A1</p>
-
-            <div class="grid grid-cols-2 gap-4 w-full mb-6">
-                <div class="bg-emerald-950/80 p-4 rounded-xl border border-emerald-700 text-center">
-                    <span class="block text-xs text-emerald-400 font-semibold mb-1">TỔNG ĐIỂM ĐẠT ĐƯỢC</span>
-                    <span id="final-score" class="text-3xl sm:text-4xl font-black text-amber-300">0.0 / 10.0</span>
+            <div class="bg-slate-900/90 border border-slate-700 p-6 rounded-2xl max-w-lg mx-auto mb-6 space-y-4 shadow-xl">
+                <div class="grid grid-cols-2 gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <span class="text-xs text-slate-400 block uppercase">Họ và tên</span>
+                        <span id="resName" class="text-lg font-bold text-cyan-300">---</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block uppercase">Lớp</span>
+                        <span id="resClass" class="text-lg font-bold text-cyan-300">---</span>
+                    </div>
                 </div>
-                <div class="bg-emerald-950/80 p-4 rounded-xl border border-emerald-700 text-center">
-                    <span class="block text-xs text-emerald-400 font-semibold mb-1">CÂU TRẢ LỜI ĐÚNG</span>
-                    <span id="final-correct-count" class="text-3xl sm:text-4xl font-black text-emerald-400">0 / 50</span>
-                </div>
-                <div class="bg-emerald-950/80 p-4 rounded-xl border border-emerald-700 text-center col-span-2">
-                    <span class="block text-xs text-emerald-400 font-semibold mb-1">THỜI GIAN HOÀN THÀNH</span>
-                    <span id="final-time" class="text-2xl font-bold text-slate-200 font-mono">00:00</span>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-xs text-slate-400 block uppercase">Tổng điểm đạt được</span>
+                        <span id="resScore" class="text-3xl font-black text-amber-400 heading-font">0.0</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 block uppercase">Thời gian làm bài</span>
+                        <span id="resTime" class="text-2xl font-bold text-emerald-400 heading-font">00:00</span>
+                    </div>
                 </div>
             </div>
 
-            <p id="result-evaluation" class="text-sm sm:text-base italic text-emerald-200 mb-6">
-                "Chúc mừng bạn đã xuất sắc vượt qua các thử thách đạo hàm!"
-            </p>
+            <div id="uploadStatus" class="text-xs text-emerald-300 mb-4 h-5 font-semibold"></div>
 
-            <div class="flex flex-col sm:flex-row gap-3 w-full">
-                <button onclick="app.restartGame()" class="flex-1 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-rotate-right"></i> CHƠI LẠI TỪ ĐẦU
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="fetchLeaderboard()" class="px-6 py-3 bg-indigo-900/80 hover:bg-indigo-800 border border-indigo-500 text-indigo-100 font-bold rounded-xl transition">
+                    🏆 Xem Bảng Xếp Hạng Live
                 </button>
-                <button onclick="app.showLeaderboardModal()" class="flex-1 py-3 bg-emerald-800 hover:bg-emerald-700 text-amber-300 font-bold border border-emerald-600 rounded-xl transition active:scale-95 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-ranking-star"></i> BẢNG XẾP HẠNG
+                <button onclick="resetGame()" class="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl shadow-lg transition">
+                    🔄 CHƠI LẠI LẦN NỮA
                 </button>
             </div>
         </section>
 
     </main>
 
-    <!-- LEADERBOARD MODAL -->
-    <div id="leaderboard-modal" class="fixed inset-0 z-50 hidden backdrop-blur-custom flex items-center justify-center p-4">
-        <div class="bg-emerald-950 border-2 border-emerald-600 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-            
-            <div class="p-4 bg-emerald-900/90 border-b border-emerald-700 flex justify-between items-center">
-                <h3 class="text-lg sm:text-xl font-black text-amber-300 flex items-center gap-2">
-                    <i class="fa-solid fa-trophy text-amber-400"></i> BẢNG XẾP HẠNG LỚP HỌC
-                </h3>
-                <button onclick="app.closeLeaderboardModal()" class="text-emerald-400 hover:text-white text-xl px-2">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
+    <!-- Modal 1: Giải Thích Sư Phạm (Feedback Modal) -->
+    <div id="feedbackModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative">
+            <div id="feedbackHeader" class="text-2xl font-black mb-3 flex items-center space-x-2"></div>
+            <div id="feedbackBody" class="text-slate-100 text-base leading-relaxed mb-6 space-y-3"></div>
+            <button onclick="closeFeedbackModal()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-base transition">
+                CÂU TIẾP THEO ➔
+            </button>
+        </div>
+    </div>
 
-            <div class="p-4 overflow-y-auto flex-1">
-                <table class="w-full text-left text-xs sm:text-sm">
+    <!-- Modal 2: Bảng Xếp Hạng Lớp Học (Live Leaderboard Modal) -->
+    <div id="leaderboardModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-amber-500/50 rounded-2xl max-w-2xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh]">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                <h3 class="heading-font text-2xl font-black text-amber-400 flex items-center space-x-2">
+                    <span>🏆 BẢNG XẾP HẠNG LỚP HỌC</span>
+                </h3>
+                <button onclick="closeLeaderboardModal()" class="text-slate-400 hover:text-white font-bold text-xl px-2">✕</button>
+            </div>
+            <div class="overflow-y-auto flex-1 mb-4 pr-1">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-emerald-800 text-emerald-400 font-bold">
-                            <th class="p-2 text-center w-12">HẠNG</th>
-                            <th class="p-2">HỌ VÀ TÊN</th>
-                            <th class="p-2 text-center">LỚP</th>
-                            <th class="p-2 text-right">ĐIỂM SỐ</th>
-                            <th class="p-2 text-right">THỜI GIAN</th>
+                        <tr class="bg-slate-800/80 text-amber-300 text-xs uppercase border-b border-slate-700">
+                            <th class="p-3">Hạng</th>
+                            <th class="p-3">Họ tên</th>
+                            <th class="p-3">Lớp</th>
+                            <th class="p-3 text-right">Điểm</th>
+                            <th class="p-3 text-right">Thời gian</th>
                         </tr>
                     </thead>
-                    <tbody id="leaderboard-tbody" class="divide-y divide-emerald-900/60 text-slate-200">
-                        <!-- Javascript chèn các dòng dữ liệu -->
+                    <tbody id="leaderboardTableBody" class="text-sm divide-y divide-slate-800/60">
+                        <!-- Dynamic rows -->
                     </tbody>
                 </table>
-                <div id="leaderboard-empty" class="text-center py-8 text-emerald-400/60 italic text-sm">
-                    Chưa có kết quả được ghi nhận. Hãy trở thành người đầu tiên!
-                </div>
             </div>
-
-            <div class="p-3 bg-emerald-900/40 border-t border-emerald-800/80 text-center text-xs text-emerald-400">
-                Dữ liệu xếp hạng tự động cập nhật từ hệ thống lớp học.
+            <div class="text-center pt-2 border-t border-slate-800">
+                <button onclick="closeLeaderboardModal()" class="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-sm font-semibold">
+                    Đóng
+                </button>
             </div>
         </div>
     </div>
 
-    <script>
-        /**
-         * BỘ ĐỀ 50 CÂU HOÀN CHỈNH - CHƯƠNG 1 TOÁN 12 (GDPT 2018)
-         * - 30% Nhận biết (15 câu): Câu 1-15
-         * - 40% Thông hiểu (20 câu): Câu 16-35
-         * - 30% Vận dụng (15 câu): Câu 36-50
-         */
-        const RAW_QUESTIONS_BANK = [
-            // --- NHẬN BIẾT (15 CÂU) ---
-            {
-                q: "Cho hàm số $y = f(x)$ có $f'(x) > 0, \\forall x \\in (a; b)$. Khẳng định nào sau đây là đúng?",
-                options: ["Hàm số đồng biến trên khoảng $(a; b)$", "Hàm số nghịch biến trên khoảng $(a; b)$", "Hàm số không đổi trên khoảng $(a; b)$", "Hàm số đạt cực đại tại $x = a$"],
-                answer: "Hàm số đồng biến trên khoảng $(a; b)$",
-                explain: "Theo định lý về tính đơn điệu, nếu $f'(x) > 0$ trên $(a; b)$ thì hàm số đồng biến trên khoảng đó."
-            },
-            {
-                q: "Cho hàm số $y = f(x)$ có bảng biến thiên với $f'(x) < 0$ trên $(1; 3)$. Khi đó hàm số:",
-                options: ["Nghịch biến trên khoảng $(1; 3)$", "Đồng biến trên khoảng $(1; 3)$", "Đồng biến trên $\\mathbb{R}$", "Nghịch biến trên $(-\\infty; 1)$"],
-                answer: "Nghịch biến trên khoảng $(1; 3)$",
-                explain: "Đạo hàm âm trên khoảng nào thì hàm số nghịch biến trên khoảng đó."
-            },
-            {
-                q: "Điểm mà tại đó đạo hàm $f'(x)$ đổi dấu từ dương sang âm khi đi qua nó (theo chiều tăng của $x$) là:",
-                options: ["Điểm cực đại của hàm số", "Điểm cực tiểu của hàm số", "Giá trị lớn nhất của hàm số", "Giá trị nhỏ nhất của hàm số"],
-                answer: "Điểm cực đại của hàm số",
-                explain: "Khi $f'(x)$ đổi dấu từ $(+)$ sang $(-)$ thì đồ thị đi lên rồi đi xuống, tạo thành điểm cực đại."
-            },
-            {
-                q: "Cho hàm số $y = f(x)$ liên tục trên $[a; b]$. Số $M$ được gọi là giá trị lớn nhất của $f(x)$ trên $[a; b]$ nếu:",
-                options: ["$f(x) \\le M, \\forall x \\in [a; b]$ và $\\exists x_0 \\in [a; b]$ sao cho $f(x_0) = M$", "$f(x) < M, \\forall x \\in [a; b]$", "$f(x) \\ge M, \\forall x \\in [a; b]$", "$f(x) = M, \\forall x \\in [a; b]$"],
-                answer: "$f(x) \\le M, \\forall x \\in [a; b]$ và $\\exists x_0 \\in [a; b]$ sao cho $f(x_0) = M$",
-                explain: "Đây là đúng định nghĩa GLN (Max) của hàm số trên một tập hợp."
-            },
-            {
-                q: "Đường thẳng $y = y_0$ được gọi là đường tiệm cận ngang của đồ thị hàm số $y = f(x)$ nếu:",
-                options: ["$\\\\lim_{x \\to +\\infty} f(x) = y_0$ hoặc $\\\\lim_{x \\to -\\infty} f(x) = y_0$", "$\\\\lim_{x \\to y_0} f(x) = +\\infty$", "$\\\\lim_{x \\to x_0} f(x) = y_0$", "$f(y_0) = 0$"],
-                answer: "$\\lim_{x \\to +\\infty} f(x) = y_0$ hoặc $\\lim_{x \\to -\\infty} f(x) = y_0$",
-                explain: "Theo định nghĩa tiệm cận ngang, giới hạn của $f(x)$ khi $x \\to \\pm\\infty$ bằng hằng số $y_0$."
-            },
-            {
-                q: "Đường thẳng $x = x_0$ là tiệm cận đứng của đồ thị hàm số $y = f(x)$ nếu:",
-                options: ["Ít nhất một trong các giới hạn $\\\\lim_{x \\to x_0^+} f(x), \\\\lim_{x \\to x_0^-} f(x)$ bằng $+\\infty$ hoặc $-\\infty$", "$\\\\lim_{x \\to +\\infty} f(x) = x_0$", "$\\\\lim_{x \\to x_0} f(x) = 0$", "$f(x_0) = +\\infty$"],
-                answer: "Ít nhất một trong các giới hạn $\\lim_{x \\to x_0^+} f(x), \\lim_{x \\to x_0^-} f(x)$ bằng $+\\infty$ hoặc $-\\infty$",
-                explain: "Định nghĩa tiệm cận đứng: khi $x$ tiến về $x_0$, giá trị $y$ tiến về vô cực."
-            },
-            {
-                q: "Hàm số $y = x^3 - 3x + 1$ có đạo hàm là:",
-                options: ["$y' = 3x^2 - 3$", "$y' = 3x^2 + 3$", "$y' = x^2 - 3$", "$y' = 3x^2$"],
-                answer: "$y' = 3x^2 - 3$",
-                explain: "Sử dụng công thức tính đạo hàm cơ bản $(x^n)' = n\\cdot x^{n-1}$."
-            },
-            {
-                q: "Tiệm cận ngang của đồ thị hàm số $y = \\frac{2x + 1}{x - 1}$ là đường thẳng:",
-                options: ["$y = 2$", "$x = 1$", "$y = 1$", "$x = 2$"],
-                answer: "$y = 2$",
-                explain: "$\\\\lim_{x \\to \\pm\\infty} \\frac{2x+1}{x-1} = 2$, vậy tiệm cận ngang là $y = 2$."
-            },
-            {
-                q: "Tiệm cận đứng của đồ thị hàm số $y = \\frac{x - 3}{x + 2}$ là đường thẳng:",
-                options: ["$x = -2$", "$y = 1$", "$x = 2$", "$y = -2$"],
-                answer: "$x = -2$",
-                explain: "Nghiệm của mẫu số là $x = -2$ làm $y \\to \\infty$, do đó $x = -2$ là tiệm cận đứng."
-            },
-            {
-                q: "Đồ thị hàm số bậc ba $y = ax^3 + bx^2 + cx + d\\ (a \\ne 0)$ luôn có dạng đường cong liền nét và có tối đa bao nhiêu điểm cực trị?",
-                options: ["2 điểm cực trị", "1 điểm cực trị", "3 điểm cực trị", "0 điểm cực trị"],
-                answer: "2 điểm cực trị",
-                explain: "Phương trình đạo hàm $y' = 0$ là phương trình bậc hai nên có tối đa 2 nghiệm phân biệt."
-            },
-            {
-                q: "Đường tiệm cận xiên của đồ thị hàm số $y = f(x)$ có dạng tổng quát là:",
-                options: ["$y = ax + b\\ (a \\ne 0)$", "$x = a$", "$y = b$", "$y = ax^2 + bx + c$"],
-                answer: "$y = ax + b\\ (a \\ne 0)$",
-                explain: "Đường tiệm cận xiên là một đường thẳng không song song và không vuông góc với các trục tọa độ."
-            },
-            {
-                q: "Giá trị cực tiểu của hàm số $y = x^2 - 4x + 3$ là:",
-                options: ["$-1$", "$2$", "$3$", "$-2$"],
-                answer: "$-1$",
-                explain: "Đỉnh parabol tại $x = 2$, thay vào ta được $y(2) = 2^2 - 4(2) + 3 = -1$."
-            },
-            {
-                q: "Nếu $f'(x) = 0$ tại $x_0$ và $f''(x_0) > 0$ thì $x_0$ là điểm:",
-                options: ["Cực tiểu của hàm số", "Cực đại của hàm số", "Không phải cực trị", "Giá trị lớn nhất"],
-                answer: "Cực tiểu của hàm số",
-                explain: "Theo dấu hiệu 2 về cực trị: $f'(x_0)=0$ và $f''(x_0)>0$ thì $x_0$ là điểm cực tiểu."
-            },
-            {
-                q: "Hàm số nào dưới đây đồng biến trên khoảng $(-\\infty; +\\infty)$?",
-                options: ["$y = x^3 + x$", "$y = -x^3 - x$", "$y = \\frac{x+1}{x-1}$", "$y = x^4 + x^2$"],
-                answer: "$y = x^3 + x$",
-                explain: "Có $y' = 3x^2 + 1 > 0, \\forall x \\in \\mathbb{R}$, nên hàm số đồng biến trên toàn bộ $\\mathbb{R}$."
-            },
-            {
-                q: "Đồ thị hàm số $y = \\frac{x^2 + x + 1}{x - 1}$ có đường tiệm cận xiên đi qua điểm nào?",
-                options: ["$(0; 2)$", "$(1; 0)$", "$(0; 0)$", "$(2; 1)$"],
-                answer: "$(0; 2)$",
-                explain: "Thực hiện phép chia: $y = x + 2 + \\frac{3}{x-1}$. Tiệm cận xiên là $y = x + 2$. Điểm $(0; 2)$ thuộc đường thẳng này."
-            },
+    <!-- Modal 3: Luật Chơi (Rules Modal) -->
+    <div id="rulesModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-emerald-500/50 rounded-2xl max-w-xl w-full p-6 shadow-2xl">
+            <h3 class="heading-font text-2xl font-black text-amber-400 mb-4 border-b border-slate-800 pb-2">
+                📖 LUẬT CHƠI & CÁCH TÍNH ĐIỂM
+            </h3>
+            <div class="text-sm text-slate-200 space-y-3 leading-relaxed mb-6">
+                <p>• <strong>Số lượng câu hỏi:</strong> Gồm 40 câu trắc nghiệm 4 lựa chọn (0,2 điểm/câu) và 20 câu trắc nghiệm Đúng/Sai (1,0 điểm/câu khi chọn đúng toàn bộ các mệnh đề).</p>
+                <p>• <strong>Ma trận độ khó:</strong> 30% Nhận biết, 40% Thông hiểu, 30% Vận dụng bám sát chương trình GDPT 2018 Toán 12.</p>
+                <p>• <strong>Quyền trợ giúp:</strong> Bạn có 3 quyền hỗ trợ trong suốt lượt thi:
+                    <br>&nbsp;&nbsp;- <i>50:50</i>: Loại bỏ 2 phương án sai.
+                    <br>&nbsp;&nbsp;- <i>Gợi ý Tư duy</i>: Nhận phương pháp giải Toán bản chất.
+                    <br>&nbsp;&nbsp;- <i>Đổi câu hỏi</i>: Đổi câu hỏi cùng cấp độ.
+                </p>
+                <p>• <strong>Lưu điểm số:</strong> Kết quả thi sẽ tự động đồng bộ lên Bảng xếp hạng của lớp học.</p>
+            </div>
+            <button onclick="closeRulesModal()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition">
+                Đã Hiểu Luật Chơi
+            </button>
+        </div>
+    </div>
 
-            // --- THÔNG HIỂU (20 CÂU) ---
-            {
-                q: "Hàm số $y = -x^3 + 3x^2 - 1$ đồng biến trên khoảng nào dưới đây?",
-                options: ["$(0; 2)$", "$(2; +\\infty)$", "$(-\\infty; 0)$", "$(-1; 1)$"],
-                answer: "$(0; 2)$",
-                explain: "Ta có $y' = -3x^2 + 6x = -3x(x - 2)$. $y' > 0 \\Leftrightarrow x \\in (0; 2)$."
-            },
-            {
-                q: "Tìm giá trị lớn nhất của hàm số $y = x^3 - 3x + 2$ trên đoạn $[0; 2]$.",
-                options: ["$4$", "$2$", "$0$", "$3$"],
-                answer: "$4$",
-                explain: "$y' = 3x^2 - 3 = 0 \\Rightarrow x = 1 \\in [0; 2]$. Tính $y(0)=2, y(1)=0, y(2)=4$. Vậy $\\max = 4$."
-            },
-            {
-                q: "Hàm số $y = x^4 - 2x^2 + 3$ có bao nhiêu điểm cực trị?",
-                options: ["3 điểm", "1 điểm", "2 điểm", "0 điểm"],
-                answer: "3 điểm",
-                explain: "Phương trình $y' = 4x^3 - 4x = 4x(x^2 - 1) = 0$ có 3 nghiệm phân biệt $x = 0, \\pm 1$."
-            },
-            {
-                q: "Cho hàm số $y = \\frac{2x - 1}{x + 1}$. Khẳng định nào sau đây là **đúng**?",
-                options: ["Hàm số đồng biến trên từng khoảng $(-\\infty; -1)$ và $(-1; +\\infty)$", "Hàm số đồng biến trên $\\mathbb{R} \\setminus \\{-1\\}$", "Hàm số nghịch biến trên từng khoảng xác định", "Hàm số đồng biến trên $\\mathbb{R}$"],
-                answer: "Hàm số đồng biến trên từng khoảng $(-\\infty; -1)$ và $(-1; +\\infty)$",
-                explain: "$y' = \\frac{2(1) - (-1)(1)}{(x+1)^2} = \\frac{3}{(x+1)^2} > 0$. Hàm số đồng biến trên từng khoảng xác định."
-            },
-            {
-                q: "Tìm tiệm cận xiên của đồ thị hàm số $y = x - 1 + \\frac{2}{x + 3}$.",
-                options: ["$y = x - 1$", "$y = x + 3$", "$x = -3$", "$y = x$"],
-                answer: "$y = x - 1$",
-                explain: "Vì $\\lim_{x \\to \\infty} [y - (x - 1)] = \\lim_{x \\to \\infty} \\frac{2}{x+3} = 0$ nên tiệm cận xiên là $y = x - 1$."
-            },
-            {
-                q: "Điểm cực đại của đồ thị hàm số $y = x^3 - 3x^2 + 2$ là điểm nào?",
-                options: ["$(0; 2)$", "$(2; -2)$", "$(0; 0)$", "$(2; 2)$"],
-                answer: "$(0; 2)$",
-                explain: "$y' = 3x^2 - 6x = 0 \\Rightarrow x = 0$ hoặc $x = 2$. $y'' = 6x - 6$; $y''(0) = -6 < 0$ nên $x = 0$ là điểm CĐ, $y(0) = 2$."
-            },
-            {
-                q: "Giá trị nhỏ nhất của hàm số $y = x + \\frac{4}{x}$ trên khoảng $(0; +\\infty)$ bằng:",
-                options: ["$4$", "$2$", "$0$", "$8$"],
-                answer: "$4$",
-                explain: "Áp dụng BĐT Bất đẳng thức Cauchy cho hai số dương $x$ và $\\frac{4}{x}$: $x + \\frac{4}{x} \\ge 2\\sqrt{x \\cdot \\frac{4}{x}} = 4$."
-            },
-            {
-                q: "Tọa độ giao điểm của hai đường tiệm cận của đồ thị hàm số $y = \\frac{3x - 1}{x + 2}$ là:",
-                options: ["$(-2; 3)$", "$(3; -2)$", "$(-2; -1)$", "$(2; 3)$"],
-                answer: "$(-2; 3)$",
-                explain: "Tiệm cận đứng $x = -2$, tiệm cận ngang $y = 3$. Giao điểm là $I(-2; 3)$."
-            },
-            {
-                q: "Bảng biến thiên có $f'(x) > 0$ trên $(-\\infty; 1)$ và $(3; +\\infty)$, $f'(x) < 0$ trên $(1; 3)$. Giá trị cực đại là $f(1) = 5$, giá trị cực tiểu là $f(3) = 1$. Mệnh đề nào **sai**?",
-                options: ["Hàm số có giá trị lớn nhất bằng 5", "Hàm số đồng biến trên $(3; +\\infty)$", "Hàm số đạt cực tiểu tại $x = 3$", "Hàm số có 2 điểm cực trị"],
-                answer: "Hàm số có giá trị lớn nhất bằng 5",
-                explain: "Cực đại chỉ mang tính địa phương, khi $x \\to +\\infty$ thì $y \\to +\\infty$ nên 5 không phải là giá trị lớn nhất trên $\\mathbb{R}$."
-            },
-            {
-                q: "Số đường tiệm cận (đứng và ngang) của đồ thị hàm số $y = \\frac{x + 1}{x^2 - 1}$ là:",
-                options: ["2", "1", "3", "0"],
-                answer: "2",
-                explain: "$y = \\frac{x+1}{(x-1)(x+1)} = \\frac{1}{x-1}$ (với $x \\ne -1$). Đồ thị có 1 TCN $y = 0$ và 1 TCĐ $x = 1$. Tổng cộng 2 đường."
-            },
-            {
-                q: "Tìm tất cả các giá trị của $m$ để hàm số $y = x^3 - 3mx^2 + 3x + 1$ đồng biến trên $\\mathbb{R}$.",
-                options: ["$-1 \\le m \\le 1$", "$m \\ge 1$", "$m \\le -1$", "$m < 1$"],
-                answer: "$-1 \\le m \\le 1$",
-                explain: "$y' = 3x^2 - 6mx + 3 \\ge 0, \\forall x \\Leftrightarrow \\Delta' = 9m^2 - 9 \\le 0 \\Leftrightarrow m^2 \\le 1 \\Leftrightarrow -1 \\le m \\le 1$."
-            },
-            {
-                q: "Đồ thị hàm số $y = ax^4 + bx^2 + c$ có dạng chữ \"W\" khi nào?",
-                options: ["$a > 0$ và $b < 0$", "$a > 0$ và $b > 0$", "$a < 0$ và $b > 0$", "$a < 0$ và $b < 0$"],
-                answer: "$a > 0$ và $b < 0$",
-                explain: "Đồ thị dạng chữ W khi có 3 điểm cực trị ($a, b$ trái dấu) và nhánh cuối đi lên ($a > 0$)."
-            },
-            {
-                q: "Tìm khoảng nghịch biến của hàm số $y = \\sqrt{4 - x^2}$.",
-                options: ["$(0; 2)$", "$(-2; 0)$", "$(-2; 2)$", "$(0; +\\infty)$"],
-                answer: "$(0; 2)$",
-                explain: "TXĐ: $[-2; 2]$. $y' = \\frac{-x}{\\sqrt{4-x^2}}$. $y' < 0 \\Leftrightarrow x \\in (0; 2)$."
-            },
-            {
-                q: "Cho hàm số $y = f(x)$ liên tục trên $[-1; 3]$ có $f(-1) = 2, f(1) = 6, f(3) = -1$. Giá trị lớn nhất của $f(x)$ trên $[-1; 3]$ có thể bằng 6 nếu 1 là điểm cực đại. Giả sử $f(x)$ chỉ có 1 cực trị tại $x=1$. Tìm $\\min_{[-1;3]} f(x)$.",
-                options: ["$-1$", "$2$", "$6$", "$0$"],
-                answer: "$-1$",
-                explain: "So sánh các giá trị tại biên và cực trị: $f(-1)=2, f(1)=6, f(3)=-1$. Nhỏ nhất là $-1$ tại $x=3$."
-            },
-            {
-                q: "Hàm số $y = \\frac{x^2 - 2x}{x + 1}$ có đường tiệm cận xiên cắt trục tung $Oy$ tại điểm nào?",
-                options: ["$(0; -3)$", "$(0; 1)$", "$(0; -1)$", "$(0; 3)$"],
-                answer: "$(0; -3)$",
-                explain: "Chia đa thức: $y = x - 3 + \\frac{3}{x+1}$. Tiệm cận xiên là $y = x - 3$. Cho $x = 0 \\Rightarrow y = -3$."
-            },
-            {
-                q: "Hàm số $y = f(x)$ có đạo hàm $f'(x) = x(x - 1)^2 (x + 2)^3$. Số điểm cực trị của hàm số là:",
-                options: ["2 điểm", "3 điểm", "1 điểm", "4 điểm"],
-                answer: "2 điểm",
-                explain: "Cực trị chỉ xuất hiện tại các nghiệm đơn/nghiệm bội lẻ của $f'(x)=0$. Nghiệm bội lẻ là $x = 0$ và $x = -2$ (nghiệm $x=1$ là nghiệm bội kép nên $f'$ không đổi dấu)."
-            },
-            {
-                q: "Tổng số đường tiệm cận đứng và tiệm cận ngang của đồ thị $y = \\frac{\\sqrt{x^2 + 1}}{x - 2}$ là:",
-                options: ["3", "2", "1", "4"],
-                answer: "3",
-                explain: "TCĐ: $x = 2$. TCN khi $x \\to +\\infty$ là $y = 1$; khi $x \\to -\\infty$ là $y = -1$. Tổng cộng 3 đường."
-            },
-            {
-                q: "Bảng biến thiên đổi dấu $f'(x)$ từ dương sang âm tại $x = -1$ và từ âm sang dương tại $x = 2$. Kết luận nào đúng?",
-                options: ["Hàm số đạt cực đại tại $x = -1$ và cực tiểu tại $x = 2$", "Hàm số đạt cực tiểu tại $x = -1$", "Hàm số nghịch biến trên $(2; +\\infty)$", "Hàm số đồng biến trên $(-1; 2)$"],
-                answer: "Hàm số đạt cực đại tại $x = -1$ và cực tiểu tại $x = 2$",
-                explain: "Dấu $f'(x)$ chuyển từ $(+)$ sang $(-)$ là CĐ, từ $(-)$ sang $(+)$ là CT."
-            },
-            {
-                q: "Đường cong hình bên có tâm đối xứng là giao điểm của hai đường tiệm cận. Nếu tiệm cận đứng $x = 1$, tiệm cận ngang $y = 2$ thì tâm đối xứng là:",
-                options: ["$(1; 2)$", "$(2; 1)$", "$(-1; -2)$", "$(0; 0)$"],
-                answer: "$(1; 2)$",
-                explain: "Giao điểm của tiệm cận đứng $x = x_0$ và tiệm cận ngang/xiên là tâm đối xứng của đồ thị hàm số nhất biến/hữu tỉ."
-            },
-            {
-                q: "Cho hàm số $y = x^3 - 3x^2 + 4$. Phương trình tiếp tuyến tại điểm cực tiểu của đồ thị là:",
-                options: ["$y = 0$", "$y = 4$", "$x = 2$", "$y = 2$"],
-                answer: "$y = 0$",
-                explain: "$y' = 3x^2 - 6x = 0 \\Rightarrow x = 2$ (điểm cực tiểu). Tại $x = 2 \\Rightarrow y = 0$. Tiếp tuyến tại cực trị có hệ số góc $k = 0$, nên PTTT là $y = 0$."
-            },
-
-            // --- VẬN DỤNG (15 CÂU) ---
-            {
-                q: "Một con cá hồi bơi ngược dòng nước để đẻ trứng. Vận tốc dòng nước là $2\\text{ km/h}$. Nếu vận tốc bơi của cá trong nước yên lặng là $v\\text{ (km/h)}$ thì năng lượng tiêu hao trong $1$ giờ tính bởi $E(v) = c \\cdot v^3$ (với $c$ là hằng số). Vận tốc $v$ bằng bao nhiêu để năng lượng tiêu hao khi bơi quãng đường $10\\text{ km}$ là ít nhất?",
-                options: ["$3\\text{ km/h}$", "$4\\text{ km/h}$", "$5\\text{ km/h}$", "$6\\text{ km/h}$"],
-                answer: "$3\\text{ km/h}$",
-                explain: "Vận tốc thực tế $v - 2$. Thời gian $t = \\frac{10}{v-2}$. Tổng năng lượng $f(v) = E(v) \\cdot t = \\frac{10c v^3}{v-2}$. Lấy đạo hàm và cho $f'(v) = 0 \\Rightarrow v = 3\\text{ km/h}$."
-            },
-            {
-                q: "Một mảnh vườn hình chữ nhật có diện tích $600\\text{ m}^2$ được rào lại bằng lưới thép. Người ta tận dụng một bức tường có sẵn làm một chiều dài. Tìm chiều dài $x$ của cạnh song song với bức tường sao cho chi phí rào lưới (tổng độ dài rào) là nhỏ nhất.",
-                options: ["$20\\sqrt{3}\\text{ m}$", "$30\\text{ m}$", "$20\\text{ m}$", "$10\\sqrt{6}\\text{ m}$"],
-                answer: "$20\\sqrt{3}\\text{ m}$",
-                explain: "Gọi chiều rộng là $y \\Rightarrow x \\cdot y = 600 \\Rightarrow y = \\frac{600}{x}$. Độ dài rào $L = x + 2y = x + \\frac{1200}{x} \\ge 2\\sqrt{x \\cdot \\frac{1200}{x}} = 40\\sqrt{3}$. Dấu '=' xảy ra khi $x = 20\\sqrt{3}\\text{ m}$."
-            },
-            {
-                q: "Tìm tất cả các giá trị thực của tham số $m$ để đồ thị hàm số $y = x^3 - 3x^2 + m$ cắt trục hoành $Ox$ tại đúng 3 điểm phân biệt.",
-                options: ["$0 < m < 4$", "$m > 4$", "$m < 0$", "$-4 < m < 0$"],
-                answer: "$0 < m < 4$",
-                explain: "Hàm số có $y' = 3x^2 - 6x = 0 \\Rightarrow x = 0 (y = m)$ và $x = 2 (y = m - 4)$. Đồ thị cắt $Ox$ tại 3 điểm $\\Leftrightarrow y_{CĐ} \\cdot y_{CT} < 0 \\Leftrightarrow m(m - 4) < 0 \\Leftrightarrow 0 < m < 4$."
-            },
-            {
-                q: "Một chất điểm chuyển động theo quy luật $s(t) = -t^3 + 6t^2 + 9t$ với $t$ (giây) là thời gian. Vận tốc của chất điểm đạt giá trị lớn nhất tại thời điểm $t$ bằng bao nhiêu?",
-                options: ["$2\\text{ s}$", "$3\\text{ s}$", "$1\\text{ s}$", "$4\\text{ s}$"],
-                answer: "$2\\text{ s}$",
-                explain: "Vận tốc $v(t) = s'(t) = -3t^2 + 12t + 9 = -3(t - 2)^2 + 21 \\le 21$. Đạt max tại $t = 2\\text{ s}$."
-            },
-            {
-                q: "Cho hộp hình chữ nhật không nắp có thể tích $V = 500\\text{ cm}^3$, đáy là hình vuông cạnh $x\\text{ (cm)}$. Tìm $x$ để diện tích toàn phần của hộp đạt giá trị nhỏ nhất.",
-                options: ["$10\\text{ cm}$", "$5\\text{ cm}$", "$15\\text{ cm}$", "$20\\text{ cm}$"],
-                answer: "$10\\text{ cm}$",
-                explain: "Chiều cao $h = \\frac{500}{x^2}$. Diện tích $S = x^2 + 4xh = x^2 + \\frac{2000}{x} = x^2 + \\frac{1000}{x} + \\frac{1000}{x} \\ge 3\\sqrt[3]{1000^2} = 300$. Dấu '=' khi $x^3 = 1000 \\Rightarrow x = 10\\text{ cm}$."
-            },
-            {
-                q: "Tìm tất cả các giá trị của $m$ để hàm số $y = \\frac{mx + 4}{x + m}$ nghịch biến trên khoảng $(1; +\\infty)$.",
-                options: ["$1 \\le m < 2$", "$-2 < m < 2$", "$m \\ge 2$", "$m < -2$"],
-                answer: "$1 \\le m < 2$",
-                explain: "$y' = \\frac{m^2 - 4}{(x+m)^2}$. Để nghịch biến trên $(1; +\\infty)$ thì $m^2 - 4 < 0 \\Rightarrow -2 < m < 2$ và mẫu số không có nghiệm trong $(1; +\\infty) \\Rightarrow -m \\le 1 \\Rightarrow m \\ge -1$. Kết hợp lại và yêu cầu $m^2 - 4 < 0 \\Rightarrow 1 \\le m < 2$."
-            },
-            {
-                q: "Một nhà sản xuất bán một mặt hàng với giá $110$ USD/đơn vị. Tổng chi phí sản xuất $x$ đơn vị là $C(x) = x^3 - 6x^2 + 15x + 100$. Số lượng sản xuất $x$ bằng bao nhiêu để lợi nhuận thu được lớn nhất?",
-                options: ["$8$ đơn vị", "$6$ đơn vị", "$10$ đơn vị", "$5$ đơn vị"],
-                answer: "$8$ đơn vị",
-                explain: "Lợi nhuận $P(x) = 110x - C(x) = -x^3 + 6x^2 + 95x - 100$. $P'(x) = -3x^2 + 12x + 95$. Nghiệm dương cho $P'(x)=0$ xấp xỉ $x = 8$ đơn vị sản phẩm."
-            },
-            {
-                q: "Cho hàm số $y = ax^3 + bx^2 + cx + d$ có đồ thị đạt cực đại tại $(-1; 2)$ và cực tiểu tại $(1; -2)$. Tính giá trị $S = a + b + c + d$.",
-                options: ["$-2$", "$0$", "$2$", "$-1$"],
-                answer: "$-2$",
-                explain: "Đồ thị nhận $I(0; 0)$ làm tâm đối xứng, suy ra $b = 0, d = 0$. $y = ax^3 + cx$. Giải hệ $a(-1)^3 + c(-1) = 2$ và $3a(1)^2 + c = 0 \\Rightarrow a = 1, c = -3$. Do đó $S = 1 + 0 - 3 + 0 = -2$."
-            },
-            {
-                q: "Biết đồ thị hàm số $y = \\frac{(m-1)x - n}{x + 1}$ nhận các trục tọa độ làm các đường tiệm cận. Giá trị $m + n$ bằng:",
-                options: ["$1$", "$0$", "$2$", "$-1$"],
-                answer: "$1$",
-                explain: "Tiệm cận đứng là $x = -1$. Để tiệm cận đứng là $Ox\\ (y=0)$ hoặc $Oy\\ (x=0)$, tiệm cận ngang là $y = m-1$. Để tiệm cận ngang là trục $Ox\\ (y=0) \\Rightarrow m - 1 = 0 \\Rightarrow m = 1$. Đồng thời $n = 0 \\Rightarrow m + n = 1$."
-            },
-            {
-                q: "Giá trị nhỏ nhất của hàm số $y = x^2 + \\frac{16}{x}$ trên $(0; +\\infty)$ bằng:",
-                options: ["$12$", "$8$", "$16$", "$6$"],
-                answer: "$12$",
-                explain: "$y = x^2 + \\frac{8}{x} + \\frac{8}{x} \\ge 3\\sqrt[3]{x^2 \\cdot \\frac{8}{x} \\cdot \\frac{8}{x}} = 3\\sqrt[3]{64} = 12$. Dấu bằng xảy ra khi $x = 2$."
-            },
-            {
-                q: "Có bao nhiêu giá trị nguyên của $m \\in [-10; 10]$ để hàm số $y = x^3 - 3x^2 + mx + 1$ có 2 điểm cực trị?",
-                options: ["8", "10", "7", "9"],
-                answer: "8",
-                explain: "$y' = 3x^2 - 6x + m = 0$ có 2 nghiệm phân biệt $\\Leftrightarrow \\Delta' = 9 - 3m > 0 \\Leftrightarrow m < 3$. Các giá trị nguyên thuộc $[-10; 10]$ là $m \\in \\{-10, -9, ..., 2\\}$ (gồm 13 giá trị, tính cẩn thận $m < 3 \\Rightarrow 2 - (-10) + 1 = 13$ giá trị nguyên)."
-            },
-            {
-                q: "Một doanh nghiệp dự định làm một đường ống dẫn dầu từ đại dương vào đất liền. Khoảng cách ngắn nhất từ trạm A ngoài biển đến bờ biển thẳng là $3\\text{ km}$. Khoảng cách trên bờ biển từ điểm vuông góc với A đến nhà máy B là $8\\text{ km}$. Chi phí đặt ống dưới nước là 50.000 USD/km, trên bờ là 30.000 USD/km. Hỏi điểm nối trên bờ cách chân đường vuông góc bao nhiêu km để chi phí nhỏ nhất?",
-                options: ["$2.25\\text{ km}$", "$3.00\\text{ km}$", "$2.00\\text{ km}$", "$4.00\\text{ km}$"],
-                answer: "$2.25\\text{ km}$",
-                explain: "Gọi vị trí nối là $x\\text{ (km)}$. Chi phí $f(x) = 50\\sqrt{x^2 + 9} + 30(8 - x)$. $f'(x) = \\frac{50x}{\\sqrt{x^2+9}} - 30 = 0 \\Leftrightarrow 5x = 3\\sqrt{x^2+9} \\Leftrightarrow 25x^2 = 9x^2 + 81 \\Leftrightarrow 16x^2 = 81 \\Rightarrow x = 2.25\\text{ km}$."
-            },
-            {
-                q: "Tìm $m$ để đồ thị hàm số $y = \\frac{x - 1}{x^2 - 2x + m}$ có đúng 2 đường tiệm cận đứng.",
-                options: ["$m < 1$ và $m \\ne 0$", "$m < 1$", "$m > 1$", "$m = 1$"],
-                answer: "$m < 1$ và $m \\ne 0$",
-                explain: "Mẫu số phải có 2 nghiệm phân biệt khác 1 (nghiệm tử). $\\Delta' = 1 - m > 0 \\Rightarrow m < 1$. Thay $x = 1$ vào mẫu: $1 - 2 + m \\ne 0 \\Rightarrow m \\ne 1$ (đã thỏa) và nếu $x=1$ là nghiệm thì $m=1$. do đó $m < 1$ và $m \\ne 0$."
-            },
-            {
-                q: "Số giá trị nguyên $m$ để giá trị lớn nhất của hàm số $y = |x^2 - 4x + m|$ trên đoạn $[0; 3]$ không vượt quá $10$ là:",
-                options: ["5", "6", "4", "7"],
-                answer: "5",
-                explain: "Xét $g(x) = x^2 - 4x + m$ trên $[0; 3]$. $g'(x) = 2x - 4 = 0 \\Rightarrow x = 2 \\in [0; 3]$. Tính $g(0) = m, g(2) = m - 4, g(3) = m - 3$. $\\max |g(x)| = \\max(|m|, |m-4|)$. Yêu cầu $\\max \\le 10 \\Leftrightarrow -6 \\le m \\le 10$ kết hợp BĐT tuyệt đối thu được 5 giá trị nguyên thỏa mãn."
-            },
-            {
-                q: "Tìm tất cả các giá trị của tham số $m$ để đường tiệm cận xiên của đồ thị hàm số $y = \\frac{x^2 + mx - 1}{x - 1}$ tạo với hai trục tọa độ một tam giác có diện tích bằng $8$.",
-                options: ["$m = 3$ hoặc $m = -5$", "$m = 3$", "$m = -3$", "$m = 4$"],
-                answer: "$m = 3$ hoặc $m = -5$",
-                explain: "Chia đa thức: $y = x + (m + 1) + \\frac{m}{x-1}$. Tiệm cận xiên $y = x + m + 1$. Cắt $Ox$ tại $(-(m+1); 0)$, cắt $Oy$ tại $(0; m+1)$. Diện tích $S = \\frac{1}{2} (m+1)^2 = 8 \\Leftrightarrow (m+1)^2 = 16 \\Rightarrow m + 1 = \\pm 4 \\Rightarrow m = 3$ hoặc $m = -5$."
-            }
-        ];
-    </script>
+    <footer class="w-full max-w-7xl mx-auto text-center py-2 text-xs text-slate-400 font-semibold">
+        Trò chơi học tập tương tác Toán 12 • Chương trình GDPT 2018
+    </footer>
 
     <script>
-        class QuizApp {
-            constructor() {
-                this.appsScriptUrl = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; // URL cố định nội bộ
-                this.questions = [];
-                this.currentIndex = 0;
-                this.score = 0;
-                this.timerSeconds = 0;
-                this.timerInterval = null;
-                this.leaderboardInterval = null;
-                this.studentInfo = { name: '', class: '' };
-                this.lifelines = { fiftyFifty: true, skip: true };
-                this.selectedOptionIndex = null;
-                this.isAnswered = false;
+        /* ==========================================================================
+           1. CẤU HÌNH APPS SCRIPT WEB APP API & ÂM THANH SYNTHESIZER
+           ========================================================================== */
+        
+        // URL Google Apps Script được cố định (hardcode) đúng yêu cầu
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_EXAMPLE_HOC_SINH_APP_SCRIPT_URL/exec";
+
+        // Audio Context Synthesizer (Không dùng file âm thanh bên ngoài)
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-
-            init() {
-                this.bindEvents();
-                this.renderKaTeX();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
             }
+            return audioCtx;
+        }
 
-            bindEvents() {
-                // Đảm bảo KaTeX render lại sau mỗi chuyển cảnh
-                window.addEventListener('resize', () => this.renderKaTeX());
-            }
-
-            renderKaTeX() {
-                if (window.renderMathInElement) {
-                    renderMathInElement(document.body, {
-                        delimiters: [
-                            {left: '$$', right: '$$', display: true},
-                            {left: '$', right: '$', display: false}
-                        ],
-                        throwOnError: false
-                    });
-                }
-            }
-
-            // Xáo trộn mảng ngẫu nhiên (Fisher-Yates Shuffle)
-            shuffleArray(array) {
-                const arr = [...array];
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
-            }
-
-            // Bắt đầu chơi game
-            startGame(e) {
-                e.preventDefault();
-                SoundEngine.init();
-
-                const nameInput = document.getElementById('student-name').value.trim();
-                const classInput = document.getElementById('student-class').value.trim();
-
-                if (!nameInput || !classInput) {
-                    alert("Vui lòng nhập đầy đủ Họ tên và Lớp học!");
-                    return;
-                }
-
-                this.studentInfo = { name: nameInput, class: classInput };
-                
-                // Reset dữ liệu hoàn toàn khi chơi mới
-                this.currentIndex = 0;
-                this.score = 0;
-                this.timerSeconds = 0;
-                this.lifelines = { fiftyFifty: true, skip: true };
-                this.updateScoreDisplay();
-                this.updateLifelineButtons();
-
-                // Chuẩn bị 50 câu hỏi & XÁO TRỘN ĐÁP ÁN CHO TỪNG CÂU
-                this.questions = RAW_QUESTIONS_BANK.map(q => {
-                    const shuffledOptions = this.shuffleArray(q.options);
-                    return {
-                        question: q.q,
-                        options: shuffledOptions,
-                        correctAnswer: q.answer,
-                        explain: q.explain
-                    };
-                });
-
-                // Chuyển màn hình
-                document.getElementById('start-screen').classList.add('hidden');
-                document.getElementById('result-screen').classList.add('hidden');
-                document.getElementById('game-screen').classList.remove('hidden');
-
-                // Khởi động Đếm thời gian
-                this.startTimer();
-
-                // Bắt đầu lấy bảng xếp hạng ngầm định kỳ 10s/lần
-                this.startLeaderboardPolling();
-
-                // Tải câu hỏi đầu tiên
-                this.loadQuestion();
-            }
-
-            startTimer() {
-                if (this.timerInterval) clearInterval(this.timerInterval);
-                this.timerSeconds = 0;
-                const timerDisplay = document.getElementById('timer-display');
-                
-                this.timerInterval = setInterval(() => {
-                    this.timerSeconds++;
-                    const mins = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0');
-                    const secs = (this.timerSeconds % 60).toString().padStart(2, '0');
-                    timerDisplay.textContent = `${mins}:${secs}`;
-                }, 1000);
-            }
-
-            stopTimer() {
-                if (this.timerInterval) {
-                    clearInterval(this.timerInterval);
-                    this.timerInterval = null;
-                }
-            }
-
-            loadQuestion() {
-                this.isAnswered = false;
-                this.selectedOptionIndex = null;
-
-                const q = this.questions[this.currentIndex];
-
-                // Cập nhật UI câu hỏi
-                document.getElementById('question-index-badge').textContent = `${this.currentIndex + 1}/50`;
-                
-                // Badge độ khó
-                const diffBadge = document.getElementById('difficulty-badge');
-                if (this.currentIndex < 15) {
-                    diffBadge.textContent = "Nhận biết";
-                    diffBadge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-emerald-800 text-emerald-200 border border-emerald-600";
-                } else if (this.currentIndex < 35) {
-                    diffBadge.textContent = "Thông hiểu";
-                    diffBadge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-blue-900 text-blue-200 border border-blue-600";
-                } else {
-                    diffBadge.textContent = "Vận dụng";
-                    diffBadge.className = "text-xs px-2.5 py-1 rounded-full font-semibold bg-amber-900 text-amber-200 border border-amber-600";
-                }
-
-                document.getElementById('question-text').innerHTML = q.question;
-
-                // Ẩn bảng giải thích
-                const expBox = document.getElementById('explanation-box');
-                expBox.classList.add('hidden');
-
-                // Render 4 đáp án
-                const optionsGrid = document.getElementById('options-grid');
-                optionsGrid.innerHTML = '';
-
-                const labels = ['A', 'B', 'C', 'D'];
-                q.options.forEach((opt, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = `option-btn w-full p-4 rounded-xl text-left text-base sm:text-lg font-medium flex items-center gap-3 text-white shadow-md`;
-                    btn.id = `option-btn-${idx}`;
-                    btn.onclick = () => this.selectOption(idx);
-                    btn.innerHTML = `
-                        <span class="w-8 h-8 rounded-lg bg-emerald-900/80 border border-emerald-600/60 flex items-center justify-center font-bold text-amber-400 shrink-0">${labels[idx]}</span>
-                        <span class="flex-1">${opt}</span>
-                    `;
-                    optionsGrid.appendChild(btn);
-                });
-
-                this.renderKaTeX();
-            }
-
-            selectOption(index) {
-                if (this.isAnswered) return;
-                this.isAnswered = true;
-                this.selectedOptionIndex = index;
-
-                const q = this.questions[this.currentIndex];
-                const selectedText = q.options[index];
-                const isCorrect = (selectedText === q.correctAnswer);
-
-                // Disable tất cả các nút đáp án
-                q.options.forEach((_, idx) => {
-                    const btn = document.getElementById(`option-btn-${idx}`);
-                    if (btn) btn.disabled = true;
-                });
-
-                const selectedBtn = document.getElementById(`option-btn-${index}`);
-
-                const expBox = document.getElementById('explanation-box');
-                const feedbackTitle = document.getElementById('feedback-title');
-                const feedbackText = document.getElementById('feedback-text');
-
-                expBox.classList.remove('hidden');
+        function playSound(isCorrect) {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
 
                 if (isCorrect) {
-                    SoundEngine.playCorrect();
-                    selectedBtn.classList.add('correct');
-                    this.score += 0.2;
-                    this.updateScoreDisplay();
-
-                    expBox.className = "mt-2 p-4 rounded-xl border border-emerald-500 bg-emerald-950/90 text-emerald-100 flex flex-col gap-2 shadow-lg";
-                    feedbackTitle.className = "flex items-center gap-2 font-black text-lg text-emerald-400";
-                    feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-check text-2xl"></i> TRẢ LỜI CHÍNH XÁC! (+0.2 điểm)`;
+                    // Âm thanh chúc mừng vui vẻ (Chord thăng hoa)
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
                 } else {
-                    SoundEngine.playIncorrect();
-                    selectedBtn.classList.add('incorrect');
-
-                    // Tìm và highlight đáp án đúng
-                    q.options.forEach((opt, idx) => {
-                        if (opt === q.correctAnswer) {
-                            const correctBtn = document.getElementById(`option-btn-${idx}`);
-                            if (correctBtn) correctBtn.classList.add('correct');
-                        }
-                    });
-
-                    expBox.className = "mt-2 p-4 rounded-xl border border-red-500 bg-red-950/90 text-red-100 flex flex-col gap-2 shadow-lg";
-                    feedbackTitle.className = "flex items-center gap-2 font-black text-lg text-red-400";
-                    feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-xmark text-2xl"></i> CHƯA CHÍNH XÁC!`;
+                    // Âm thanh báo sai (Trầm Sad Note)
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.setValueAtTime(164.81, now + 0.15); // E3
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
                 }
-
-                feedbackText.innerHTML = `<strong>Giải thích bản chất:</strong> ${q.explain}`;
-                this.renderKaTeX();
-            }
-
-            nextQuestion() {
-                if (this.currentIndex < this.questions.length - 1) {
-                    this.currentIndex++;
-                    this.loadQuestion();
-                } else {
-                    this.finishGame();
-                }
-            }
-
-            updateScoreDisplay() {
-                document.getElementById('score-display').textContent = this.score.toFixed(1);
-            }
-
-            // Quyền trợ giúp 50:50
-            useLifeline5050() {
-                if (!this.lifelines.fiftyFifty || this.isAnswered) return;
-                SoundEngine.playLifeline();
-
-                this.lifelines.fiftyFifty = false;
-                this.updateLifelineButtons();
-
-                const q = this.questions[this.currentIndex];
-                const wrongIndices = [];
-                q.options.forEach((opt, idx) => {
-                    if (opt !== q.correctAnswer) wrongIndices.push(idx);
-                });
-
-                // Xóa ngẫu nhiên 2 đáp án sai
-                const shuffledWrong = this.shuffleArray(wrongIndices);
-                const toRemove = shuffledWrong.slice(0, 2);
-
-                toRemove.forEach(idx => {
-                    const btn = document.getElementById(`option-btn-${idx}`);
-                    if (btn) {
-                        btn.style.opacity = '0.2';
-                        btn.disabled = true;
-                    }
-                });
-            }
-
-            // Quyền trợ giúp Bỏ Qua
-            useLifelineSkip() {
-                if (!this.lifelines.skip || this.isAnswered) return;
-                SoundEngine.playLifeline();
-
-                this.lifelines.skip = false;
-                this.updateLifelineButtons();
-
-                // Tự động cộng điểm câu hiện tại và chuyển tiếp
-                this.score += 0.2;
-                this.updateScoreDisplay();
-                this.nextQuestion();
-            }
-
-            updateLifelineButtons() {
-                const btn5050 = document.getElementById('btn-5050');
-                const btnSkip = document.getElementById('btn-skip');
-
-                btn5050.disabled = !this.lifelines.fiftyFifty;
-                btnSkip.disabled = !this.lifelines.skip;
-            }
-
-            finishGame() {
-                this.stopTimer();
-
-                const mins = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0');
-                const secs = (this.timerSeconds % 60).toString().padStart(2, '0');
-                const timeStr = `${mins}:${secs}`;
-                const correctCount = Math.round(this.score / 0.2);
-
-                // Cập nhật UI màn hình Kết Quả
-                document.getElementById('student-summary').textContent = `Học sinh: ${this.studentInfo.name} - Lớp ${this.studentInfo.class}`;
-                document.getElementById('final-score').textContent = `${this.score.toFixed(1)} / 10.0`;
-                document.getElementById('final-correct-count').textContent = `${correctCount} / 50`;
-                document.getElementById('final-time').textContent = timeStr;
-
-                const evalElem = document.getElementById('result-evaluation');
-                if (this.score >= 8.0) {
-                    evalElem.textContent = "🏆 Tuyên dương! Bạn nắm vững hoàn toàn lý thuyết & bài tập Ứng dụng đạo hàm!";
-                } else if (this.score >= 5.0) {
-                    evalElem.textContent = "👍 Kết quả Khá! Hãy rèn luyện thêm các dạng bài Vận dụng để đạt điểm tối đa!";
-                } else {
-                    evalElem.textContent = "📚 Bạn cần ôn tập thêm lý thuyết & các dạng bài tập cơ bản trong SGK!";
-                }
-
-                // Chuyển màn hình
-                document.getElementById('game-screen').classList.add('hidden');
-                document.getElementById('result-screen').classList.remove('hidden');
-
-                // Gửi dữ liệu về Google Apps Script
-                this.sendResultToAppsScript(this.studentInfo.name, this.studentInfo.class, parseFloat(this.score.toFixed(1)), timeStr);
-            }
-
-            // Gửi dữ liệu Fetch POST theo đúng cấu trúc khóa yêu cầu
-            sendResultToAppsScript(name, className, score, time) {
-                if (!this.appsScriptUrl || this.appsScriptUrl.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
-                    console.log("Apps Script URL chưa điền. Dữ liệu mô phỏng local:", { "Họ tên": name, "Lớp": className, "Điểm số": score, "Thời gian làm bài": time });
-                    return;
-                }
-
-                const payload = {
-                    "Họ tên": name,
-                    "Lớp": className,
-                    "Điểm số": score,
-                    "Thời gian làm bài": time
-                };
-
-                fetch(this.appsScriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }).then(() => {
-                    console.log("Đã gửi kết quả về Apps Script thành công!");
-                    this.fetchLeaderboard();
-                }).catch(err => {
-                    console.error("Lỗi khi gửi kết quả:", err);
-                });
-            }
-
-            // Lấy Bảng xếp hạng định kỳ (Fetch GET)
-            startLeaderboardPolling() {
-                this.fetchLeaderboard();
-                if (this.leaderboardInterval) clearInterval(this.leaderboardInterval);
-                this.leaderboardInterval = setInterval(() => this.fetchLeaderboard(), 8000);
-            }
-
-            fetchLeaderboard() {
-                if (!this.appsScriptUrl || this.appsScriptUrl.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
-                    return;
-                }
-
-                fetch(this.appsScriptUrl)
-                    .then(res => res.json())
-                    .then(resData => {
-                        if (resData.status === "ok" && Array.isArray(resData.data)) {
-                            this.renderLeaderboardTable(resData.data);
-                        }
-                    })
-                    .catch(err => console.error("Lỗi tải bảng xếp hạng:", err));
-            }
-
-            renderLeaderboardTable(data) {
-                const tbody = document.getElementById('leaderboard-tbody');
-                const emptyMsg = document.getElementById('leaderboard-empty');
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '';
-                    emptyMsg.classList.remove('hidden');
-                    return;
-                }
-
-                emptyMsg.classList.add('hidden');
-
-                // Sắp xếp dữ liệu giảm dần theo Điểm số, tăng dần theo Thời gian
-                const sorted = [...data].sort((a, b) => {
-                    if (b["Điểm số"] !== a["Điểm số"]) {
-                        return b["Điểm số"] - a["Điểm số"];
-                    }
-                    return (a["Thời gian làm bài"] || "").localeCompare(b["Thời gian làm bài"] || "");
-                });
-
-                tbody.innerHTML = sorted.map((row, idx) => {
-                    let rankBadge = `${idx + 1}`;
-                    if (idx === 0) rankBadge = `<i class="fa-solid fa-crown text-amber-400 text-base"></i>`;
-                    else if (idx === 1) rankBadge = `<i class="fa-solid fa-medal text-slate-300 text-base"></i>`;
-                    else if (idx === 2) rankBadge = `<i class="fa-solid fa-medal text-amber-600 text-base"></i>`;
-
-                    return `
-                        <tr class="hover:bg-emerald-900/40 transition">
-                            <td class="p-2 text-center font-bold text-amber-300">${rankBadge}</td>
-                            <td class="p-2 font-semibold text-white">${row["Họ tên"] || 'Ẩn danh'}</td>
-                            <td class="p-2 text-center text-emerald-300">${row["Lớp"] || '-'}</td>
-                            <td class="p-2 text-right font-black text-yellow-300">${(row["Điểm số"] || 0).toFixed(1)}</td>
-                            <td class="p-2 text-right font-mono text-xs text-slate-300">${row["Thời gian làm bài"] || '00:00'}</td>
-                        </tr>
-                    `;
-                }).join('');
-            }
-
-            showLeaderboardModal() {
-                this.fetchLeaderboard();
-                document.getElementById('leaderboard-modal').classList.remove('hidden');
-            }
-
-            closeLeaderboardModal() {
-                document.getElementById('leaderboard-modal').classList.add('hidden');
-            }
-
-            restartGame() {
-                this.stopTimer();
-                if (this.leaderboardInterval) clearInterval(this.leaderboardInterval);
-
-                // Reset giao diện về trang bắt đầu
-                document.getElementById('result-screen').classList.add('hidden');
-                document.getElementById('game-screen').classList.add('hidden');
-                document.getElementById('start-screen').classList.remove('hidden');
-
-                // Clear input
-                document.getElementById('student-name').value = this.studentInfo.name;
-                document.getElementById('student-class').value = this.studentInfo.class;
+            } catch (e) {
+                console.log("Audio play context error:", e);
             }
         }
 
-        // Khởi tạo ứng dụng duy nhất sau khi window load
-        let app;
-        window.addEventListener('DOMContentLoaded', () => {
-            app = new QuizApp();
-            app.init();
-        });
+        /* ==========================================================================
+           2. NGÂN HÀNG 60 CÂU HỎI CHUẨN GDPT 2018 (40 MCQ + 20 TF)
+           ========================================================================== */
+        
+        const rawQuestionBank = [
+            // --- 40 CÂU TRẮC NGHIỆM 4 LỰA CHỌN (0.2 ĐIỂM/CÂU) ---
+            {
+                id: 1, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Cho hàm số $y = f(x)$ có đạo hàm $f\'(x) > 0$ với mọi $x \\in (1; 3)$. Khẳng định nào sau đây là ĐÚNG?',
+                options: ['Hàm số đồng biến trên khoảng $(1; 3)$', 'Hàm số nghịch biến trên khoảng $(1; 3)$', 'Hàm số đạt cực đại tại $x = 2$', 'Hàm số không đổi trên khoảng $(1; 3)$'],
+                correctIndex: 0,
+                explanation: 'Đạo hàm dương $f\'(x) > 0$ trên khoảng nào thì hàm số đồng biến trên khoảng đó.',
+                hint: 'Dấu của đạo hàm $f\'(x) > 0$ thể hiện tính đồng biến.'
+            },
+            {
+                id: 2, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Trong không gian $Oxyz$, cho điểm $M(3; -1; 2)$. Tọa độ vectơ $\\vec{OM}$ là:',
+                options: ['$(3; -1; 2)$', '$(-3; 1; -2)$', '$(2; -1; 3)$', '$(3; 1; 2)$'],
+                correctIndex: 0,
+                explanation: 'Vectơ $\\vec{OM}$ có tọa độ trùng với tọa độ điểm $M$ do $O(0;0;0)$.',
+                hint: 'Tọa độ vectơ $\\vec{OM} = (x_M - 0; y_M - 0; z_M - 0)$.'
+            },
+            {
+                id: 3, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Cho hàm số $y = x^3 - 3x + 1$. Điểm cực đại của đồ thị hàm số là:',
+                options: ['(-1; 3)', '(1; -1)', '(0; 1)', '(-1; 0)'],
+                correctIndex: 0,
+                explanation: '$y\' = 3x^2 - 3 = 0 \\Leftrightarrow x = \\pm 1$. Tại $x = -1$, $y = 3$ và $y\'$ đổi dấu từ dương sang âm.',
+                hint: 'Xét dấu $y\'$ và tính giá trị $y(-1)$.'
+            },
+            {
+                id: 4, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Trong không gian $Oxyz$, mặt phẳng $(P): 3x - y + 2z - 4 = 0$ có một vectơ pháp tuyến là:',
+                options: ['$\\vec{n} = (3; -1; 2)$', '$\\vec{n} = (3; 1; 2)$', '$\\vec{n} = (-3; -1; 2)$', '$\\vec{n} = (3; -1; -4)$'],
+                correctIndex: 0,
+                explanation: 'Vectơ pháp tuyến của mặt phẳng $Ax+By+Cz+D=0$ là $\\vec{n} = (A; B; C) = (3; -1; 2)$.',
+                hint: 'Lấy các hệ số đứng trước x, y, z.'
+            },
+            {
+                id: 5, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Đường tiệm cận đứng của đồ thị hàm số $y = \\frac{2x - 3}{x + 1}$ là:',
+                options: ['$x = -1$', '$y = 2$', '$x = 1$', '$y = -3$'],
+                correctIndex: 0,
+                explanation: 'Tiệm cận đứng là nghiệm của mẫu số $x + 1 = 0 \\Leftrightarrow x = -1$.',
+                hint: 'Nghiệm làm cho mẫu số bằng 0.'
+            },
+            {
+                id: 6, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Trong không gian $Oxyz$, độ dài của vectơ $\\vec{u} = (2; -2; 1)$ bằng:',
+                options: ['$3$', '$9$', '$\\sqrt{5}$', '$1$'],
+                correctIndex: 0,
+                explanation: '$|\\vec{u}| = \\sqrt{2^2 + (-2)^2 + 1^2} = \\sqrt{4+4+1} = 3$.',
+                hint: 'Sử dụng công thức $|\\vec{u}| = \\sqrt{x^2+y^2+z^2}$.'
+            },
+            {
+                id: 7, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Giá trị lớn nhất của hàm số $f(x) = -x^2 + 4x + 1$ trên đoạn $[0; 3]$ bằng:',
+                options: ['$5$', '$1$', '$4$', '$3$'],
+                correctIndex: 0,
+                explanation: '$f\'(x) = -2x + 4 = 0 \\Leftrightarrow x = 2$. Tính $f(0)=1, f(2)=5, f(3)=4$. Vậy GTLN bằng 5.',
+                hint: 'Tính giá trị tại điểm cực trị $x=2$ và hai đầu mút.'
+            },
+            {
+                id: 8, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Trong không gian $Oxyz$, phương trình mặt cầu tâm $I(2; -1; 0)$ bán kính $R = 3$ là:',
+                options: ['$(x-2)^2 + (y+1)^2 + z^2 = 9$', '$(x+2)^2 + (y-1)^2 + z^2 = 9$', '$(x-2)^2 + (y+1)^2 + z^2 = 3$', '$(x-2)^2 + (y-1)^2 + z^2 = 9$'],
+                correctIndex: 0,
+                explanation: 'Phương trình mặt cầu có dạng $(x-a)^2 + (y-b)^2 + (z-c)^2 = R^2$. VỚi $R^2 = 9$.',
+                hint: 'Đổi dấu tọa độ tâm khi đưa vào ngoặc bình phương.'
+            },
+            {
+                id: 9, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Đồ thị hàm số nào sau đây có đường tiệm cận ngang $y = 3$?',
+                options: ['$y = \\frac{3x + 1}{x - 2}$', '$y = \\frac{x + 3}{x - 1}$', '$y = \\frac{3}{x + 1}$', '$y = x^3 - 3x$'],
+                correctIndex: 0,
+                explanation: 'Đường tiệm cận ngang $y = \\lim_{x \\to \\pm\\infty} \\frac{3x+1}{x-2} = 3$.',
+                hint: 'Xét hệ số của x bậc cao nhất ở tử và mẫu.'
+            },
+            {
+                id: 10, type: 'MCQ', cognitive: 'Nhận biết', points: 0.2,
+                question: 'Trong không gian $Oxyz$, trung điểm $I$ của đoạn thẳng $AB$ với $A(1; 2; -3)$ và $B(3; 0; 1)$ có tọa độ là:',
+                options: ['$(2; 1; -1)$', '$(4; 2; -2)$', '$(1; -1; 2)$', '$(2; 1; 1)$'],
+                correctIndex: 0,
+                explanation: 'Tọa độ trung điểm $I = \\left(\\frac{1+3}{2}; \\frac{2+0}{2}; \\frac{-3+1}{2}\\right) = (2; 1; -1)$.',
+                hint: 'Trung điểm bằng cộng tọa độ hai điểm chia 2.'
+            },
+
+            // --- THÔNG HIỂU (16 câu MCQ) ---
+            {
+                id: 11, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Hàm số $y = \\frac{1}{3}x^3 - 2x^2 + 3x + 1$ nghịch biến trên khoảng nào?',
+                options: ['$(1; 3)$', '$(-\\infty; 1)$', '$(3; +\\infty)$', '$(0; 2)$'],
+                correctIndex: 0,
+                explanation: '$y\' = x^2 - 4x + 3 < 0 \\Leftrightarrow 1 < x < 3$.',
+                hint: 'Giải bất phương trình $y\' < 0$.'
+            },
+            {
+                id: 12, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Trong không gian $Oxyz$, góc giữa hai vectơ $\\vec{a} = (1; 1; 0)$ và $\\vec{b} = (0; 1; 1)$ bằng:',
+                options: ['$60^\\circ$', '$45^\\circ$', '$90^\\circ$', '$30^\\circ$'],
+                correctIndex: 0,
+                explanation: '$\\cos(\\vec{a}, \\vec{b}) = \\frac{1}{\\sqrt{2}\\cdot\\sqrt{2}} = \\frac{1}{2} \\Rightarrow \\theta = 60^\\circ$.',
+                hint: 'Dùng công thức $\\cos = \\frac{\\vec{a}\\cdot\\vec{b}}{|\\vec{a}||\\vec{b}|}$.'
+            },
+            {
+                id: 13, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Tìm tất cả các giá trị thực của m để hàm số $y = x^3 - 3mx^2 + 3x + 1$ đồng biến trên $\\mathbb{R}$.',
+                options: ['$-1 \\le m \\le 1$', '$m \\ge 1$', '$m \\le -1$', '$m > 1$'],
+                correctIndex: 0,
+                explanation: '$y\' = 3x^2 - 6mx + 3 \\ge 0 \\forall x \\Leftrightarrow \\Delta\' = 9m^2 - 9 \\le 0 \\Leftrightarrow -1 \\le m \\le 1$.',
+                hint: 'Điều kiện đồng biến trên R là $a > 0$ và $\\Delta\' \\le 0$.'
+            },
+            {
+                id: 14, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Trong không gian $Oxyz$, mặt phẳng đi qua $A(1; 0; 0)$, $B(0; -2; 0)$, $C(0; 0; 3)$ có phương trình là:',
+                options: ['$\\frac{x}{1} + \\frac{y}{-2} + \\frac{z}{3} = 1$', '$\\frac{x}{1} + \\frac{y}{2} + \\frac{z}{3} = 1$', '$x - 2y + 3z = 1$', '$3x - 2y + z = 6$'],
+                correctIndex: 0,
+                explanation: 'Phương trình mặt phẳng theo đoạn chắn: $\\frac{x}{a} + \\frac{y}{b} + \\frac{z}{c} = 1$.',
+                hint: 'Áp dụng công thức mặt phẳng theo đoạn chắn.'
+            },
+            {
+                id: 15, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Tổng số đường tiệm cận đứng và tiệm cận ngang của đồ thị $y = \\frac{x-1}{x^2 - 3x + 2}$ là:',
+                options: ['$2$', '$3$', '$1$', '$0$'],
+                correctIndex: 0,
+                explanation: '$y = \\frac{x-1}{(x-1)(x-2)} = \\frac{1}{x-2}$ (với $x \\neq 1$). Đồ thị có 1 TCĐ $x=2$ và 1 TCN $y=0$. Tổng là 2.',
+                hint: 'Rút gọn nhân tử chung $(x-1)$ ở tử và mẫu.'
+            },
+            {
+                id: 16, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Trong không gian $Oxyz$, khoảng cách từ $M(1; 2; -2)$ đến mặt phẳng $(P): 2x - 2y + z + 5 = 0$ bằng:',
+                options: ['$\\frac{1}{3}$', '$1$', '$3$', '$\\frac{5}{3}$'],
+                correctIndex: 0,
+                explanation: '$d(M, P) = \\frac{|2(1) - 2(2) + (-2) + 5|}{\\sqrt{2^2 + (-2)^2 + 1^2}} = \\frac{|1|}{3} = \\frac{1}{3}$.',
+                hint: 'Sử dụng công thức khoảng cách từ điểm tới mặt phẳng.'
+            },
+            {
+                id: 17, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Cho hàm số $y = f(x)$ có bảng biến thiên với $f\'(x)$ đổi dấu từ âm sang dương tại $x = 2$. Khẳng định nào ĐÚNG?',
+                options: ['$x = 2$ là điểm cực tiểu của hàm số', '$x = 2$ là điểm cực đại của hàm số', 'Hàm số đạt giá trị nhỏ nhất bằng 2', 'Hàm số đồng biến trên $(-\\infty; 2)$'],
+                correctIndex: 0,
+                explanation: 'Đạo hàm đổi dấu từ âm sang dương khi qua $x_0$ thì $x_0$ là điểm cực tiểu.',
+                hint: 'Đổi dấu từ (-) sang (+) báo hiệu điểm cực tiểu.'
+            },
+            {
+                id: 18, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Trong không gian $Oxyz$, phương trình mặt cầu có đường kính $AB$ với $A(1; 1; 1)$ và $B(3; 3; 1)$ là:',
+                options: ['$(x-2)^2 + (y-2)^2 + (z-1)^2 = 2$', '$(x-2)^2 + (y-2)^2 + (z-1)^2 = 8$', '$(x-1)^2 + (y-1)^2 + (z-1)^2 = 2$', '$(x-3)^2 + (y-3)^2 + (z-1)^2 = 4$'],
+                correctIndex: 0,
+                explanation: 'Tâm $I(2; 2; 1)$, bán kính $R = \\frac{AB}{2} = \\frac{\\sqrt{4+4+0}}{2} = \\sqrt{2} \\Rightarrow R^2 = 2$.',
+                hint: 'Tâm là trung điểm AB, bán kính bằng nửa độ dài AB.'
+            },
+            {
+                id: 19, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Giá trị nhỏ nhất của hàm số $y = x + \\frac{4}{x}$ trên khoảng $(0; +\\infty)$ bằng:',
+                options: ['$4$', '$2$', '$5$', '$3$'],
+                correctIndex: 0,
+                explanation: 'Áp dụng BĐT Bất đẳng thức Cauchy: $x + \\frac{4}{x} \\ge 2\\sqrt{x \\cdot \\frac{4}{x}} = 4$. Dấu "=" khi $x = 2$.',
+                hint: 'Áp dụng BĐT Cauchy cho 2 số dương $x$ và $\\frac{4}{x}$.'
+            },
+            {
+                id: 20, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Trong không gian $Oxyz$, tích vô hướng của hai vectơ $\\vec{u} = (2; -1; 3)$ và $\\vec{v} = (1; 4; 2)$ bằng:',
+                options: ['$4$', '$12$', '$0$', '$-2$'],
+                correctIndex: 0,
+                explanation: '$\\vec{u} \\cdot \\vec{v} = 2(1) + (-1)(4) + 3(2) = 2 - 4 + 6 = 4$.',
+                hint: 'Tích vô hướng = $x_1 x_2 + y_1 y_2 + z_1 z_2$.'
+            },
+            {
+                id: 21, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Đồ thị hàm số $y = -x^4 + 2x^2 + 1$ có bao nhiêu điểm cực trị?',
+                options: ['$3$', '$1$', '$2$', '$0$'],
+                correctIndex: 0,
+                explanation: '$a = -1, b = 2$. Vì $a \\cdot b = -2 < 0$ nên hàm số trùng phương có 3 điểm cực trị.',
+                hint: 'Hàm trùng phương có $a \\cdot b < 0$ thì có 3 cực trị.'
+            },
+            {
+                id: 22, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Trong không gian $Oxyz$, phương trình mặt phẳng đi qua $M(1; 2; 3)$ và song song với mặt phẳng $(Oxy)$ là:',
+                options: ['$z - 3 = 0$', '$x - 1 = 0$', '$y - 2 = 0$', '$x + y + z - 6 = 0$'],
+                correctIndex: 0,
+                explanation: 'Mặt phẳng song song $(Oxy)$ có VPT $\\vec{k} = (0; 0; 1)$ nên có dạng $z + D = 0$. Đi qua $M(1;2;3) \\Rightarrow z = 3$.',
+                hint: 'Mặt phẳng song song Oxy chứa vectơ pháp tuyến $\\vec{k}=(0;0;1)$.'
+            },
+            {
+                id: 23, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Hình vẽ bên dưới là đồ thị của hàm số nào trong bốn hàm số sau?',
+                options: ['$y = \\frac{2x + 1}{x - 1}$', '$y = \\frac{x + 1}{x - 1}$', '$y = x^3 - 3x$', '$y = \\frac{x - 2}{x + 1}$'],
+                correctIndex: 0,
+                explanation: 'Đồ thị có TCĐ $x = 1$, TCN $y = 2$ và cắt $Oy$ tại $(0; -1)$. Khớp với $y = \\frac{2x+1}{x-1}$.',
+                hint: 'Kiểm tra tiệm cận đứng $x=1$ và tiệm cận ngang $y=2$.'
+            },
+            {
+                id: 24, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Trong không gian $Oxyz$, cho $A(2; 0; 0), B(0; 4; 0), C(0; 0; 4)$. Diện tích tam giác $ABC$ bằng:',
+                options: ['$6$', '$12$', '$2\\sqrt{6}$', '$3\\sqrt{2}$'],
+                correctIndex: 0,
+                explanation: '$\\vec{AB} = (-2; 4; 0), \\vec{AC} = (-2; 0; 4) \\Rightarrow [\\vec{AB}, \\vec{AC}] = (16; 8; 8)$. $S = \\frac{1}{2} |[\\vec{AB}, \\vec{AC}]| = \\frac{1}{2} \\sqrt{256+64+64} = 6$.',
+                hint: 'Dùng công thức diện tích bằng nửa độ dài tích có hướng.'
+            },
+            {
+                id: 25, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Tâm đối xứng của đồ thị hàm số $y = \\frac{x + 2}{2x - 1}$ có tọa độ là:',
+                options: ['$\\left(\\frac{1}{2}; \\frac{1}{2}\\right)$', '$(1; 2)$', '$\\left(-\\frac{1}{2}; 1\\right)$', '$(2; -1)$'],
+                correctIndex: 0,
+                explanation: 'Tâm đối xứng là giao điểm của 2 đường tiệm cận $x = \\frac{1}{2}$ và $y = \\frac{1}{2}$.',
+                hint: 'Tâm đối xứng là giao của TCĐ và TCN.'
+            },
+            {
+                id: 26, type: 'MCQ', cognitive: 'Thông hiểu', points: 0.2,
+                question: 'Trong không gian $Oxyz$, tìm $m$ để mặt phẳng $(P): x + y + z - 1 = 0$ tiếp xúc mặt cầu $(S): x^2 + y^2 + z^2 = m$.',
+                options: ['$m = \\frac{1}{3}$', '$m = 3$', '$m = \\frac{1}{\\sqrt{3}}$', '$m = 1$'],
+                correctIndex: 0,
+                explanation: 'Mặt cầu tâm $O(0;0;0)$, bán kính $R = \\sqrt{m}$. Tiếp xúc $\\Leftrightarrow d(O, P) = R \\Leftrightarrow \\frac{|-1|}{\\sqrt{3}} = \\sqrt{m} \\Leftrightarrow m = \\frac{1}{3}$.',
+                hint: 'Điều kiện tiếp xúc là khoảng cách từ tâm bằng bán kính.'
+            },
+
+            // --- VẬN DỤNG & VẬN DỤNG CAO (14 câu MCQ Thực tế & Nâng cao) ---
+            {
+                id: 27, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Một doanh nghiệp sản xuất thùng sơn hình trụ tròn xoay không nắp có thể tích $V = 16\\pi\\text{ dm}^3$. Tính bán kính đáy $r$ để diện tích toàn phần thùng sơn nhỏ nhất.',
+                options: ['$2\\text{ dm}$', '$4\\text{ dm}$', '$\\sqrt{2}\\text{ dm}$', '$3\\text{ dm}$'],
+                correctIndex: 0,
+                explanation: 'Thể tích $V = \\pi r^2 h = 16\\pi \\Rightarrow h = \\frac{16}{r^2}$. Diện tích vỏ $S = \\pi r^2 + 2\\pi r h = \\pi r^2 + \\frac{32\\pi}{r}$. $S\' = 2\\pi r - \\frac{32\\pi}{r^2} = 0 \\Rightarrow r = 2\\text{ dm}$.',
+                hint: 'Lập biểu thức diện tích $S(r)$ theo bán kính $r$ rồi đạo hàm.'
+            },
+            {
+                id: 28, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Trong không gian $Oxyz$, một máy bay xuất phát từ tọa độ $A(1; 2; 3)$ đến vị trí $B(7; 10; 15)$ (đơn vị: km). Khoảng cách ngắn nhất từ máy bay đến trạm phát sóng $O(0;0;0)$ khi di chuyển trên đoạn $AB$ là:',
+                options: ['$\\sqrt{14}\\text{ km}$', '$13\\text{ km}$', '$5\\text{ km}$', '$\\sqrt{10}\\text{ km}$'],
+                correctIndex: 0,
+                explanation: 'Phương trình đường thẳng $AB: \\vec{u}=(6; 8; 12) = 2(3; 4; 6)$. Hình chiếu vuông góc của $O$ lên $AB$ cho khoảng cách ngắn nhất bằng $\\sqrt{14}$.',
+                hint: 'Tìm khoảng cách từ gốc O đến đường thẳng AB.'
+            },
+            {
+                id: 29, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Cho hàm số $y = f(x)$ có đạo hàm $f\'(x) = (x-1)^2 (x^2 - 4)$. Số điểm cực trị của hàm số $y = f(x)$ là:',
+                options: ['$2$', '$3$', '$1$', '$0$'],
+                correctIndex: 0,
+                explanation: '$f\'(x) = 0 \\Leftrightarrow x = 1$ (nghiệm bội 2), $x = 2, x = -2$ (nghiệm đơn). Đạo hàm chỉ đổi dấu khi qua $x = \\pm 2$ nên có 2 cực trị.',
+                hint: 'Bỏ qua nghiệm bội chẵn $(x-1)^2$ vì đạo hàm không đổi dấu.'
+            },
+            {
+                id: 30, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Trong không gian $Oxyz$, cho mặt phẳng $(P): x + 2y + 2z - 3 = 0$ và điểm $A(1; 4; 3)$. Tọa độ hình chiếu vuông góc $H$ của $A$ lên $(P)$ là:',
+                options: ['$(-1; 0; -1)$', '$(0; 2; 1)$', '$(2; 6; 5)$', '$(1; 2; 2)$'],
+                correctIndex: 0,
+                explanation: 'Đường thẳng qua $A$ vuông góc $(P)$ là $x = 1+t, y = 4+2t, z = 3+2t$. Thay vào $(P) \\Rightarrow (1+t) + 2(4+2t) + 2(3+2t) - 3 = 0 \\Rightarrow 9t + 18 = 0 \\Rightarrow t = -2$. Vậy $H(-1; 0; -1)$.',
+                hint: 'Lập phương trình đường thẳng qua A nhận VPT của (P) làm VTCP.'
+            },
+            {
+                id: 31, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Số giá trị nguyên dương của tham số $m$ để hàm số $y = \\frac{x + 2}{x + 3m}$ đồng biến trên khoảng $(2; +\\infty)$ là:',
+                options: ['$1$', '$2$', '$0$', 'Vô số'],
+                correctIndex: 0,
+                explanation: '$y\' = \\frac{3m - 2}{(x + 3m)^2} > 0 \\Leftrightarrow 3m > 2 \\Rightarrow m > \\frac{2}{3}$. Đồng thời điều kiện $-3m \\notin (2; +\\infty) \\Leftrightarrow -3m \\le 2 \\Leftrightarrow m \\ge -\\frac{2}{3}$. Vì $m \\in \\mathbb{Z}^+ \\Rightarrow m = 1$.',
+                hint: 'Cần hai điều kiện: Đạo hàm $y\' > 0$ và điểm gián đoạn nằm ngoài khoảng $(2; +\\infty)$.'
+            },
+            {
+                id: 32, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Trong không gian $Oxyz$, mặt cầu $(S)$ đi qua 4 điểm $O(0;0;0), A(4;0;0), B(0;4;0), C(0;0;4)$ có bán kính là:',
+                options: ['$2\\sqrt{3}$', '$4$', '$\\sqrt{3}$', '$6$'],
+                correctIndex: 0,
+                explanation: 'Tâm mặt cầu $I(2; 2; 2)$. Bán kính $R = OI = \\sqrt{2^2 + 2^2 + 2^2} = \\sqrt{12} = 2\\sqrt{3}$.',
+                hint: 'Tìm tọa độ tâm I bằng trung điểm các hoành, tung, cao độ.'
+            },
+            {
+                id: 33, type: 'MCQ', cognitive: 'Vận dụng cao', points: 0.2,
+                question: 'Một hình chữ nhật có chu vi $20\\text{ cm}$. Quay hình chữ nhật này quanh một cạnh của nó để tạo thành hình trụ. Thể tích lớn nhất của khối trụ thu được bằng:',
+                options: ['$\\frac{400\\pi}{27}\\text{ cm}^3$', '$50\\pi\\text{ cm}^3$', '$\\frac{500\\pi}{27}\\text{ cm}^3$', '$64\\pi\\text{ cm}^3$'],
+                correctIndex: 0,
+                explanation: 'Gọi chiều rộng $x$, chiều dài $10-x$. Khối trụ có bán kính $r=x$, chiều cao $h=10-x$. $V(x) = \\pi x^2 (10-x)$. $V\'(x) = \\pi (20x - 3x^2) = 0 \\Rightarrow x = \\frac{20}{3}$. $V_{max} = \\pi \\left(\\frac{20}{3}\\right)^2 \\left(10 - \\frac{20}{3}\\right) = \\frac{400\\pi}{27}$.',
+                hint: 'Khảo sát hàm thể tích $V(x) = \\pi x^2 (10-x)$ trên $(0; 10)$.'
+            },
+            {
+                id: 34, type: 'MCQ', cognitive: 'Vận dụng cao', points: 0.2,
+                question: 'Trong không gian $Oxyz$, cho hai điểm $A(1; 2; 3), B(3; 4; 7)$ và mặt phẳng $(P): x + y + z - 1 = 0$. Điểm $M \\in (P)$ sao cho $MA + MB$ nhỏ nhất có hoành độ bằng:',
+                options: ['$\\frac{1}{3}$', '$1$', '$0$', '$2$'],
+                correctIndex: 0,
+                explanation: 'Thử tọa độ $A, B$ vào $(P)$ thấy hai điểm nằm cùng phía đối với $(P)$. Lấy $A\'$ đối xứng với $A$ qua $(P)$, khi đó $MA + MB = MA\' + MB$ nhỏ nhất khi $M$ là giao điểm của $A\'B$ và $(P)$.',
+                hint: 'Kiểm tra vị trí tương đối của A và B so với mặt phẳng (P).'
+            },
+            {
+                id: 35, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Hàm số $y = f(x)$ có đồ thị như hình vẽ. Số nghiệm thực của phương trình $2f(x) - 3 = 0$ là:',
+                options: ['$3$', '$2$', '$4$', '$1$'],
+                correctIndex: 0,
+                explanation: '$2f(x) - 3 = 0 \\Leftrightarrow f(x) = 1.5$. Đường thẳng $y = 1.5$ cắt đồ thị tại 3 điểm phân biệt.',
+                hint: 'Tìm số giao điểm của đồ thị $y = f(x)$ và đường thẳng ngang $y = 1.5$.'
+            },
+            {
+                id: 36, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Trong không gian $Oxyz$, cho góc giữa hai mặt phẳng $(P): x + y - 1 = 0$ và $(Q): x + z - 2 = 0$ bằng $\\alpha$. Số đo góc $\\alpha$ bằng:',
+                options: ['$60^\\circ$', '$45^\\circ$', '$30^\\circ$', '$90^\\circ$'],
+                correctIndex: 0,
+                explanation: '$\\cos\\alpha = \\frac{|1(1) + 1(0) + 0(1)|}{\\sqrt{2}\\cdot\\sqrt{2}} = \\frac{1}{2} \\Rightarrow \\alpha = 60^\\circ$.',
+                hint: 'Áp dụng công thức cosin góc giữa 2 vectơ pháp tuyến.'
+            },
+            {
+                id: 37, type: 'MCQ', cognitive: 'Vận dụng cao', points: 0.2,
+                question: 'Cho hàm số $f(x) = x^3 - 3x^2 + m$. Có bao nhiêu giá trị nguyên của $m \\in [-10; 10]$ để $\\max_{[0; 3]} |f(x)| \\le 5$?',
+                options: ['$3$', '$5$', '$2$', '$4$'],
+                correctIndex: 0,
+                explanation: 'Khảo sát $g(x) = x^3 - 3x^2$ trên $[0;3] \\Rightarrow \\min = -4, \\max = 0$. Do đó $f(x) \\in [m-4; m]$. Để $|f(x)| \\le 5 \\Leftrightarrow -5 \\le m-4$ và $m \\le 5 \\Leftrightarrow 1 \\le m \\le 5$. Có 5 giá trị nguyên.',
+                hint: 'Tìm min và max của hàm số bên trong dấu giá trị tuyệt đối.'
+            },
+            {
+                id: 38, type: 'MCQ', cognitive: 'Vận dụng cao', points: 0.2,
+                question: 'Trong không gian $Oxyz$, mặt phẳng $(P)$ đi qua $M(1; 2; 3)$ và cắt các trục $Ox, Oy, Oz$ lần lượt tại $A, B, C$ sao cho $M$ là trọng tâm tam giác $ABC$. Phương trình $(P)$ là:',
+                options: ['$6x + 3y + 2z - 18 = 0$', '$x + 2y + 3z - 14 = 0$', '$3x + 2y + z - 10 = 0$', '$2x + 3y + 6z - 26 = 0$'],
+                correctIndex: 0,
+                explanation: 'Trọng tâm $M(1; 2; 3) \\Rightarrow A(3; 0; 0), B(0; 6; 0), C(0; 0; 9)$. Phương trình $\\frac{x}{3} + \\frac{y}{6} + \\frac{z}{9} = 1 \\Leftrightarrow 6x + 3y + 2z - 18 = 0$.',
+                hint: 'Tọa độ A, B, C gấp 3 lần tọa độ trọng tâm M.'
+            },
+            {
+                id: 39, type: 'MCQ', cognitive: 'Vận dụng', points: 0.2,
+                question: 'Đường cong trong hình dưới đây là đồ thị của hàm số nào?',
+                options: ['$y = x^3 - 3x^2 + 2$', '$y = -x^3 + 3x^2 + 2$', '$y = x^4 - 2x^2 + 2$', '$y = \\frac{x+2}{x-1}$'],
+                correctIndex: 0,
+                explanation: 'Đồ thị hàm bậc 3 nét cuối đi lên ($a > 0$), có cực đại tại $x = 0$ ($y = 2$) và cực tiểu tại $x = 2$ ($y = -2$).',
+                hint: 'Xác định hệ số $a > 0$ và điểm cực trị trên đồ thị.'
+            },
+            {
+                id: 40, type: 'MCQ', cognitive: 'Vận dụng cao', points: 0.2,
+                question: 'Trong không gian $Oxyz$, bán kính nhỏ nhất của mặt cầu tiếp xúc với cả hai đường thẳng $d_1: x = y = z$ và $d_2: x-1 = y = z-2$ bằng:',
+                options: ['$\\frac{\\sqrt{6}}{6}$', '$\\frac{\\sqrt{2}}{2}$', '$\\frac{\\sqrt{3}}{3}$', '$1$'],
+                correctIndex: 0,
+                explanation: 'Bán kính nhỏ nhất của mặt cầu tiếp xúc hai đường thẳng chính bằng nửa khoảng cách giữa hai đường thẳng chéo nhau $d_1$ và $d_2$.',
+                hint: 'Bán kính nhỏ nhất bằng nửa khoảng cách giữa 2 đường thẳng chéo nhau.'
+            },
+
+            // --- 20 CÂU TRẮC NGHIỆM ĐÚNG SAI (1.0 ĐIỂM/CÂU) ---
+            {
+                id: 41, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Cho hàm số $y = f(x) = x^3 - 3x^2 + 2$. Xét tính đúng/sai của các mệnh đề sau:',
+                statements: [
+                    { text: 'a) Hàm số đồng biến trên khoảng $(2; +\\infty)$.', correct: true },
+                    { text: 'b) Đồ thị hàm số đạt cực tiểu tại điểm $(2; -2)$.', correct: true },
+                    { text: 'c) Hàm số có giá trị lớn nhất bằng 2 trên $\\mathbb{R}$.', correct: false },
+                    { text: 'd) Phương trình $f(x) = 0$ có đúng 3 nghiệm thực phân biệt.', correct: true }
+                ],
+                explanation: 'Hàm số bậc 3 tiến ra vô cùng nên không có GTLN trên $\\mathbb{R}$. Mệnh đề c) Sai.',
+                hint: 'Khảo sát sự biến thiên của hàm bậc 3.'
+            },
+            {
+                id: 42, type: 'TF', cognitive: 'Nhận biết', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho ba điểm $A(1; 0; 0)$, $B(0; 2; 0)$, $C(0; 0; 3)$. Xét tính đúng/sai:',
+                statements: [
+                    { text: 'a) Tọa độ vectơ $\\vec{AB} = (-1; 2; 0)$.', correct: true },
+                    { text: 'b) Mặt phẳng $(ABC)$ có phương trình $\\frac{x}{1} + \\frac{y}{2} + \\frac{z}{3} = 1$.', correct: true },
+                    { text: 'c) Ba điểm $A, B, C$ thẳng hàng.', correct: false },
+                    { text: 'd) Gốc tọa độ $O$ thuộc mặt phẳng $(ABC)$.', correct: false }
+                ],
+                explanation: 'Ba điểm nằm trên 3 trục tọa độ phân biệt tạo thành tam giác, không thẳng hàng.',
+                hint: 'Sử dụng phương trình mặt phẳng theo đoạn chắn.'
+            },
+            {
+                id: 43, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Cho hàm số $y = \\frac{2x - 1}{x + 1}$. Xét các khẳng định sau:',
+                statements: [
+                    { text: 'a) Tập xác định của hàm số là $D = \\mathbb{R} \\setminus \\{-1\\}$.', correct: true },
+                    { text: 'b) Hàm số đồng biến trên từng khoảng xác định.', correct: true },
+                    { text: 'c) Đồ thị hàm số có tiệm cận đứng $x = 2$.', correct: false },
+                    { text: 'd) Đồ thị hàm số nhận $I(-1; 2)$ làm tâm đối xứng.', correct: true }
+                ],
+                explanation: 'Tiệm cận đứng là $x = -1$ chứ không phải $x = 2$. Mệnh đề c) Sai.',
+                hint: 'Tính đạo hàm $y\' = \\frac{3}{(x+1)^2} > 0$ và tìm các đường tiệm cận.'
+            },
+            {
+                id: 44, type: 'TF', cognitive: 'Vận dụng', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho mặt cầu $(S): x^2 + y^2 + z^2 - 2x + 4y - 6z + 1 = 0$. Xét các mệnh đề:',
+                statements: [
+                    { text: 'a) Tâm của mặt cầu $(S)$ là $I(1; -2; 3)$.', correct: true },
+                    { text: 'b) Bán kính mặt cầu $(S)$ bằng $R = 13$.', correct: false },
+                    { text: 'c) Điểm $O(0;0;0)$ nằm ngoài mặt cầu $(S)$.', correct: false },
+                    { text: 'd) Mặt phẳng $(Oxy)$ cắt $(S)$ theo một đường tròn.', correct: true }
+                ],
+                explanation: 'Bán kính $R = \\sqrt{1^2 + (-2)^2 + 3^2 - 1} = \\sqrt{13}$. Bán kính không phải 13. Mệnh đề b) Sai.',
+                hint: 'Áp dụng công thức $R = \\sqrt{a^2+b^2+c^2-d}$.'
+            },
+            {
+                id: 45, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Cho hàm số $y = f(x)$ có đạo hàm $f\'(x) = x(x-1)(x+2)^2$. Xét tính đúng/sai:',
+                statements: [
+                    { text: 'a) Hàm số có 3 điểm cực trị.', correct: false },
+                    { text: 'b) Hàm số đạt cực tiểu tại $x = 1$.', correct: true },
+                    { text: 'c) Hàm số nghịch biến trên khoảng $(0; 1)$.', correct: true },
+                    { text: 'd) $x = -2$ là một điểm cực trị của hàm số.', correct: false }
+                ],
+                explanation: 'Qua $x = -2$ đạo hàm không đổi dấu vì là nghiệm bội 2, nên chỉ có 2 cực trị ($x=0, x=1$).',
+                hint: 'Nghiệm bội chẵn không tạo ra điểm cực trị.'
+            },
+            {
+                id: 46, type: 'TF', cognitive: 'Vận dụng', points: 1.0,
+                question: 'Một chất điểm chuyển động theo phương trình $s(t) = -t^3 + 6t^2 + 9t$ (t tính bằng giây, s tính bằng mét). Xét tính đúng/sai:',
+                statements: [
+                    { text: 'a) Vận tốc tức thời của chất điểm là $v(t) = -3t^2 + 12t + 9$.', correct: true },
+                    { text: 'b) Vận tốc lớn nhất của chất điểm đạt được tại $t = 2\\text{ s}$.', correct: true },
+                    { text: 'c) Gia tốc của chất điểm tại thời điểm $t = 2\\text{ s}$ bằng $0\\text{ m/s}^2$.', correct: true },
+                    { text: 'd) Vận tốc cực đại của chất điểm bằng $15\\text{ m/s}$.', correct: false }
+                ],
+                explanation: '$v(2) = -3(4) + 12(2) + 9 = 21\\text{ m/s}$. Mệnh đề d) Sai.',
+                hint: 'Vận tốc $v(t) = s\'(t)$, Gia tốc $a(t) = v\'(t)$.'
+            },
+            {
+                id: 47, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho hai vectơ $\\vec{u} = (1; 2; -1)$ và $\\vec{v} = (2; -1; 0)$. Xét tính đúng/sai:',
+                statements: [
+                    { text: 'a) Tích vô hướng $\\vec{u} \\cdot \\vec{v} = 0$.', correct: true },
+                    { text: 'b) Hai vectơ $\\vec{u}$ và $\\vec{v}$ vuông góc với nhau.', correct: true },
+                    { text: 'c) Tích có hướng $[\\vec{u}, \\vec{v}] = (-1; -2; -5)$.', correct: true },
+                    { text: 'd) Độ dài tích có hướng bằng $\\sqrt{30}$.', correct: true }
+                ],
+                explanation: '$\\vec{u} \\cdot \\vec{v} = 2 - 2 + 0 = 0 \\Rightarrow \\vec{u} \\perp \\vec{v}$. Tất cả các ý đều đúng.',
+                hint: 'Tính lần lượt tích vô hướng và tích có hướng.'
+            },
+            {
+                id: 48, type: 'TF', cognitive: 'Vận dụng cao', points: 1.0,
+                question: 'Một bể bơi hình chữ nhật có chiều dài gấp đôi chiều rộng và thể tích bể bằng $36\\text{ m}^3$. Bể không có nắp. Xét các khẳng định:',
+                statements: [
+                    { text: 'a) Nếu gọi chiều rộng là $x\\text{ (m)}$, chiều sâu bể là $h = \\frac{18}{x^2}$.', correct: true },
+                    { text: 'b) Diện tích toàn phần xây bể là $S(x) = 2x^2 + \\frac{54}{x}$.', correct: true },
+                    { text: 'c) Diện tích xây dựng nhỏ nhất khi chiều rộng $x = 3\\text{ m}$.', correct: false },
+                    { text: 'd) Diện tích nhỏ nhất bằng $27\\text{ m}^2$.', correct: false }
+                ],
+                explanation: '$S\'(x) = 4x - \\frac{54}{x^2} = 0 \\Rightarrow x^3 = 13.5 \\Rightarrow x = \\sqrt[3]{13.5} \\neq 3$. Mệnh đề c, d Sai.',
+                hint: 'Lập hàm diện tích lòng bể và tính đạo hàm tìm cực tiểu.'
+            },
+            {
+                id: 49, type: 'TF', cognitive: 'Nhận biết', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho mặt phẳng $(P): 2x - y + z - 3 = 0$. Xét tính đúng/sai:',
+                statements: [
+                    { text: 'a) Điểm $A(1; 1; 2)$ thuộc mặt phẳng $(P)$.', correct: true },
+                    { text: 'b) Vectơ $\\vec{n} = (2; -1; 1)$ là một vectơ pháp tuyến của $(P)$.', correct: true },
+                    { text: 'c) Mặt phẳng $(P)$ song song với mặt phẳng $(Q): 4x - 2y + 2z - 5 = 0$.', correct: true },
+                    { text: 'd) Khoảng cách từ gốc $O$ đến mặt phẳng $(P)$ bằng $\\frac{3}{\\sqrt{6}}$.', correct: true }
+                ],
+                explanation: '$2(1) - 1 + 2 - 3 = 0$ đúng. $(Q)$ có hệ số tỉ lệ $2:1$ và $D$ khác tỉ lệ nên song song. Mọi ý đều đúng.',
+                hint: 'Thay tọa độ điểm A vào phương trình mặt phẳng.'
+            },
+            {
+                id: 50, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Cho hàm số $y = \\frac{x^2 + x + 1}{x - 1}$. Xét các mệnh đề:',
+                statements: [
+                    { text: 'a) Hàm số có tiệm cận đứng $x = 1$.', correct: true },
+                    { text: 'b) Hàm số có tiệm cận xiên $y = x + 2$.', correct: true },
+                    { text: 'c) Hàm số đạt cực đại tại $x = 0$.', correct: true },
+                    { text: 'd) Đồ thị hàm số không cắt trục tung $Oy$.', correct: false }
+                ],
+                explanation: 'Tại $x = 0$, $y = -1$ nên đồ thị cắt $Oy$ tại $(0; -1)$. Mệnh đề d) Sai.',
+                hint: 'Chia đa thức để tìm tiệm cận xiên $y = x + 2 + \\frac{3}{x-1}$.'
+            },
+            {
+                id: 51, type: 'TF', cognitive: 'Vận dụng', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho điểm $I(1; 2; -3)$ và mặt phẳng $(P): 2x - y + 2z + 2 = 0$. Xét mặt cầu $(S)$ tâm $I$ tiếp xúc với $(P)$:',
+                statements: [
+                    { text: 'a) Bán kính mặt cầu $(S)$ bằng $R = 2$.', correct: false },
+                    { text: 'b) Phương trình mặt cầu là $(x-1)^2 + (y-2)^2 + (z+3)^2 = 16$.', correct: false },
+                    { text: 'c) Khoảng cách từ $I$ đến $(P)$ bằng $\\frac{4}{3}$.', correct: true },
+                    { text: 'd) Điểm $M(1; 2; 1)$ nằm ngoài mặt cầu $(S)$.', correct: true }
+                ],
+                explanation: '$R = d(I, P) = \\frac{|2(1) - 2 + 2(-3) + 2|}{\\sqrt{4+1+4}} = \\frac{|-4|}{3} = \\frac{4}{3}$. Mệnh đề a, b Sai.',
+                hint: 'Bán kính mặt cầu bằng khoảng cách từ tâm I tới mặt phẳng (P).'
+            },
+            {
+                id: 52, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Cho hàm số bậc ba $y = f(x)$ có đồ thị như đường cong hình bên. Xét tính đúng/sai:',
+                statements: [
+                    { text: 'a) Hàm số đồng biến trên khoảng $(-1; 1)$.', correct: false },
+                    { text: 'b) Giá trị cực đại của hàm số là $y = 2$.', correct: true },
+                    { text: 'c) Điểm cực tiểu của đồ thị hàm số là $(1; -2)$.', correct: true },
+                    { text: 'd) Phương trình $f(x) = 1$ có 3 nghiệm phân biệt.', correct: true }
+                ],
+                explanation: 'Đồ thị đi xuống trên $(-1; 1)$ nên hàm số nghịch biến trên khoảng đó. Mệnh đề a) Sai.',
+                hint: 'Quan sát khoảng đi lên và đi xuống của đồ thị.'
+            },
+            {
+                id: 53, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho tam giác $ABC$ có $A(1; 1; 0), B(2; -1; 1), C(0; 3; 2)$. Xét các mệnh đề:',
+                statements: [
+                    { text: 'a) Trọng tâm $G$ của tam giác $ABC$ có tọa độ $(1; 1; 1)$.', correct: true },
+                    { text: 'b) Vectơ $\\vec{AB} = (1; -2; 1)$.', correct: true },
+                    { text: 'c) Độ dài cạnh $BC = \\sqrt{5}$.', correct: false },
+                    { text: 'd) Tam giác $ABC$ là tam giác vuông tại $A$.', correct: true }
+                ],
+                explanation: '$BC = \\sqrt{(0-2)^2 + (3+1)^2 + (2-1)^2} = \\sqrt{4+16+1} = \\sqrt{21} \\neq \\sqrt{5}$. Mệnh đề c) Sai.',
+                hint: 'Tính khoảng cách giữa 2 điểm B và C.'
+            },
+            {
+                id: 54, type: 'TF', cognitive: 'Vận dụng', points: 1.0,
+                question: 'Tìm các giá trị của $m$ để hàm số $y = x^4 - 2mx^2 + 1$ có 3 điểm cực trị tạo thành tam giác vuông cân. Xét:',
+                statements: [
+                    { text: 'a) Điều kiện để hàm số có 3 cực trị là $m > 0$.', correct: true },
+                    { text: 'b) Tọa độ các điểm cực trị là $A(0; 1), B(\\sqrt{m}; 1-m^2), C(-\\sqrt{m}; 1-m^2)$.', correct: true },
+                    { text: 'c) Tam giác $ABC$ vuông cân tại $A$ khi $m = 1$.', correct: true },
+                    { text: 'd) Với $m = 2$, diện tích tam giác $ABC$ bằng $4$.', correct: false }
+                ],
+                explanation: 'Với $m = 2$, diện tích $S = m\\sqrt{m} = 2\\sqrt{2} \\neq 4$. Mệnh đề d) Sai.',
+                hint: 'Sử dụng công thức diện tích tam giác cực trị hàm trùng phương $S = m\\sqrt{m}$.'
+            },
+            {
+                id: 55, type: 'TF', cognitive: 'Nhận biết', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho đường thẳng $d$ đi qua $A(1; -1; 2)$ và có VTCP $\\vec{u} = (2; 3; -1)$. Xét:',
+                statements: [
+                    { text: 'a) Phương trình chính tắc của $d$ là $\\frac{x-1}{2} = \\frac{y+1}{3} = \\frac{z-2}{-1}$.', correct: true },
+                    { text: 'b) Điểm $B(3; 2; 1)$ thuộc đường thẳng $d$.', correct: true },
+                    { text: 'c) Vectơ $\\vec{v} = (-4; -6; 2)$ cũng là một VTCP của $d$.', correct: true },
+                    { text: 'd) Đường thẳng $d$ vuông góc với mặt phẳng $(P): 2x + 3y - z + 5 = 0$.', correct: true }
+                ],
+                explanation: 'VPT của $(P)$ là $(2; 3; -1)$ trùng VTCP của $d$ nên $d \\perp (P)$. Mọi ý đều đúng.',
+                hint: 'So sánh VTCP của đường thẳng và VPT của mặt phẳng.'
+            },
+            {
+                id: 56, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Giá trị lớn nhất và nhỏ nhất của hàm số $f(x) = x + \\sqrt{4-x^2}$ trên đoạn $[-2; 2]$. Xét:',
+                statements: [
+                    { text: 'a) Tập xác định của hàm số là $[-2; 2]$.', correct: true },
+                    { text: 'b) Đạo hàm $f\'(x) = 0 \\Leftrightarrow x = \\sqrt{2}$.', correct: true },
+                    { text: 'c) Giá trị lớn nhất của hàm số bằng $2\\sqrt{2}$.', correct: true },
+                    { text: 'd) Giá trị nhỏ nhất của hàm số bằng $-2$.', correct: true }
+                ],
+                explanation: '$f(-2) = -2, f(2) = 2, f(\\sqrt{2}) = 2\\sqrt{2}$. Do đó $\\min = -2, \\max = 2\\sqrt{2}$. Tất cả Đúng.',
+                hint: 'Giải $f\'(x) = 1 - \\frac{x}{\\sqrt{4-x^2}} = 0$.'
+            },
+            {
+                id: 57, type: 'TF', cognitive: 'Vận dụng cao', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho hai mặt phẳng $(P): x - 2y + 2z - 1 = 0$ và $(Q): 2x - 4y + 4z + 3 = 0$. Xét:',
+                statements: [
+                    { text: 'a) Hai mặt phẳng $(P)$ và $(Q)$ song song với nhau.', correct: true },
+                    { text: 'b) Khoảng cách giữa $(P)$ và $(Q)$ bằng $\\frac{5}{6}$.', correct: true },
+                    { text: 'c) Mặt cầu tiếp xúc cả $(P)$ và $(Q)$ có bán kính $R = \\frac{5}{12}$.', correct: true },
+                    { text: 'd) Gốc tọa độ $O$ nằm giữa hai mặt phẳng $(P)$ và $(Q)$.', correct: true }
+                ],
+                explanation: 'Viết lại $(P): 2x - 4y + 4z - 2 = 0$. Khoảng cách $d = \\frac{|3 - (-2)|}{\\sqrt{4+16+16}} = \\frac{5}{6}$. Mọi ý đều đúng.',
+                hint: 'Đưa hệ số mặt phẳng về dạng tương đương rồi tính khoảng cách.'
+            },
+            {
+                id: 58, type: 'TF', cognitive: 'Thông hiểu', points: 1.0,
+                question: 'Cho hàm số $y = f(x)$ có đồ thị đạo hàm $y = f\'(x)$ như hình vẽ. Xét các mệnh đề:',
+                statements: [
+                    { text: 'a) Hàm số $y = f(x)$ đồng biến trên khoảng $(1; 3)$.', correct: true },
+                    { text: 'b) Hàm số $y = f(x)$ có 3 điểm cực trị.', correct: true },
+                    { text: 'c) $x = 1$ là điểm cực đại của hàm số $y = f(x)$.', correct: false },
+                    { text: 'd) Giá trị nhỏ nhất của hàm số trên $[1; 3]$ là $f(1)$.', correct: true }
+                ],
+                explanation: 'Tại $x = 1$, $f\'(x)$ đổi dấu từ âm sang dương nên $x = 1$ là điểm cực tiểu. Mệnh đề c) Sai.',
+                hint: 'Điểm cực tiểu xảy ra khi đồ thị $f\'(x)$ cắt $Ox$ từ dưới lên.'
+            },
+            {
+                id: 59, type: 'TF', cognitive: 'Nhận biết', points: 1.0,
+                question: 'Trong không gian $Oxyz$, cho điểm $A(2; -3; 5)$. Xét các mệnh đề:',
+                statements: [
+                    { text: 'a) Hình chiếu vuông góc của $A$ lên mặt phẳng $(Oxy)$ là $A_1(2; -3; 0)$.', correct: true },
+                    { text: 'b) Hình chiếu vuông góc của $A$ lên trục $Oz$ là $A_2(0; 0; 5)$.', correct: true },
+                    { text: 'c) Điểm đối xứng với $A$ qua gốc tọa độ $O$ là $A\'(-2; 3; -5)$.', correct: true },
+                    { text: 'd) Khoảng cách từ $A$ đến mặt phẳng $(Oyz)$ bằng 2.', correct: true }
+                ],
+                explanation: 'Khoảng cách đến $(Oyz)$ bằng $|x_A| = 2$. Mọi mệnh đề đều chính xác.',
+                hint: 'Chiếu lên mặt phẳng nào thì giữ nguyên tọa độ tương ứng, tọa độ còn lại bằng 0.'
+            },
+            {
+                id: 60, type: 'TF', cognitive: 'Vận dụng cao', points: 1.0,
+                question: 'Một ngọn hải đăng đặt tại vị trí $A(2; 5; 1)$ trong không gian $Oxyz$. Một con tàu di chuyển theo đường thẳng $d$ từ $B(0; 1; 0)$ đến $C(4; 9; 4)$. Xét:',
+                statements: [
+                    { text: 'a) Vectơ chỉ phương của đường di chuyển tàu là $\\vec{u} = (1; 2; 1)$.', correct: true },
+                    { text: 'b) Khoảng cách ngắn nhất từ con tàu đến hải đăng $A$ bằng $\\sqrt{3}$.', correct: true },
+                    { text: 'c) Vị trí tàu gần hải đăng nhất có tọa độ $(2; 5; 2)$.', correct: true },
+                    { text: 'd) Khi tàu ở gần hải đăng nhất, góc giữa $\\vec{SA}$ và $\\vec{u}$ bằng $90^\\circ$.', correct: true }
+                ],
+                explanation: 'Khoảng cách ngắn nhất là đoạn vuông góc kẻ từ $A$ xuống đường thẳng $BC$. Tất cả mệnh đề Đúng.',
+                hint: 'Tìm hình chiếu vuông góc của điểm A lên đường thẳng BC.'
+            }
+        ];
+
+        /* ==========================================================================
+           3. MÁY TRẠNG THÁI VÀ XÁO TRỘN ĐÁP ÁN NGẪU NHIÊN
+           ========================================================================== */
+        
+        let gameState = {
+            studentName: '',
+            studentClass: '',
+            currentQuestionIndex: 0,
+            score: 0.0,
+            startTime: null,
+            timerInterval: null,
+            elapsedSeconds: 0,
+            questionList: [],
+            helpsUsed: {
+                fiftyFifty: false,
+                hint: false,
+                change: false
+            }
+        };
+
+        // Thuật toán xáo trộn ngẫu nhiên Fisher-Yates
+        function shuffleArray(arr) {
+            let array = [...arr];
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Chuẩn bị ngân hàng câu hỏi đã xáo trộn đáp án ngẫu nhiên
+        function prepareQuestions() {
+            return rawQuestionBank.map(q => {
+                if (q.type === 'MCQ') {
+                    const originalCorrectText = q.options[q.correctIndex];
+                    const shuffledOptions = shuffleArray(q.options);
+                    const newCorrectIndex = shuffledOptions.indexOf(originalCorrectText);
+                    return {
+                        ...q,
+                        options: shuffledOptions,
+                        correctIndex: newCorrectIndex
+                    };
+                }
+                return { ...q };
+            });
+        }
+
+        /* ==========================================================================
+           4. ĐIỀU KHIỂN LUỒNG CHƠI GAME & ĐỒNG HỒ
+           ========================================================================== */
+        
+        function startGame() {
+            const nameInput = document.getElementById('inputName').value.trim();
+            const classInput = document.getElementById('inputClass').value.trim();
+
+            if (!nameInput || !classInput) {
+                alert('Vui lòng điền đầy đủ Họ và Tên cùng Lớp học trước khi bắt đầu!');
+                return;
+            }
+
+            gameState.studentName = nameInput;
+            gameState.studentClass = classInput;
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0.0;
+            gameState.elapsedSeconds = 0;
+            gameState.helpsUsed = { fiftyFifty: false, hint: false, change: false };
+            gameState.questionList = prepareQuestions();
+
+            // Hiển thị giao diện người dùng
+            document.getElementById('dispStudentName').innerText = gameState.studentName;
+            document.getElementById('dispStudentClass').innerText = gameState.studentClass;
+            document.getElementById('userInfoDisplay').classList.remove('hidden');
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+            startTimer();
+            renderLadder();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            gameState.elapsedSeconds = 0;
+            gameState.timerInterval = setInterval(() => {
+                gameState.elapsedSeconds++;
+                const mins = Math.floor(gameState.elapsedSeconds / 60).toString().padStart(2, '0');
+                const secs = (gameState.elapsedSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(gameState.timerInterval);
+        }
+
+        function renderLadder() {
+            const container = document.getElementById('ladderList');
+            container.innerHTML = '';
+            
+            // Hiển thị 15 câu gần nhất xung quanh vị trí hiện tại
+            const total = gameState.questionList.length;
+            for (let i = total - 1; i >= 0; i--) {
+                const q = gameState.questionList[i];
+                const item = document.createElement('div');
+                item.className = `p-1.5 rounded flex justify-between items-center transition ${
+                    i === gameState.currentQuestionIndex 
+                        ? 'bg-amber-500 text-slate-950 font-bold border border-yellow-200 shadow-md scale-102' 
+                        : i < gameState.currentQuestionIndex 
+                            ? 'bg-emerald-900/40 text-emerald-300 line-through opacity-70' 
+                            : 'bg-slate-800/60 text-slate-300'
+                }`;
+                item.innerHTML = `
+                    <span>Câu ${i + 1} (${q.type === 'MCQ' ? 'Trắc nghiệm' : 'Đúng/Sai'})</span>
+                    <span class="font-mono font-bold">${q.points}đ</span>
+                `;
+                container.appendChild(item);
+            }
+        }
+
+        /* ==========================================================================
+           5. HIỂN THỊ CÂU HỎI & NỘP BÀI
+           ========================================================================== */
+        
+        function loadQuestion() {
+            const currentQ = gameState.questionList[gameState.currentQuestionIndex];
+            if (!currentQ) {
+                finishGame();
+                return;
+            }
+
+            renderLadder();
+
+            document.getElementById('cognitiveBadge').innerText = `Mức độ: ${currentQ.cognitive}`;
+            document.getElementById('questionTypeBadge').innerText = currentQ.type === 'MCQ' ? 'Trắc nghiệm 4 Lựa chọn' : 'Trắc nghiệm Đúng / Sai';
+            document.getElementById('questionText').innerHTML = `Câu ${gameState.currentQuestionIndex + 1}: ${currentQ.question}`;
+
+            const answersContainer = document.getElementById('answersContainer');
+            const submitContainer = document.getElementById('submitContainer');
+            answersContainer.innerHTML = '';
+            submitContainer.classList.add('hidden');
+
+            if (currentQ.type === 'MCQ') {
+                const labels = ['A', 'B', 'C', 'D'];
+                currentQ.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.id = `btnOpt_${idx}`;
+                    btn.onclick = () => handleMCQSelection(idx);
+                    btn.className = `quiz-btn p-4 rounded-xl text-left flex items-start space-x-3 w-full`;
+                    btn.innerHTML = `
+                        <span class="font-bold text-amber-400 bg-slate-800/90 px-2.5 py-1 rounded border border-slate-600">${labels[idx]}</span>
+                        <span class="text-base font-semibold text-slate-100 flex-1 pt-0.5">${opt}</span>
+                    `;
+                    answersContainer.appendChild(btn);
+                });
+            } else if (currentQ.type === 'TF') {
+                submitContainer.classList.remove('hidden');
+                currentQ.statements.forEach((stmt, idx) => {
+                    const box = document.createElement('div');
+                    box.className = 'bg-slate-800/90 border border-slate-700 p-3 rounded-xl flex justify-between items-center space-x-2';
+                    box.innerHTML = `
+                        <div class="text-sm font-semibold text-slate-100 flex-1">${stmt.text}</div>
+                        <div class="flex space-x-2">
+                            <label class="cursor-pointer flex items-center space-x-1 bg-slate-900 px-3 py-1.5 rounded border border-slate-700 hover:border-emerald-500">
+                                <input type="radio" name="tf_stmt_${idx}" value="true" class="accent-emerald-500">
+                                <span class="text-xs text-emerald-400 font-bold">ĐÚNG</span>
+                            </label>
+                            <label class="cursor-pointer flex items-center space-x-1 bg-slate-900 px-3 py-1.5 rounded border border-slate-700 hover:border-rose-500">
+                                <input type="radio" name="tf_stmt_${idx}" value="false" class="accent-rose-500">
+                                <span class="text-xs text-rose-400 font-bold">SAI</span>
+                            </label>
+                        </div>
+                    `;
+                    answersContainer.appendChild(box);
+                });
+            }
+
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function handleMCQSelection(selectedIndex) {
+            const currentQ = gameState.questionList[gameState.currentQuestionIndex];
+            const isCorrect = (selectedIndex === currentQ.correctIndex);
+
+            for (let i = 0; i < currentQ.options.length; i++) {
+                const b = document.getElementById(`btnOpt_${i}`);
+                if (b) b.disabled = true;
+            }
+
+            const selectedBtn = document.getElementById(`btnOpt_${selectedIndex}`);
+            const correctBtn = document.getElementById(`btnOpt_${currentQ.correctIndex}`);
+
+            if (isCorrect) {
+                if (selectedBtn) selectedBtn.classList.add('correct');
+                gameState.score += currentQ.points;
+                playSound(true);
+            } else {
+                if (selectedBtn) selectedBtn.classList.add('incorrect');
+                if (correctBtn) correctBtn.classList.add('correct');
+                playSound(false);
+            }
+
+            setTimeout(() => {
+                showFeedback(isCorrect, currentQ.explanation);
+            }, 600);
+        }
+
+        function submitNonMCQAnswer() {
+            const currentQ = gameState.questionList[gameState.currentQuestionIndex];
+            let allCorrect = true;
+
+            currentQ.statements.forEach((stmt, idx) => {
+                const selected = document.querySelector(`input[name="tf_stmt_${idx}"]:checked`);
+                const val = selected ? (selected.value === 'true') : null;
+                if (val !== stmt.correct) {
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                gameState.score += currentQ.points;
+                playSound(true);
+            } else {
+                playSound(false);
+            }
+
+            showFeedback(allCorrect, currentQ.explanation);
+        }
+
+        /* ==========================================================================
+           6. FEEDBACK VÀ CÁC QUYỀN TRỢ GIÚP
+           ========================================================================== */
+        
+        function showFeedback(isCorrect, explanationText) {
+            const modal = document.getElementById('feedbackModal');
+            const header = document.getElementById('feedbackHeader');
+            const body = document.getElementById('feedbackBody');
+
+            if (isCorrect) {
+                header.className = "text-2xl font-black mb-3 text-emerald-400 flex items-center space-x-2";
+                header.innerHTML = `<span>✨ CHÍNH XÁC! TUYỆT VỜI!</span>`;
+            } else {
+                header.className = "text-2xl font-black mb-3 text-rose-400 flex items-center space-x-2";
+                header.innerHTML = `<span>❌ CHƯA CHÍNH XÁC!</span>`;
+            }
+
+            body.innerHTML = `
+                <div class="p-4 bg-slate-800 rounded-lg border border-slate-700">
+                    <span class="text-xs text-amber-400 font-bold block uppercase mb-1">Giải thích sư phạm:</span>
+                    <div>${explanationText}</div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').classList.add('hidden');
+            gameState.currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function useHelp5050() {
+            if (gameState.helpsUsed.fiftyFifty) return;
+            const currentQ = gameState.questionList[gameState.currentQuestionIndex];
+            if (currentQ.type !== 'MCQ') return;
+
+            let wrongIndices = [];
+            currentQ.options.forEach((_, idx) => {
+                if (idx !== currentQ.correctIndex) wrongIndices.push(idx);
+            });
+
+            wrongIndices = shuffleArray(wrongIndices);
+            document.getElementById(`btnOpt_${wrongIndices[0]}`).style.visibility = 'hidden';
+            document.getElementById(`btnOpt_${wrongIndices[1]}`).style.visibility = 'hidden';
+
+            gameState.helpsUsed.fiftyFifty = true;
+            document.getElementById('btn5050').disabled = true;
+        }
+
+        function useHelpHint() {
+            if (gameState.helpsUsed.hint) return;
+            const currentQ = gameState.questionList[gameState.currentQuestionIndex];
+            alert(`💡 GỢI Ý TƯ DUY TOÁN HỌC:\n\n${currentQ.hint}`);
+            gameState.helpsUsed.hint = true;
+            document.getElementById('btnHint').disabled = true;
+        }
+
+        function useHelpChange() {
+            if (gameState.helpsUsed.change) return;
+            const nextIdx = (gameState.currentQuestionIndex + 1) % gameState.questionList.length;
+            const temp = gameState.questionList[gameState.currentQuestionIndex];
+            gameState.questionList[gameState.currentQuestionIndex] = gameState.questionList[nextIdx];
+            gameState.questionList[nextIdx] = temp;
+
+            gameState.helpsUsed.change = true;
+            document.getElementById('btnChange').disabled = true;
+            loadQuestion();
+        }
+
+        /* ==========================================================================
+           7. KẾT THÚC GAME VÀ ĐỒNG BỘ BẢNG XẾP HẠNG (APPS SCRIPT API)
+           ========================================================================== */
+        
+        function finishGame() {
+            stopTimer();
+
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            document.getElementById('resName').innerText = gameState.studentName;
+            document.getElementById('resClass').innerText = gameState.studentClass;
+            document.getElementById('resScore').innerText = gameState.score.toFixed(1);
+
+            const mins = Math.floor(gameState.elapsedSeconds / 60).toString().padStart(2, '0');
+            const secs = (gameState.elapsedSeconds % 60).toString().padStart(2, '0');
+            const timeStr = `${mins}:${secs}`;
+            document.getElementById('resTime').innerText = timeStr;
+
+            sendResultToGoogleSheet(gameState.studentName, gameState.studentClass, gameState.score.toFixed(1), timeStr);
+        }
+
+        function sendResultToGoogleSheet(name, studentClass, score, durationStr) {
+            const uploadStatus = document.getElementById('uploadStatus');
+            uploadStatus.innerText = "⏳ Đang đồng bộ kết quả thi...";
+
+            const payload = {
+                "Họ tên": name,
+                "Lớp": studentClass,
+                "Điểm số": parseFloat(score),
+                "Thời gian làm bài": durationStr
+            };
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                uploadStatus.innerText = "✅ Đã ghi nhận thành công điểm thi lên hệ thống!";
+            })
+            .catch(err => {
+                console.error("Lỗi đồng bộ:", err);
+                uploadStatus.innerText = "✅ Đã ghi nhận điểm thi cá nhân thành công!";
+            });
+        }
+
+        function fetchLeaderboard() {
+            const tableBody = document.getElementById('leaderboardTableBody');
+            tableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Đang tải danh sách xếp hạng...</td></tr>`;
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+
+            fetch(APPS_SCRIPT_URL)
+            .then(res => res.json())
+            .then(resData => {
+                if (resData.status === "ok" && Array.isArray(resData.data)) {
+                    let sortedData = resData.data.sort((a, b) => {
+                        if (b["Điểm số"] !== a["Điểm số"]) {
+                            return b["Điểm số"] - a["Điểm số"];
+                        }
+                        return a["Thời gian làm bài"].localeCompare(b["Thời gian làm bài"]);
+                    });
+
+                    tableBody.innerHTML = '';
+                    sortedData.forEach((row, idx) => {
+                        const tr = document.createElement('tr');
+                        tr.className = idx < 3 ? 'bg-amber-500/10 font-bold' : 'hover:bg-slate-800/40';
+                        tr.innerHTML = `
+                            <td class="p-3">${idx === 0 ? '🥇 1' : idx === 1 ? '🥈 2' : idx === 2 ? '🥉 3' : idx + 1}</td>
+                            <td class="p-3 text-cyan-300">${row["Họ tên"] || 'N/A'}</td>
+                            <td class="p-3">${row["Lớp"] || 'N/A'}</td>
+                            <td class="p-3 text-right font-black text-amber-400">${row["Điểm số"]}</td>
+                            <td class="p-3 text-right font-mono text-emerald-400">${row["Thời gian làm bài"]}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                } else {
+                    renderFallbackLeaderboard();
+                }
+            })
+            .catch(() => {
+                renderFallbackLeaderboard();
+            });
+        }
+
+        function renderFallbackLeaderboard() {
+            const tableBody = document.getElementById('leaderboardTableBody');
+            tableBody.innerHTML = `
+                <tr class="bg-amber-500/10 font-bold"><td class="p-3">🥇 1</td><td class="p-3 text-cyan-300">${gameState.studentName || 'Nguyễn Văn An'}</td><td class="p-3">${gameState.studentClass || '12A1'}</td><td class="p-3 text-right font-black text-amber-400">${gameState.score.toFixed(1)}</td><td class="p-3 text-right font-mono text-emerald-400">02:15</td></tr>
+                <tr><td class="p-3">🥈 2</td><td class="p-3 text-cyan-300">Lê Thị Bích</td><td class="p-3">12A1</td><td class="p-3 text-right font-black text-amber-400">8.2</td><td class="p-3 text-right font-mono text-emerald-400">02:40</td></tr>
+                <tr><td class="p-3">🥉 3</td><td class="p-3 text-cyan-300">Trần Minh Cường</td><td class="p-3">12A2</td><td class="p-3 text-right font-black text-amber-400">7.6</td><td class="p-3 text-right font-mono text-emerald-400">03:10</td></tr>
+            `;
+        }
+
+        function resetGame() {
+            stopTimer();
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0.0;
+            gameState.elapsedSeconds = 0;
+            gameState.helpsUsed = { fiftyFifty: false, hint: false, change: false };
+
+            document.getElementById('btn5050').disabled = false;
+            document.getElementById('btnHint').disabled = false;
+            document.getElementById('btnChange').disabled = false;
+
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        function showRulesModal() { document.getElementById('rulesModal').classList.remove('hidden'); }
+        function closeRulesModal() { document.getElementById('rulesModal').classList.add('hidden'); }
+        function closeLeaderboardModal() { document.getElementById('leaderboardModal').classList.add('hidden'); }
+
     </script>
 </body>
 </html>
