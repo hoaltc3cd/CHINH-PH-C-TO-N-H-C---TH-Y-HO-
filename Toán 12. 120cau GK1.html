@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ai là triệu phú – Toán 12</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#14452f;--bg2:#0d3322;--tx:#fff;--gold:#ffd54a;--ok:#2ecc71;--no:#ff6b6b}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--tx);font-family:"Segoe UI",Arial,sans-serif;font-size:clamp(18px,2.1vw,28px)}
+body{background:radial-gradient(circle at 30% 20%,#1d6b47,var(--bg2));min-height:100vh;padding:14px}
+h1{margin:0 0 8px;color:var(--gold);font-size:1.5em;text-align:center}
+.card{background:rgba(0,0,0,.28);border:3px solid #e8e2c8;border-radius:16px;padding:16px;max-width:1300px;margin:0 auto 12px}
+input{font-size:1em;padding:10px;border-radius:10px;border:2px solid var(--gold);width:100%;margin:6px 0;background:#fff;color:#000}
+button{font:inherit;cursor:pointer;color:#fff;background:#1b6a49;border:3px solid #e8e2c8;border-radius:12px;padding:12px 16px;text-align:left}
+button:hover:not(:disabled){background:#238a5f}button:disabled{cursor:default}
+.go{background:var(--gold);color:#000;font-weight:700;text-align:center;border-color:#fff}
+.hide{display:none}.v{text-decoration:overline;text-decoration-thickness:2px}.main{display:flex;gap:14px;flex-wrap:wrap}.q{flex:1 1 560px}
+.ladder{flex:0 0 190px;display:flex;flex-direction:column-reverse;gap:4px;font-size:.8em}
+.ladder div{padding:4px 8px;border-radius:8px;border:2px solid #7fae96;text-align:center}
+.ladder .cur{background:var(--gold);color:#000;font-weight:700}.ladder .done{background:#2a8f5f}
+.top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--gold);font-weight:700}
+.qt{font-size:1.25em;margin:12px 0;line-height:1.5}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:700px){.opts{grid-template-columns:1fr}.ladder{flex-direction:row;flex-wrap:wrap}}
+.ok{background:var(--ok)!important;color:#000}.no{background:var(--no)!important;color:#000}
+.exp{margin-top:12px;padding:12px;border-radius:12px;background:#fff;color:#102;font-weight:600}
+.tf{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap}.tf .s{flex:1 1 380px}.tf button{padding:8px 14px}
+.sel{outline:4px solid var(--gold)}
+table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px solid #7fae96;text-align:left}
+</style></head><body>
+<h1>🎓 AI LÀ TRIỆU PHÚ – TOÁN 12</h1>
+
+<div id="start" class="card">
+<b>Luật chơi:</b>
+<ul><li>120 câu, độ khó tăng dần: <b>100 câu trắc nghiệm</b> (nhận biết, thông hiểu; 0,2 điểm/câu) rồi <b>20 câu Đúng/Sai</b> (80 ý, nhận biết → vận dụng cao; 1 điểm/ý). Tổng 100 điểm.</li>
+<li>Trả lời xong sẽ có giải thích ngắn. Có 5 lần trợ giúp <b>50:50</b> (chỉ cho câu trắc nghiệm).</li>
+<li>Kết thúc khi hết 120 câu hoặc khi bấm "Nộp bài sớm". Xếp hạng theo điểm cao, thời gian ít.</li></ul>
+<input id="nm" placeholder="Họ tên" maxlength="40"><input id="cl" placeholder="Lớp" maxlength="12">
+<button class="go" id="bs" style="width:100%;margin-top:8px">▶ BẮT ĐẦU</button></div>
+
+<div id="play" class="card hide"><div class="main"><div class="q">
+<div class="top"><span id="inf"></span><span id="sc"></span><span id="tm"></span></div>
+<div id="qt" class="qt"></div><div id="body"></div><div id="ex"></div>
+<div style="margin-top:10px;display:flex;gap:10px"><button id="b5" style="">💡 50:50</button><button id="nx" class="go hide">Câu tiếp ▶</button><button id="sb" style="margin-left:auto">⏹ Nộp bài sớm</button></div>
+</div><div class="ladder" id="ld" style="flex:1 1 100%;order:-1;display:block;background:#0006;border-radius:8px;height:14px;padding:0;border:0"></div></div></div>
+
+<div id="end" class="card hide"><h1>🏆 KẾT QUẢ</h1><div id="rs" style="text-align:center;font-size:1.3em"></div>
+<div style="text-align:center;margin:10px"><button class="go" id="br">↻ Chơi lại</button></div></div>
+
+<div id="lb" class="card"><b style="color:var(--gold)">📋 Bảng xếp hạng</b><div id="lbt">Chưa có dữ liệu.</div></div>
+
+<script>
+const API_URL=""; // Điền Web App URL của Apps Script vào đây
+const $=id=>document.getElementById(id);
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pk=a=>a[ri(0,a.length-1)];
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const M=n=>n<0?"−"+(-n):""+n,P=n=>n<0?" − "+(-n):" + "+n,P0=n=>n?P(n):"";
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const fr=(n,d)=>{if(d<0){n=-n;d=-d}const g=gcd(n,d)||1;n/=g;d/=g;return d==1?M(n):M(n)+"/"+d};
+const tp=a=>"("+a.join(";")+")",tm=a=>tp(a.map(M)),sg=()=>pk([1,-1]),rv=(m=6)=>[ri(-m,m),ri(-m,m),ri(-m,m)];
+const Q=[[1,2,2],[2,3,6],[3,4,12],[2,6,9],[4,4,7],[6,6,7],[1,4,8]];
+const qv=()=>shuf(pk(Q)).map(x=>x*sg()),nm=v=>Math.round(Math.hypot(...v)),dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const co=(n,t)=>n==1?t:n==-1?"−"+t:n+t,lin=(a,b)=>co(a,"x")+P0(b);
+const mk=(q,a,w,e)=>{w=[...new Set(w.map(String).filter(x=>x!==a))];return w.length<3?null:{k:"mc",q,a,w:w.slice(0,3),e}};
+const fk=()=>{let a,b,k;do{a=ri(1,5);k=ri(-6,6);b=ri(-6,6)}while(!k||a*k+b==0);return{a,b,k,d:-a*k-b,f:`(${lin(a,b)})/(x${P0(-k)})`}};
+const SV=[
+["Cho hình hộp ABCD.A′B′C′D′. Khẳng định nào đúng?","{AB} + {AD} + {AA′} = {AC′}",["{AB} + {AD} + {AA′} = {AC}","{AB} + {AD} + {AA′} = {BD′}","{AB} + {AD} + {AA′} = {DB′}"],"Theo quy tắc hình hộp, tổng ba vectơ chung gốc A là đường chéo {AC′}."],
+["Cho tứ diện ABCD có trọng tâm G. Khẳng định nào đúng?","{GA} + {GB} + {GC} + {GD} = {0}",["{GA} + {GB} + {GC} + {GD} = {AG}","{GA} + {GB} + {GC} + {GD} = 4{AG}","{GA} + {GB} + {GC} + {GD} = {GD}"],"Đây là tính chất đặc trưng của trọng tâm tứ diện."],
+["Hình chóp S.ABCD có đáy là hình bình hành tâm O. Đặt u = {SA} + {SB} + {SC} + {SD}. Khẳng định nào đúng?","u = 4{SO}",["u = 2{SO}","u = 3{SO}","u = {0}"],"{SA} + {SC} = 2{SO} và {SB} + {SD} = 2{SO} vì O là trung điểm AC, BD."],
+["M là trung điểm đoạn AB, O là điểm bất kì. Khẳng định nào đúng?","{OA} + {OB} = 2{OM}",["{OA} + {OB} = {OM}","{OA} − {OB} = 2{OM}","{OA} + {OB} = 2{MO}"],"Đây là hệ thức trung điểm."],
+["Cho hình hộp ABCD.A′B′C′D′. Vectơ nào sau đây cùng phương với {BC}?","{AD}",["{BB′}","{C′C}","{DD′}"],"ABCD là hình bình hành nên AD ∥ BC; các cạnh bên vuông góc đáy không cùng phương với BC."],
+["Cho tam giác ABC có trọng tâm G. Khẳng định nào đúng?","{GA} + {GB} + {GC} = {0}",["{GA} + {GB} + {GC} = {AG}","{GA} + {GB} + {GC} = 3{GA}","{GA} + {GB} + {GC} = {GB}"],"Đây là tính chất trọng tâm tam giác."],
+["Với ba điểm A, B, C bất kì, khẳng định nào đúng?","{AB} + {BC} = {AC}",["{AB} + {BC} = {CA}","{AB} + {BC} = {CB}","{AB} + {BC} = {BA}"],"Quy tắc ba điểm (Chasles)."],
+["Với ba điểm A, B, C bất kì, {AB} − {AC} bằng:","{CB}",["{BC}","{AB} + {AC}","{0}"],"{AB} − {AC} = {AB} + {CA} = {CB}."]];
+const L1=[
+()=>{const{a,k,f}=fk();return mk(`Đồ thị hàm số y = ${f} có tiệm cận đứng là:`,`x = ${M(k)}`,[`x = ${M(-k)}`,`y = ${M(a)}`,`y = ${M(k)}`,`x = ${M(a)}`],`Mẫu bằng 0 tại x = ${M(k)} (tử khác 0) nên đó là tiệm cận đứng.`)},
+()=>{const{a,k,f}=fk();return mk(`Đồ thị hàm số y = ${f} có tiệm cận ngang là:`,`y = ${M(a)}`,[`y = ${M(k)}`,`x = ${M(a)}`,`y = ${M(-a)}`,`x = ${M(k)}`],`Khi x → ±∞ thì y → ${M(a)} nên tiệm cận ngang là y = ${M(a)}.`)},
+()=>{const p=rv(9).map(x=>x||ri(1,9)),i=ri(0,2),n=["Oyz","Oxz","Oxy"][i],z=p.slice();z[i]=0;const o=[1,2].map(j=>{const t=p.slice();t[(i+j)%3]=0;return tm(t)});return mk(`Hình chiếu vuông góc của M${tm(p)} lên mặt phẳng (${n}) có tọa độ:`,tm(z),[...o,tm(p.map((x,j)=>j==i?x:-x)),tm(p.map((x,j)=>j==i?0:x+1))],`Chiếu lên (${n}) thì giữ nguyên hai tọa độ còn lại và cho ${"xyz"[i]} = 0.`)},
+()=>{const A=rv(),B=rv(),d=B.map((x,i)=>x-A[i]);return mk(`Cho A${tm(A)}, B${tm(B)}. Tọa độ vectơ {AB} là:`,tm(d),[tm(d.map(x=>-x)),tm(A.map((x,i)=>x+B[i])),tm(d.map((x,i)=>i?x:x+1)),tm(d.map((x,i)=>i==2?-x:x))],`{AB} = (xB − xA; yB − yA; zB − zA) = ${tm(d)}.`)},
+()=>{const A=rv(),d=rv(4),B=A.map((x,i)=>x+2*d[i]),m=A.map((x,i)=>x+d[i]);return mk(`Cho A${tm(A)}, B${tm(B)}. Trung điểm M của đoạn AB có tọa độ:`,tm(m),[tm(d.map(x=>2*x)),tm(A.map((x,i)=>x+B[i])),tm(m.map((x,i)=>i?x:x+1)),tm(m.map(x=>-x))],"Tọa độ trung điểm bằng nửa tổng tọa độ hai đầu mút.")},
+()=>{const u=qv(),n=nm(u);return mk(`Cho u = ${tm(u)}. Độ dài |u| bằng:`,""+n,[n+1,n-1,n+2,n*n],`|u| = √(${u.map(x=>x*x).join(" + ")}) = ${n}.`)},
+()=>{const s=pk(SV);return mk(s[0],s[1],s[2],s[3])},
+()=>{const s=ri(1,4),mx=pk([0,1]);return mk(`Hàm số y = x³ − ${3*s*s}x đạt ${mx?"cực đại":"cực tiểu"} tại điểm:`,`x = ${M(mx?-s:s)}`,[`x = ${M(mx?s:-s)}`,"x = 0",`x = ${3*s}`,`x = ${3*s*s}`],`y′ = 3x² − ${3*s*s} = 0 ⇒ x = ±${s}; y′ đổi dấu ${mx?"+ sang − tại x = −"+s:"− sang + tại x = "+s}.`)},
+()=>{const a=pk([1,2,-1,-2]),b=pk([-4,-2,2,4]),c=ri(-3,3),n=a*b<0?3:1;return mk(`Số điểm cực trị của hàm số y = ${co(a,"x⁴")} ${b<0?"−":"+"} ${Math.abs(b)}x²${P0(c)} là:`,""+n,["0","1","2","3"],`Hàm trùng phương có a, b ${a*b<0?"trái dấu":"cùng dấu"} nên có ${n} điểm cực trị.`)}];
+const pol=(p,q)=>"x²"+(p?P(p)+"x":"")+P0(q);
+const L2=[
+()=>{const s=ri(1,4);return mk(`Hàm số y = x³ − ${3*s*s}x nghịch biến trên khoảng nào?`,`(${M(-s)};${s})`,[`(−∞;${M(-s)})`,`(${s};+∞)`,`(−∞;${s})`,`(${M(-s)};+∞)`],`y′ = 3(x − ${s})(x + ${s}) < 0 ⇔ ${M(-s)} < x < ${s}.`)},
+()=>{const{d,f}=fk(),u=d>0,A="Hàm số đồng biến trên mỗi khoảng xác định",B="Hàm số nghịch biến trên mỗi khoảng xác định";return mk(`Cho hàm số y = ${f}. Mệnh đề nào đúng?`,u?A:B,[u?B:A,"Hàm số đồng biến trên ℝ","Hàm số nghịch biến trên ℝ"],`y′ = ${M(d)}/(mẫu)², dấu của y′ là dấu của ${M(d)} (${u?"dương":"âm"}) trên mỗi khoảng xác định.`)},
+()=>{const c=ri(-5,5),t=ri(0,2),a=[c-2,c+2,2*c][t];return mk(`${["Giá trị nhỏ nhất","Giá trị lớn nhất","Tổng giá trị lớn nhất và nhỏ nhất"][t]} của hàm số y = x³ − 3x${P0(c)} trên đoạn [0;2] là:`,M(a),[c-2,c+2,2*c,c,c+1,c-1].map(M),`y′ = 3x² − 3 = 0 ⇒ x = 1. Ta có y(0) = ${M(c)}, y(1) = ${M(c-2)}, y(2) = ${M(c+2)}.`)},
+()=>{let p,q,k,r;do{p=ri(-5,5);q=ri(-6,6);k=ri(-4,4);r=q+k*(p+k)}while(!k||!r||!q);return mk(`Đường tiệm cận xiên của đồ thị hàm số y = (${pol(p,q)})/(x${P0(-k)}) là:`,`y = x${P0(p+k)}`,[`y = x${P0(p-k)}`,`y = x${P0(-k)}`,`y = x${P0(q)}`,`x = ${M(k)}`],`Chia đa thức: y = x${P0(p+k)} + (${M(r)})/(x${P0(-k)}), phần dư → 0 khi x → ∞.`)},
+()=>{const c=ri(-5,5),mx=pk([0,1]);return mk(`Giá trị ${mx?"cực đại":"cực tiểu"} của hàm số y = x³ − 3x²${P0(c)} là:`,M(mx?c:c-4),[M(mx?c-4:c),M(c+4),M(c-2),M(mx?0:2),M(c+2)],`y′ = 3x² − 6x = 0 ⇒ x = 0 (cực đại, y = ${M(c)}), x = 2 (cực tiểu, y = ${M(c-4)}).`)},
+()=>{const A=rv(),B=rv(),C=rv(),D=A.map((x,i)=>x-B[i]+C[i]);return mk(`Trong Oxyz, cho hình bình hành ABCD có A${tm(A)}, B${tm(B)}, C${tm(C)}. Tọa độ điểm D là:`,tm(D),[tm(A.map((x,i)=>B[i]+C[i]-x)),tm(A.map((x,i)=>x+B[i]-C[i])),tm(A.map((x,i)=>x+B[i]+C[i])),tm(A.map((x,i)=>x-B[i]-C[i]))],"ABCD là hình bình hành ⇒ {AB} = {DC} ⇒ D = A − B + C.")},
+()=>{let u,v,d;do{u=qv();v=qv();d=dot(u,v)}while(!d);const n=nm(u)*nm(v);return mk(`Cho u = ${tm(u)}, v = ${tm(v)}. Côsin của góc giữa hai vectơ là:`,fr(d,n),[fr(-d,n),fr(d+1,n),fr(d,nm(u)+nm(v)),fr(d,2*n)],`cos(u,v) = u·v/(|u|·|v|) = ${M(d)}/${n}.`)},
+()=>{const a=rv(4),b=rv(4),x=pk([2,3]),y=pk([2,3]),r=a.map((t,i)=>x*t-y*b[i]);return mk(`Cho a = ${tm(a)}, b = ${tm(b)}. Tọa độ u = ${x}a − ${y}b là:`,tm(r),[tm(a.map((t,i)=>x*t+y*b[i])),tm(a.map((t,i)=>y*t-x*b[i])),tm(a.map((t,i)=>x*t-y*b[i]+(i?0:1))),tm(a.map((t,i)=>x*b[i]-y*t))],`Nhân từng tọa độ rồi trừ: u = ${tm(r)}.`)},
+()=>{const G=rv(4),A=rv(),B=rv(),C=G.map((g,i)=>3*g-A[i]-B[i]);return mk(`Cho tam giác ABC có A${tm(A)}, B${tm(B)}, C${tm(C)}. Tọa độ trọng tâm G là:`,tm(G),[tm(G.map(x=>3*x)),tm(G.map((x,i)=>i?x:x+1)),tm(G.map(x=>-x)),tm(G.map(x=>x+2))],"Trọng tâm có tọa độ bằng trung bình cộng tọa độ ba đỉnh.")},
+()=>{const x=ri(-4,4),y=ri(-4,4),a=ri(-4,4),b=ri(-4,4),m=-(x*a+y*b);return mk(`Cho u = ${tm([x,y,"m"])}, v = ${tm([a,b,1])}. Tìm m để u ⊥ v.`,"m = "+M(m),[-m,m+1,m-1,m+2].map(t=>"m = "+M(t)),`u ⊥ v ⇔ u·v = 0 ⇔ ${M(x*a)}${P(y*b)} + m = 0 ⇒ m = ${M(m)}.`)},
+()=>{const s=ri(2,9);return mk(`Giá trị nhỏ nhất của hàm số y = x + ${s*s}/x trên khoảng (0;+∞) là:`,""+2*s,[s,2*s*s,s*s,2*s+1].map(String),`Cô-si: x + ${s*s}/x ≥ 2√${s*s} = ${2*s}, dấu bằng khi x = ${s}.`)},
+()=>{const s=ri(1,5);return mk(`Từ tấm bìa hình vuông cạnh ${6*s} cm, cắt bốn góc bốn hình vuông cạnh x cm rồi gấp thành hộp không nắp. Thể tích hộp lớn nhất khi x bằng:`,`${s} cm`,[2*s,3*s,s+1,6*s].map(t=>t+" cm"),`V = x(${6*s} − 2x)², V′ = 12(x − ${s})(x − ${3*s}); với 0 < x < ${3*s} thì V lớn nhất tại x = ${s}.`)},
+()=>{const k=ri(2,8),c=ri(1,k*k+8);return mk(`Lợi nhuận (triệu đồng) khi sản xuất x sản phẩm là P(x) = −x² + ${2*k}x − ${c}. Lợi nhuận lớn nhất khi x bằng:`,""+k,[2*k,k*k,k+1,k-1].map(String),`P′(x) = −2x + ${2*k} = 0 ⇒ x = ${k}, P′ đổi dấu + sang −.`)},
+()=>{const v=ri(1,5),t=ri(0,1);return mk(`Một vật được ném lên, độ cao h(t) = −5t² + ${10*v}t (m, t tính bằng giây). ${t?"Độ cao lớn nhất vật đạt được là:":"Thời điểm vật đạt độ cao lớn nhất là:"}`,t?`${5*v*v} m`:`${v} giây`,t?[10*v*v,5*v,v*v,5*v*v+5].map(x=>x+" m"):[2*v,10*v,v+1,5*v].map(x=>x+" giây"),`h′(t) = −10t + ${10*v} = 0 ⇒ t = ${v}; h(${v}) = ${5*v*v} m.`)}];
+const J=(tx,g,b,e)=>{const t=Math.random()<.5;return[tx(t?g:b),t,e]};
+const TS=[["Với hình hộp ABCD.A′B′C′D′: {AB} + {AD} + {AA′} = {AC′}.",1,"Quy tắc hình hộp."],["Với hình hộp ABCD.A′B′C′D′: {AB} + {AD} + {AA′} = {AC}.",0,"Tổng đó bằng {AC′}, không phải {AC}."],["G là trọng tâm tứ diện ABCD thì {GA} + {GB} + {GC} + {GD} = {0}.",1,"Tính chất trọng tâm tứ diện."],["O là tâm hình bình hành ABCD thì {OA} + {OB} + {OC} + {OD} = {0}.",1,"{OA} + {OC} = {0} và {OB} + {OD} = {0}."],["Hình chóp S.ABCD có đáy là hình bình hành tâm O thì {SA} + {SC} = 2{SO}.",1,"O là trung điểm AC."],["Với ba điểm A, B, C bất kì: {AB} + {BC} + {CA} = {AC}.",0,"Tổng ba vectơ khép kín bằng {0}."],["Với ba điểm A, B, C bất kì: {AB} − {AC} = {BC}.",0,"Đúng phải là {AB} − {AC} = {CB}."],["M là trung điểm AB thì với mọi điểm O: {OM} = ({OA} + {OB})/2.",1,"Hệ thức trung điểm."],["Trong hình hộp ABCD.A′B′C′D′, {BB′} và {CC′} cùng phương.",1,"BB′ ∥ CC′."],["G là trọng tâm tam giác ABC thì {AG} = ({AB} + {AC})/2.",0,"Đúng phải là {AG} = ({AB} + {AC})/3."],["Trong hình hộp ABCD.A′B′C′D′, {AA′} và {BC} cùng phương.",0,"AA′ và BC không song song."]];
+let PL=[];
+const TFT=[
+()=>{const c=ri(1,6);return[`Cho hàm số f(x) = x³ − 3x²${P0(c)}.`,[J(v=>`Hàm số đạt cực đại tại x = ${v}.`,0,2,"f′(x) = 3x² − 6x = 0 ⇒ x = 0 (cực đại), x = 2 (cực tiểu)."),J(v=>`Giá trị cực tiểu của hàm số bằng ${M(v)}.`,c-4,c-4+pk([1,2,-1]),`f(2) = 8 − 12${P0(c)} = ${M(c-4)}.`),J(v=>`Hàm số nghịch biến trên khoảng ${v}.`,"(0;2)",pk(["(2;+∞)","(−∞;0)"]),"f′(x) < 0 ⇔ 0 < x < 2."),[`Phương trình f(x) = 0 có 3 nghiệm phân biệt.`,c>0&&c<4,`Cần f(0) = ${c} > 0 và f(2) = ${c-4} < 0, tức 0 < c < 4; ở đây c = ${c}, nên ${c>0&&c<4?"điều kiện thỏa":"điều kiện không thỏa"}.`]]]},
+()=>{const{a,k,d,f}=fk(),t=ri(1,4);return[`Cho hàm số f(x) = ${f}.`,[J(v=>`Đồ thị có tiệm cận đứng là đường thẳng x = ${M(v)}.`,k,-k,`Mẫu bằng 0 tại x = ${M(k)}.`),J(v=>`Đồ thị có tiệm cận ngang y = ${M(v)}.`,a,a+pk([1,2,-1]),`f(x) → ${M(a)} khi x → ±∞.`),[`Hàm số đồng biến trên mỗi khoảng xác định.`,d>0,`f′(x) = ${M(d)}/(mẫu)², dấu của f′ là dấu của ${M(d)}.`],J(v=>`Đồ thị hàm số y = f(x) + ${t} có tiệm cận ngang y = ${M(v)}.`,a+t,a-t,`Tịnh tiến lên ${t} đơn vị: y = ${M(a)} + ${t} = ${M(a+t)}.`)]]},
+()=>{const s=ri(1,3),c=ri(1,5);return[`Cho hàm số f(x) = x⁴ − ${2*s*s}x²${P0(c)}.`,[J(v=>`Hàm số có ${v} điểm cực trị.`,3,1,`f′(x) = 4x(x² − ${s*s}) có 3 nghiệm phân biệt và đổi dấu.`),J(v=>`Hàm số đạt cực tiểu tại x = ±${v}.`,s,s+1,`f′ = 0 ⇔ x = 0 hoặc x = ±${s}; cực tiểu tại x = ±${s}.`),J(v=>`Giá trị cực đại của hàm số bằng ${M(v)}.`,c,c+s*s,`Cực đại tại x = 0: f(0) = ${c}.`),J(v=>`Giá trị nhỏ nhất của hàm số trên ℝ bằng ${M(v)}.`,c-s**4,c-s**4+pk([1,2]),`f(±${s}) = ${c} − ${s**4} = ${M(c-s**4)}.`)]]},
+()=>{const s=ri(1,4);return[`Cho hàm số f(x) = x + ${s*s}/x.`,[J(v=>`Đồ thị có tiệm cận đứng là đường thẳng ${v}.`,"x = 0","y = 0","Mẫu x = 0 mà tử khác 0."),J(v=>`Đồ thị có tiệm cận xiên là y = ${v}.`,"x","x + "+s,`f(x) − x = ${s*s}/x → 0 khi x → ±∞.`),J(v=>`Giá trị nhỏ nhất của hàm số trên (0;+∞) bằng ${v}.`,2*s,2*s+1,`Cô-si: x + ${s*s}/x ≥ ${2*s}, dấu bằng khi x = ${s}.`),J(v=>`Hàm số đạt cực đại tại x = ${M(v)}.`,-s,s,`f′ = 1 − ${s*s}/x² = 0 ⇔ x = ±${s}; f′ đổi dấu + → − tại x = ${M(-s)}.`)]]},
+()=>{const[p,q,r]=shuf(pk(Q)),n=nm([p,q,r]);return[`Cho hình hộp chữ nhật ABCD.A′B′C′D′ có AB = ${p}, AD = ${q}, AA′ = ${r}; hệ trục Oxyz có gốc A, B ∈ Ox, D ∈ Oy, A′ ∈ Oz.`,[J(v=>`Tọa độ điểm C′ là ${v}.`,tp([p,q,r]),tp([p,q,0]),`C′ cách A ${p} theo Ox, ${q} theo Oy, ${r} theo Oz.`),J(v=>`Tọa độ vectơ {D′B} là ${v}.`,tm([p,-q,-r]),tm([p,q,-r]),`D′(0;${q};${r}), B(${p};0;0) ⇒ {D′B} = ${tm([p,-q,-r])}.`),J(v=>`Trọng tâm tam giác A′BD có tọa độ ${v}.`,tp([fr(p,3),fr(q,3),fr(r,3)]),tp([fr(p,3),fr(q,3),fr(r,2)]),`A′(0;0;${r}), B(${p};0;0), D(0;${q};0): lấy trung bình cộng tọa độ.`),J(v=>`Độ dài đoạn AC′ bằng ${v}.`,n,n+1,`AC′ = √(${p}² + ${q}² + ${r}²) = ${n}.`)]]},
+()=>{const a=qv(),b=qv(),d=dot(a,b),na=nm(a),nb=nm(b);return[`Trong Oxyz, cho a = ${tm(a)} và b = ${tm(b)}.`,[J(v=>`a + b = ${v}.`,tm(a.map((x,i)=>x+b[i])),tm(a.map((x,i)=>x-b[i])),"Cộng từng tọa độ tương ứng."),J(v=>`a·b = ${M(v)}.`,d,d+pk([1,2,-1,3]),`a·b = x₁x₂ + y₁y₂ + z₁z₂ = ${M(d)}.`),J(v=>`|a| = ${v}.`,na,na+1,`|a| = √(${a.map(x=>x*x).join(" + ")}) = ${na}.`),J(v=>`cos(a, b) = ${v}.`,fr(d,na*nb),fr(d+1,na*nb),`cos = a·b/(|a|·|b|) = ${M(d)}/${na*nb}.`)]]},
+()=>{const s=ri(1,4);return[`Từ tấm bìa hình vuông cạnh ${6*s} cm, cắt bốn góc bốn hình vuông cạnh x (cm) rồi gấp thành hộp không nắp, thể tích V(x) = x(${6*s} − 2x)².`,[J(v=>`Điều kiện của x là 0 < x < ${v}.`,3*s,6*s,`Cạnh đáy ${6*s} − 2x > 0 ⇔ x < ${3*s}.`),J(v=>`V′(x) = 0 ⇔ x = ${s} hoặc x = ${v}.`,3*s,2*s,`V′ = 12(x − ${s})(x − ${3*s}).`),J(v=>`Thể tích hộp lớn nhất khi x = ${v} cm.`,s,2*s,`Trong (0;${3*s}), V′ đổi dấu + → − tại x = ${s}.`),J(v=>`Thể tích lớn nhất của hộp bằng ${v} cm³.`,16*s**3,8*s**3,`V(${s}) = ${s}·(${4*s})² = ${16*s**3}.`)]]},
+()=>{const k=ri(2,8),c=ri(1,k*k+6);return[`Lợi nhuận (triệu đồng) khi sản xuất x sản phẩm là P(x) = −x² + ${2*k}x − ${c}.`,[J(v=>`P′(x) = −2x ${v}.`,"+ "+2*k,"− "+2*k,`Đạo hàm của −x² + ${2*k}x − ${c} là −2x + ${2*k}.`),J(v=>`P đạt giá trị lớn nhất tại x = ${v}.`,k,2*k,`P′ = 0 ⇔ x = ${k}.`),J(v=>`Lợi nhuận lớn nhất bằng ${M(v)} triệu đồng.`,k*k-c,k*k+c,`P(${k}) = −${k*k} + ${2*k*k} − ${c} = ${M(k*k-c)}.`),[`Nhà sản xuất có lãi (P > 0) tại mức sản lượng tối ưu.`,k*k-c>0,`P lớn nhất = ${M(k*k-c)} ${k*k-c>0?"> 0":"≤ 0"}.`]]]},
+()=>{const[u,w]=pk([[1,5],[2,4],[1,3],[2,6],[1,7],[3,5]]),A=3*(u+w)/2,B=3*u*w,S=w**3-A*w*w+B*w;return[`Chất điểm chuyển động trên trục số có vị trí S(t) = t³ − ${A}t² + ${B}t (t ≥ 0; t: giây, S: mét).`,[J(v=>`Vận tốc v(t) = 3t² − ${v}t + ${B}.`,2*A,A,`v(t) = S′(t) = 3t² − ${2*A}t + ${B}.`),J(v=>`Chất điểm chuyển động sang trái trong khoảng (${v}) giây.`,u+";"+w,"0;"+u,`v(t) = 3(t − ${u})(t − ${w}) < 0 ⇔ ${u} < t < ${w}.`),J(v=>`Chất điểm đổi chiều chuyển động tại t = ${u} và t = ${v}.`,w,w+1,`v(t) = 0 ⇔ t = ${u} hoặc t = ${w}.`),J(v=>`Tại t = ${w}, vị trí của chất điểm là S = ${M(v)} m.`,S,S+pk([1,2,-1]),`S(${w}) = ${w**3} − ${A*w*w} + ${B*w} = ${M(S)}.`)]]},
+()=>["Xét các khẳng định về vectơ trong không gian:",PL.splice(0,4)]];
+function build(){const o=[],s=new Set();const g=(L,n)=>{let t=0;while(n>0&&t++<5000){const f=pk(L)();if(f&&!s.has(f.q)){s.add(f.q);o.push(f);n--}}};g(L1,40);g(L2,60);PL=shuf(TS);for(let p=0;p<2;p++)TFT.forEach(f=>{const r=f();o.push({k:"tf",q:r[0],s:r[1]})});return o}
+const fm=t=>String(t).replace(/\{([^}]+)\}/g,'<span class="v">$1</span>');
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+let G={i:0,sc:0,t0:0,run:false,lf:5,cur:null,tfa:[],lock:false,name:"",cls:"",it:[]};
+let ac;
+function snd(ok){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const ns=ok?[523,659,784,1047]:[330,262,220];ns.forEach((f,k)=>{const o=ac.createOscillator(),g=ac.createGain();o.type=ok?"triangle":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.15,ac.currentTime+k*.15);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+k*.15+.14);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+k*.15);o.stop(ac.currentTime+k*.15+.15)})}catch(e){}}
+function head(){const N=G.it.length,x=G.it[G.i];$("inf").textContent=`${x.k=="mc"?"Trắc nghiệm "+(G.i+1)+"/100":"Đúng/Sai "+(G.i-99)+"/20"}`;$("sc").textContent=`Điểm: ${G.sc/10}`;$("b5").textContent=`💡 50:50 (${G.lf})`;$("ld").innerHTML=`<div style="height:100%;width:${G.i/N*100}%;background:var(--gold);border-radius:8px;padding:0;border:0"></div>`}
+function show(){const x=G.it[G.i];G.lock=false;head();$("ex").innerHTML="";$("nx").classList.add("hide");const b=$("body");b.innerHTML="";$("qt").innerHTML=fm(x.q);
+if(x.k=="mc"){$("b5").classList.toggle("hide",G.lf<1);G.cur=shuf([{t:x.a,c:1},...x.w.map(t=>({t,c:0}))]);const g=document.createElement("div");g.className="opts";G.cur.forEach((o,k)=>{const y=document.createElement("button");y.innerHTML="ABCD"[k]+". "+fm(o.t);y.onclick=()=>pickMC(k);o.el=y;g.appendChild(y)});b.appendChild(g)}
+else{$("b5").classList.add("hide");G.tfa=[null,null,null,null];x.s.forEach((s,k)=>{const d=document.createElement("div");d.className="tf";d.innerHTML=`<div class="s">${"abcd"[k]}) ${fm(s[0])}</div>`;["Đúng","Sai"].forEach((l,v)=>{const y=document.createElement("button");y.textContent=l;y.onclick=()=>{if(G.lock)return;G.tfa[k]=v==0;[...d.querySelectorAll("button")].forEach(z=>z.classList.remove("sel"));y.classList.add("sel");$("ck").classList.toggle("hide",G.tfa.includes(null))};d.appendChild(y)});b.appendChild(d)});const c=document.createElement("button");c.id="ck";c.className="go hide";c.textContent="✔ Chốt đáp án";c.onclick=checkTF;b.appendChild(c)}}
+function pickMC(k){if(G.lock)return;G.lock=true;const x=G.it[G.i],ok=G.cur[k].c;G.cur.forEach(o=>{o.el.disabled=true;if(o.c)o.el.classList.add("ok")});if(!ok)G.cur[k].el.classList.add("no");if(ok)G.sc+=2;snd(ok);$("b5").classList.add("hide");$("ex").innerHTML=`<div class="exp">${ok?"✅ Chính xác! ":"❌ Chưa đúng. Đáp án đúng: "+fm(x.a)+". "}${fm(x.e)}</div>`;after()}
+function checkTF(){if(G.lock)return;G.lock=true;const q=G.it[G.i].s;let n=0,h="";q.forEach((s,k)=>{const ok=G.tfa[k]==!!s[1];if(ok)n++;h+=`<div>${ok?"✅":"❌"} ${"abcd"[k]}) ${s[1]?"ĐÚNG":"SAI"} – ${fm(s[2])}</div>`});G.sc+=n*10;snd(n>=3);$("ck").classList.add("hide");$("ex").innerHTML=`<div class="exp">Bạn đúng ${n}/4 ý (+${n} điểm).${h}</div>`;after()}
+function after(){head();const n=$("nx");n.textContent=G.i==G.it.length-1?"Xem kết quả ▶":"Câu tiếp ▶";n.classList.remove("hide")}
+function fifty(){const x=G.it[G.i];if(G.lf<1||G.lock||x.k!="mc")return;G.lf--;head();$("b5").classList.add("hide");G.cur.filter(o=>!o.c).slice(0,2).forEach(o=>{o.el.disabled=true;o.el.style.opacity=.2})}
+function next(){G.i++;if(G.i>=G.it.length)finish();else show()}
+function finish(){if(!G.run)return;G.run=false;const t=fmt(Math.floor((Date.now()-G.t0)/1000)),sc=G.sc/10;$("play").classList.add("hide");$("end").classList.remove("hide");$("rs").innerHTML="";const a=document.createElement("div");a.textContent=`${G.name} – lớp ${G.cls}`;const b=document.createElement("div");b.innerHTML=`Điểm: <b style="color:var(--gold)">${sc}/100</b> · Thời gian: ${t}`;$("rs").append(a,b);
+if(API_URL){fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({"Họ tên":G.name,"Lớp":G.cls,"Điểm số":sc,"Thời gian làm bài":t})}).then(()=>setTimeout(loadLB,1500)).catch(()=>{})}}
+function start(){const n=$("nm").value.trim(),c=$("cl").value.trim();if(!n||!c){alert("Vui lòng nhập Họ tên và Lớp.");return}
+G={i:0,sc:0,t0:Date.now(),run:true,lf:5,cur:null,tfa:[],lock:false,name:n,cls:c,it:build()};$("start").classList.add("hide");$("end").classList.add("hide");$("play").classList.remove("hide");show()}
+function again(){$("end").classList.add("hide");$("start").classList.remove("hide");$("nm").value="";$("cl").value=""}
+function secs(t){const p=String(t||"").split(":").map(Number);return p.length==2?p[0]*60+p[1]:9e9}
+function loadLB(){if(!API_URL)return;fetch(API_URL).then(r=>r.json()).then(j=>{if(!j||j.status!=="ok"||!Array.isArray(j.data))return;const d=j.data.slice().sort((a,b)=>(Number(b["Điểm số"])-Number(a["Điểm số"]))||(secs(a["Thời gian làm bài"])-secs(b["Thời gian làm bài"]))).slice(0,15);const t=document.createElement("table");t.innerHTML="<tr><th>#</th><th>Họ tên</th><th>Lớp</th><th>Điểm</th><th>Thời gian</th></tr>";d.forEach((r,k)=>{const tr=t.insertRow();[k+1,r["Họ tên"],r["Lớp"],r["Điểm số"],r["Thời gian làm bài"]].forEach(v=>{tr.insertCell().textContent=v==null?"":v})});$("lbt").innerHTML="";$("lbt").appendChild(t)}).catch(()=>{})}
+$("bs").onclick=start;$("nx").onclick=next;$("b5").onclick=fifty;$("br").onclick=again;$("sb").onclick=()=>{if(G.run&&confirm("Nộp bài ngay với số điểm hiện tại?"))finish()};
+setInterval(()=>{if(G.run)$("tm").textContent="⏱ "+fmt(Math.floor((Date.now()-G.t0)/1000))},1000);
+setInterval(loadLB,5000);loadLB();
+</script></body></html>
